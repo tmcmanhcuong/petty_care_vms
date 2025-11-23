@@ -1,10 +1,13 @@
 <template>
   <div class="min-h-screen flex items-center justify-center py-12 px-4">
-    <div class="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden ">
+    <div
+      class="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden"
+    >
       <div class="grid grid-cols-1 lg:grid-cols-2">
-        <!-- Left Side - Info Section with Gradient -->
-        <div class="bg-gradient-to-br from-[#5a9690] to-[#3d7671] p-12 text-white relative">
-          <!-- Header -->
+        <!-- Left Side - Info -->
+        <div
+          class="bg-gradient-to-br from-[#5a9690] to-[#3d7671] p-12 text-white relative"
+        >
           <div class="mb-16">
             <h1 class="text-white text-3xl font-bold font-nunito mb-2">
               Chào mừng bạn đến với PETTY
@@ -14,58 +17,53 @@
             </p>
           </div>
 
-          <!-- Image -->
           <div class="mb-28 rounded-xl overflow-hidden">
-            <img 
-              src="/src/assets/img_imports/sign_in_up_img/sign-img2.png" 
+            <img
+              src="/src/assets/img_imports/sign_in_up_img/sign-img2.png"
               alt="Veterinarian with pet"
               class="w-full h-80 object-cover rounded-lg"
             />
           </div>
 
-          <!-- Features List -->
           <div class="space-y-4">
             <div class="flex items-start gap-3">
-              <div class="w-5 h-5 mt-1 flex-shrink-0">
-                <Tick class="w-5 h-5 text-white" />
-              </div>
+              <Tick class="w-5 h-5 mt-1 flex-shrink-0 text-white" />
               <div>
-                <h3 class="text-white text-lg font-semibold font-nunitoSans">Bảo mật & An toàn</h3>
+                <h3 class="text-white text-lg font-semibold font-nunitoSans">
+                  Bảo mật & An toàn
+                </h3>
                 <p class="text-sm text-blue-100 font-nunitoSans">
                   Mọi thông tin của bạn và thú cưng được lưu trữ bảo mật
                 </p>
               </div>
             </div>
-
             <div class="flex items-start gap-3">
-              <div class="w-5 h-5 mt-1 flex-shrink-0">
-                <Tick class="w-5 h-5 text-white" />
-              </div>
+              <Tick class="w-5 h-5 mt-1 flex-shrink-0 text-white" />
               <div>
-                <h3 class="text-white text-lg font-semibold font-nunitoSans">24/7 Hỗ Trợ</h3>
+                <h3 class="text-white text-lg font-semibold font-nunitoSans">
+                  24/7 Hỗ Trợ
+                </h3>
                 <p class="text-sm text-blue-100 font-nunitoSans">
                   Đội ngũ PETTY luôn sẵn sàng giúp bạn khi cần
                 </p>
               </div>
             </div>
-
             <div class="flex items-start gap-3">
-              <div class="w-5 h-5 mt-1 flex-shrink-0">
-               <Tick class="w-5 h-5 text-white" />
-              </div>
+              <Tick class="w-5 h-5 mt-1 flex-shrink-0 text-white" />
               <div>
-                <h3 class="text-white text-lg font-semibold font-nunitoSans">Sử dụng dễ dàng</h3>
+                <h3 class="text-white text-lg font-semibold font-nunitoSans">
+                  Sử dụng dễ dàng
+                </h3>
                 <p class="text-sm text-blue-100 font-nunitoSans">
-                  Bắt đầu chỉ với vài thao tác đơn giản – đặt lịch, xem hồ sơ...
+                  Bắt đầu chỉ với vài thao tác đơn giản
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Right Side - Form Section -->
+        <!-- Right Side - Form -->
         <div class="p-12 bg-white">
-          <!-- Form Header -->
           <div class="mb-8">
             <h2 class="text-2xl font-bold text-textColor font-nunito mb-1">
               Tạo tài khoản
@@ -75,150 +73,347 @@
             </p>
           </div>
 
-          <!-- Form -->
           <form @submit.prevent="handleSubmit" class="space-y-5">
             <!-- Họ và Tên -->
             <div>
-              <label class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans">
-                Họ và Tên
-              </label>
+              <label
+                class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans"
+                >Họ và Tên</label
+              >
               <div class="relative">
-                <div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 ">
-                    <User viewBox="0 0 20 20" 
-                    path d="M10 2a5 5 0 100 10 5 5 0 000-10zM2 18a8 8 0 1116 0H2z"  />
+                <div
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
                 </div>
-                <input 
+                <input
                   v-model="formData.fullName"
-                  type="text" 
+                  type="text"
                   placeholder="Nguyễn Văn A"
                   class="w-full pl-14 pr-3 py-3 bg-gray-100 border-0 rounded-lg text-base font-nunitoSans text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                  :class="{ 'border-red-500': errors.ho_ten }"
+                  ref="fullNameInput"
                 />
               </div>
+              <p v-if="errors.ho_ten" class="mt-1 text-sm text-red-600">
+                {{ errors.ho_ten[0] }}
+              </p>
             </div>
 
             <!-- Email -->
             <div>
-              <label class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans">
-                Email
-              </label>
+              <label
+                class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans"
+                >Email</label
+              >
               <div class="relative">
-                <div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400">
-                 <EmailAddress viewBox="0 0 20 20" 
-                    path d="M10 2a5 5 0 100 10 5 5 0 000-10zM2 18a8 8 0 1116 0H2z"  />
+                <div
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
                 </div>
-                <input 
+                <input
                   v-model="formData.email"
-                  type="email" 
+                  type="email"
                   placeholder="nguyenvana@example.com"
                   class="w-full pl-14 pr-3 py-3 bg-gray-100 border-0 rounded-lg text-base font-nunitoSans text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                  :class="{ 'border-red-500': errors.email }"
+                  ref="emailInput"
                 />
+              </div>
+              <p v-if="errors.email" class="mt-1 text-sm text-red-600">
+                {{ errors.email[0] }}
+              </p>
+            </div>
+
+            <!-- Số điện thoại (tùy chọn) -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans"
+                >Số điện thoại (tùy chọn)</label
+              >
+              <div class="relative">
+                <div
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  v-model="formData.so_dien_thoai"
+                  type="text"
+                  placeholder="0901234567"
+                  class="w-full pl-14 pr-3 py-3 bg-gray-100 border-0 rounded-lg text-base font-nunitoSans text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                  ref="phoneInput"
+                  :class="{ 'border-red-500': errors.so_dien_thoai }"
+                  aria-invalid="errors.so_dien_thoai ? 'true' : 'false'"
+                  aria-describedby="phone-error"
+                />
+                <p
+                  v-if="errors.so_dien_thoai"
+                  id="phone-error"
+                  class="mt-1 text-sm text-red-600"
+                >
+                  {{ errors.so_dien_thoai[0] }}
+                </p>
               </div>
             </div>
 
-            <!-- Mật Khẩu -->
+            <!-- Địa chỉ (tùy chọn) -->
             <div>
-              <label class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans">
-                Mật Khẩu
-              </label>
+              <label
+                class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans"
+                >Địa chỉ (tùy chọn)</label
+              >
               <div class="relative">
-                <div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400">
-                  <password viewBox="0 0 20 20" 
-                    path d="M10 2a5 5 0 100 10 5 5 0 000-10zM2 18a8 8 0 1116 0H2z"  />
+                <div
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
                 </div>
-                <input 
-                  v-model="formData.password"
-                  type="password" 
-                  placeholder="Nhập mật khẩu"
+                <input
+                  v-model="formData.dia_chi"
+                  type="text"
+                  placeholder="123 Đường ABC, Quận 1, TP.HCM"
                   class="w-full pl-14 pr-3 py-3 bg-gray-100 border-0 rounded-lg text-base font-nunitoSans text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                  ref="addressInput"
+                  :class="{ 'border-red-500': errors.dia_chi }"
+                  aria-invalid="errors.dia_chi ? 'true' : 'false'"
+                  aria-describedby="address-error"
+                />
+                <p
+                  v-if="errors.dia_chi"
+                  id="address-error"
+                  class="mt-1 text-sm text-red-600"
+                >
+                  {{ errors.dia_chi[0] }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Mật khẩu -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans"
+                >Mật Khẩu</label
+              >
+              <div class="relative">
+                <div
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 11c0-1.1-.9-2-2-2s-2 .9-2 2v4c0 1.1.9 2 2 2s2-.9 2-2v-4zM8 11V7a4 4 0 118 0v4"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  v-model="formData.password"
+                  type="password"
+                  placeholder="Nhập mật khẩu (tối thiểu 8 ký tự)"
+                  class="w-full pl-14 pr-3 py-3 bg-gray-100 border-0 rounded-lg text-base font-nunitoSans text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                  :class="{ 'border-red-500': errors.mat_khau }"
+                  ref="passwordInput"
                 />
               </div>
+              <p v-if="errors.mat_khau" class="mt-1 text-sm text-red-600">
+                {{ errors.mat_khau[0] }}
+              </p>
             </div>
 
             <!-- Xác nhận mật khẩu -->
             <div>
-              <label class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans">
-                Xác nhận mật khẩu
-              </label>
+              <label
+                class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans"
+                >Xác nhận mật khẩu</label
+              >
               <div class="relative">
-                <div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400">
-                  <password viewBox="0 0 20 20" 
-                    path d="M10 2a5 5 0 100 10 5 5 0 000-10zM2 18a8 8 0 1116 0H2z"  />
+                <div
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                >
+                  <LockIcon />
                 </div>
-                <input 
+                <input
                   v-model="formData.confirmPassword"
-                  type="password" 
-                  placeholder="Xác nhận mật khẩu"
+                  type="password"
+                  placeholder="Nhập lại mật khẩu"
                   class="w-full pl-14 pr-3 py-3 bg-gray-100 border-0 rounded-lg text-base font-nunitoSans text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                  ref="confirmInput"
                 />
               </div>
+              <p v-if="passwordMismatch" class="mt-1 text-sm text-red-600">
+                Mật khẩu xác nhận không khớp
+              </p>
             </div>
 
-            <!-- Checkbox Terms -->
+            <!-- Điều khoản -->
             <div class="flex items-start gap-2 pt-2">
-              <input 
+              <input
                 v-model="formData.agreeTerms"
-                type="checkbox" 
+                type="checkbox"
                 id="terms"
                 class="w-4 h-4 mt-0.5 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-primary"
+                ref="agreeRef"
               />
-              <label for="terms" class="text-sm font-semibold text-gray-900 font-nunitoSans">
-                Tôi đồng ý với các 
-                <a href="#" class="text-blue-600 font-bold hover:underline">Điều Khoản</a>
+              <label
+                for="terms"
+                class="text-sm font-semibold text-gray-900 font-nunitoSans"
+              >
+                Tôi đồng ý với các
+                <a href="#" class="text-blue-600 font-bold hover:underline"
+                  >Điều Khoản</a
+                >
                 và
-                <a href="#" class="text-blue-600 font-bold hover:underline">Chính Sách Bảo Mật</a>
+                <a href="#" class="text-blue-600 font-bold hover:underline"
+                  >Chính Sách Bảo Mật</a
+                >
               </label>
             </div>
+            <p v-if="errors.agreeTerms" class="text-sm text-red-600 -mt-3">
+              Bạn cần đồng ý với điều khoản
+            </p>
 
-            <!-- Submit Button -->
-            <button 
+            <!-- Nút Đăng ký -->
+            <button
               type="submit"
-              class="w-full bg-[#5A9690] text-white py-2.5 rounded-2xl font-semibold text-lg font-nunito hover:bg-opacity-70 transition-all duration-300"
+              :disabled="isSubmitting"
+              class="w-full bg-[#5A9690] text-white py-3 rounded-2xl font-semibold text-lg font-nunito hover:bg-opacity-90 transition-all duration-300 disabled:opacity-70"
             >
-              Đăng Ký
+              <span v-if="!isSubmitting">Đăng Ký</span>
+              <span v-else>Đang xử lý...</span>
             </button>
 
             <!-- Divider -->
-            <div class="relative my-5">
+            <div class="relative my-8">
               <div class="absolute inset-0 flex items-center">
                 <div class="w-full border-t border-gray-300"></div>
               </div>
-              <div class="relative flex justify-center text-sm -mt-6 -mb-6">
-                <span class="px-4 bg-white text-gray-600">Hoặc tiếp tục với</span>
+              <div class="relative flex justify-center text-sm">
+                <span class="px-4 bg-white text-gray-600"
+                  >Hoặc tiếp tục với</span
+                >
               </div>
             </div>
 
-            <!-- Social Login Buttons -->
-            <div class="grid grid-cols-2 gap-3 -mt-4">
-              <button 
+            <!-- Social Buttons -->
+            <div class="grid grid-cols-2 gap-3">
+              <button
                 type="button"
-                class="flex items-center justify-center gap-2 px-4 py-2 shadow rounded-lg text-sm font-semibold text-gray-900 font-nunitoSans hover:bg-gray-200 transition-colors"
+                class="flex items-center justify-center gap-2 px-4 py-2 shadow rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-100 transition"
               >
-                <svg class="w-4 h-4" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
                 </svg>
                 Google
               </button>
-
-              <button 
+              <button
                 type="button"
-                class="flex items-center justify-center gap-2 px-4 py-2 shadow rounded-lg text-sm font-semibold text-gray-900 font-nunitoSans hover:bg-gray-200 transition-colors"
+                class="flex items-center justify-center gap-2 px-4 py-2 shadow rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-100 transition"
               >
                 <svg class="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  <path
+                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                  />
                 </svg>
                 Facebook
               </button>
             </div>
           </form>
 
-          <!-- Login Link -->
           <div class="mt-6 text-center">
             <p class="text-sm text-gray-600 font-nunitoSans">
               Đã có tài khoản?
-              <router-link to="/khach-hang/dang-nhap" class="text-blue-600 font-medium hover:underline ml-1">
+              <router-link
+                to="/khach-hang/dang-nhap"
+                class="text-blue-600 font-medium hover:underline ml-1"
+              >
                 Đăng Nhập
               </router-link>
             </p>
@@ -230,25 +425,146 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import Tick from '../../../assets/svg/tick.svg'
-import User from '../../../assets/svg/User.svg'
-import EmailAddress from '../../../assets/svg/emailaddress.svg'
-import Password from '../../../assets/svg/password.svg'
-const formData = ref({
-  fullName: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
-  agreeTerms: false
-})
+import { ref, nextTick } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+import { useToast } from "vue-toastification";
 
-const handleSubmit = () => {
-  console.log('Form submitted:', formData.value)
-  
-}
+const router = useRouter();
+const toast = useToast();
+
+const formData = ref({
+  fullName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  so_dien_thoai: "",
+  dia_chi: "",
+  agreeTerms: false,
+});
+
+const errors = ref({});
+const isSubmitting = ref(false);
+const passwordMismatch = ref(false);
+
+const fullNameInput = ref(null);
+const emailInput = ref(null);
+const phoneInput = ref(null);
+const addressInput = ref(null);
+const passwordInput = ref(null);
+const confirmInput = ref(null);
+const agreeRef = ref(null);
+
+const inputRefs = {
+  fullName: fullNameInput,
+  email: emailInput,
+  password: passwordInput,
+  confirmPassword: confirmInput,
+  so_dien_thoai: phoneInput,
+  dia_chi: addressInput,
+  ho_ten: fullNameInput, 
+  mat_khau: passwordInput,
+  agreeTerms: agreeRef,
+};
+
+const focusByKey = (key) => {
+  const r = inputRefs[key];
+  if (r && r.value && typeof r.value.focus === "function") {
+    try {
+      r.value.scrollIntoView?.({ behavior: "smooth", block: "center" });
+    } catch (e) {}
+    r.value.focus();
+  }
+};
+
+const focusFirstError = (errs) => {
+  const order = [
+    "ho_ten",
+    "email",
+    "mat_khau",
+    "so_dien_thoai",
+    "dia_chi",
+    "agreeTerms",
+  ];
+  for (const k of order) {
+    if (errs && errs[k]) {
+      focusByKey(k);
+      break;
+    }
+  }
+};
+
+const handleSubmit = async () => {
+  errors.value = {};
+  passwordMismatch.value = false;
+  isSubmitting.value = true;
+
+  const required = ["fullName", "email", "password", "confirmPassword"];
+  const missingKey = required.find((k) => !formData.value[k]);
+  if (missingKey) {
+    toast.error("Vui lòng điền đầy đủ các trường bắt buộc");
+    isSubmitting.value = false;
+    await nextTick();
+    focusByKey(missingKey);
+    return;
+  }
+
+  if (formData.value.password !== formData.value.confirmPassword) {
+    passwordMismatch.value = true;
+    isSubmitting.value = false;
+    await nextTick();
+    focusByKey("password");
+    return;
+  }
+
+  if (!formData.value.agreeTerms) {
+    errors.value.agreeTerms = ["Bạn cần đồng ý với điều khoản"];
+    toast.error("Bạn cần đồng ý với Điều khoản và Chính sách bảo mật");
+    isSubmitting.value = false;
+    await nextTick();
+    focusByKey("agreeTerms");
+    return;
+  }
+
+  const payload = {
+    ho_ten: formData.value.fullName,
+    email: formData.value.email,
+    mat_khau: formData.value.password,
+    so_dien_thoai: formData.value.so_dien_thoai || null,
+    dia_chi: formData.value.dia_chi || null,
+  };
+
+  try {
+    const res = await axios.post(
+      "http://127.0.0.1:8000/api/khach-hang/dang-ki",
+      payload
+    );
+
+    if (res.data.status) {
+      toast.success("Đăng ký thành công! Vui lòng đăng nhập để tiếp tục");
+      setTimeout(() => {
+        router.push("/khach-hang/dang-nhap");
+      }, 1500);
+    }
+  } catch (err) {
+    if (err.response?.status === 422) {
+      errors.value = err.response.data.errors;
+      toast.error("Vui lòng kiểm tra lại thông tin đăng ký");
+      await nextTick();
+      focusFirstError(errors.value);
+    } else {
+      toast.error(
+        err.response?.data?.message || "Đã có lỗi xảy ra, vui lòng thử lại"
+      );
+    }
+  } finally {
+    isSubmitting.value = false;
+  }
+};
 </script>
 
 <style scoped>
-
+.border-red-500 {
+  border: 1px solid #ef4444 !important;
+}
 </style>
