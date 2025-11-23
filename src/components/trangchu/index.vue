@@ -111,7 +111,7 @@
           
           <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-[#EEE] backdrop-blur-sm rounded-xl px-6 py-3 w-[380px] shadow-lg" >
             <div class="flex gap-2 items-start">
-              <div class="w-9 h-9 bg-[#432323] rounded-md flex items-center justify-center shrink-0">
+              <div class="w-9 h-9 bg-[#432323] rounded-md flex items-center justify-center shrink-0 mr-4">
                 <VaccineIcon class="text-[#EEEEEE]" />
               </div>
               <div class="flex flex-col gap-2 ">
@@ -130,15 +130,14 @@
             alt="" class="absolute inset-0 w-full h-full object-cover">
           <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-transparent"></div>
           
-          <div class="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl px-4 py-3 max-w-[320px] shadow-lg">
-            <div class="flex gap-3 items-start">
-              <div class="w-9 h-9 bg-[#432323] rounded-md flex items-center justify-center shrink-0">
-                <img src="https://www.figma.com/api/mcp/asset/e153f526-d315-4368-8042-9fa90e379f63" 
-                  alt="" class="w-5 h-5 object-contain brightness-0 invert" />
+          <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-[#EEE] backdrop-blur-sm rounded-xl px-6 py-3 w-[380px] shadow-lg" >
+            <div class="flex gap-2 items-start">
+              <div class="w-9 h-9 bg-[#432323] rounded-md flex items-center justify-center shrink-0 mr-4">
+                <VaccineIcon class="text-[#EEEEEE]" />
               </div>
-              <div class="flex flex-col gap-1">
+              <div class="flex flex-col gap-2 ">
                 <h3 class="text-base font-extrabold text-[#432323] leading-tight">Phẫu thuật triệt sản</h3>
-                <p class="text-xs font-medium text-[#393e46] leading-snug">
+                <p class="text-xs font-medium text-[#393e46] leading-relaxed">
                   Quy trình triệt sản an toàn, giúp thú cưng khỏe mạnh và sống vui hơn
                 </p>
               </div>
@@ -152,15 +151,14 @@
             alt="" class="absolute inset-0 w-full h-full object-cover">
           <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-transparent"></div>
           
-          <div class="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl px-4 py-3 max-w-[320px] shadow-lg">
-            <div class="flex gap-3 items-start">
-              <div class="w-9 h-9 bg-[#432323] rounded-md flex items-center justify-center shrink-0">
-                <img src="https://www.figma.com/api/mcp/asset/04a8670e-c7f6-4423-ad55-6326cd228ea6" 
-                  alt="" class="w-5 h-5 object-contain brightness-0 invert" />
+         <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-[#EEE] backdrop-blur-sm rounded-xl px-6 py-3 w-[380px] shadow-lg" >
+            <div class="flex gap-2 items-start">
+              <div class="w-9 h-9 bg-[#432323] rounded-md flex items-center justify-center shrink-0 mr-4">
+                <VaccineIcon class="text-[#EEEEEE]" />
               </div>
-              <div class="flex flex-col gap-1">
+              <div class="flex flex-col gap-2 ">
                 <h3 class="text-base font-extrabold text-[#432323] leading-tight">Điều trị nội trú</h3>
-                <p class="text-xs font-medium text-[#393e46] leading-snug">
+                <p class="text-xs font-medium text-[#393e46] leading-relaxed">
                   Chăm sóc toàn diện cho thú cưng trong môi trường an toàn và tiện nghi
                 </p>
               </div>
@@ -182,24 +180,21 @@
       <!-- About Content -->
       <div class="flex items-center justify-center w-full mt-[44px]">
         <div class="w-[640px] h-[414px] rounded-[24px] overflow-hidden shadow-2xl -mr-24 z-10 relative">
-          <img src="https://images.unsplash.com/photo-1583511655826-05700d52f4d9?w=1200&h=800&fit=crop"
+          <img src="/src/assets/img_imports/public_img/hp-pic4.png"
             alt="About PETTY" class="w-full h-full object-cover">
         </div>
-        <div class="bg-[#eeeeee] px-[33px] py-6 rounded-2xl shadow-xl w-[576px] h-[312px] -ml-24 z-20 flex flex-col gap-[10px] justify-center">
+        <div class="bg-[#eeeeee] px-[33px] py-6 rounded-2xl shadow-xl w-[576px] h-auto -ml-24 z-20 flex flex-col gap-[10px] justify-center">
           <div class="flex flex-col gap-8 w-[384px]">
             <div class="inline-flex items-center gap-2 px-[10px] py-[6px] border-2 border-[#5a9690] rounded-full bg-[#eeeeee] w-fit">
               <div class="w-[34px] h-[34px] bg-[#2f5755] rounded-full flex items-center justify-center shadow-lg">
-                <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="6" width="18" height="12" rx="2" />
-                  <path d="M9 2v4m6-4v4" />
-                </svg>
+                <BriefcaseIcon class="w-6 h-6 text-white" />
               </div>
               <span class="text-base font-bold text-[#2f5755]">Về chúng tôi</span>
             </div>
-            <div class="flex flex-col gap-2">
-              <h2 class="text-4xl font-bold text-[#432323] leading-4">Sứ mệnh cốt lõi</h2>
-              <p class="text-base font-semibold text-[#222831] leading-4">Vì sức khỏe và hạnh phúc của từng thú cưng</p>
-              <p class="text-xs font-light text-[#393e46] leading-4">
+            <div class="flex flex-col gap-1">
+              <h2 class="text-4xl font-bold text-[#432323] leading-4 ">Sứ mệnh cốt lõi</h2>
+              <p class="text-base font-semibold text-[#222831] leading-4 mt-4">Vì sức khỏe và hạnh phúc của từng thú cưng</p>
+              <p class="text-sm font-light text-[#393e46] leading-4 ">
                 Chúng tôi xây dựng hệ thống phòng khám thú y hiện đại – nơi công nghệ và chuyên môn kết hợp để mang đến quy trình chăm sóc, theo dõi và quản lý sức khỏe thú cưng toàn diện, minh bạch và tận tâm.
               </p>
             </div>
@@ -526,6 +521,7 @@
 <script setup>
 import SunIcon from '@/assets/svg/sun-medium.svg'
 import VaccineIcon from '@/assets/svg/vaccine.svg'
+import BriefcaseIcon from '@/assets/svg/briefcase.svg'  
 const avatarImages = [
   "./src/assets/img_imports/public_img/hp-pic13.jpg",
   "./src/assets/img_imports/public_img/hp-pic14.jpg",
