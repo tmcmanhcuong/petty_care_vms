@@ -84,32 +84,19 @@
                 <div
                   class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
                 >
-                  <svg
-                    class="w-5 h-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
+                  <UserIcon class="w-6 h-6" />
                 </div>
                 <input
-                  v-model="formData.fullName"
+                  v-model="formData.full_name"
                   type="text"
                   placeholder="Nguyễn Văn A"
                   class="w-full pl-14 pr-3 py-3 bg-gray-100 border-0 rounded-lg text-base font-nunitoSans text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                  :class="{ 'border-red-500': errors.ho_ten }"
+                  :class="{ 'border-red-500': errors.full_name }"
                   ref="fullNameInput"
                 />
               </div>
-              <p v-if="errors.ho_ten" class="mt-1 text-sm text-red-600">
-                {{ errors.ho_ten[0] }}
+              <p v-if="errors.full_name" class="mt-1 text-sm text-red-600">
+                {{ errors.full_name[0] }}
               </p>
             </div>
 
@@ -123,20 +110,7 @@
                 <div
                   class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
                 >
-                  <svg
-                    class="w-5 h-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
+                  <EmailAddressIcon class="w-6 h-6" />
                 </div>
                 <input
                   v-model="formData.email"
@@ -152,102 +126,6 @@
               </p>
             </div>
 
-            <!-- Số điện thoại (tùy chọn) -->
-            <div>
-              <label
-                class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans"
-                >Số điện thoại (tùy chọn)</label
-              >
-              <div class="relative">
-                <div
-                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-                >
-                  <svg
-                    class="w-5 h-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                    />
-                  </svg>
-                </div>
-                <input
-                  v-model="formData.so_dien_thoai"
-                  type="text"
-                  placeholder="0901234567"
-                  class="w-full pl-14 pr-3 py-3 bg-gray-100 border-0 rounded-lg text-base font-nunitoSans text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                  ref="phoneInput"
-                  :class="{ 'border-red-500': errors.so_dien_thoai }"
-                  aria-invalid="errors.so_dien_thoai ? 'true' : 'false'"
-                  aria-describedby="phone-error"
-                />
-                <p
-                  v-if="errors.so_dien_thoai"
-                  id="phone-error"
-                  class="mt-1 text-sm text-red-600"
-                >
-                  {{ errors.so_dien_thoai[0] }}
-                </p>
-              </div>
-            </div>
-
-            <!-- Địa chỉ (tùy chọn) -->
-            <div>
-              <label
-                class="block text-sm font-semibold text-textColor mb-2 font-nunitoSans"
-                >Địa chỉ (tùy chọn)</label
-              >
-              <div class="relative">
-                <div
-                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-                >
-                  <svg
-                    class="w-5 h-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </div>
-                <input
-                  v-model="formData.dia_chi"
-                  type="text"
-                  placeholder="123 Đường ABC, Quận 1, TP.HCM"
-                  class="w-full pl-14 pr-3 py-3 bg-gray-100 border-0 rounded-lg text-base font-nunitoSans text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                  ref="addressInput"
-                  :class="{ 'border-red-500': errors.dia_chi }"
-                  aria-invalid="errors.dia_chi ? 'true' : 'false'"
-                  aria-describedby="address-error"
-                />
-                <p
-                  v-if="errors.dia_chi"
-                  id="address-error"
-                  class="mt-1 text-sm text-red-600"
-                >
-                  {{ errors.dia_chi[0] }}
-                </p>
-              </div>
-            </div>
-
             <!-- Mật khẩu -->
             <div>
               <label
@@ -258,38 +136,19 @@
                 <div
                   class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
                 >
-                  <svg
-                    class="w-5 h-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 11c0-1.1-.9-2-2-2s-2 .9-2 2v4c0 1.1.9 2 2 2s2-.9 2-2v-4zM8 11V7a4 4 0 118 0v4"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+                  <PasswordIcon class="w-6 h-6" />
                 </div>
                 <input
                   v-model="formData.password"
                   type="password"
                   placeholder="Nhập mật khẩu (tối thiểu 8 ký tự)"
                   class="w-full pl-14 pr-3 py-3 bg-gray-100 border-0 rounded-lg text-base font-nunitoSans text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                  :class="{ 'border-red-500': errors.mat_khau }"
+                  :class="{ 'border-red-500': errors.password }"
                   ref="passwordInput"
                 />
               </div>
-              <p v-if="errors.mat_khau" class="mt-1 text-sm text-red-600">
-                {{ errors.mat_khau[0] }}
+              <p v-if="errors.password" class="mt-1 text-sm text-red-600">
+                {{ errors.password[0] }}
               </p>
             </div>
 
@@ -303,7 +162,7 @@
                 <div
                   class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
                 >
-                  <LockIcon />
+                  <PasswordIcon class="w-6 h-6" />
                 </div>
                 <input
                   v-model="formData.confirmPassword"
@@ -371,6 +230,7 @@
             <div class="grid grid-cols-2 gap-3">
               <button
                 type="button"
+                @click="handleGoogleLogin"
                 class="flex items-center justify-center gap-2 px-4 py-2 shadow rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-100 transition"
               >
                 <svg class="w-5 h-5" viewBox="0 0 24 24">
@@ -395,6 +255,7 @@
               </button>
               <button
                 type="button"
+                @click="handleFacebookLogin"
                 class="flex items-center justify-center gap-2 px-4 py-2 shadow rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-100 transition"
               >
                 <svg class="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
@@ -425,21 +286,23 @@
 </template>
 
 <script setup>
+// Import các thư viện cần thiết
 import { ref, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useToast } from "vue-toastification";
+import UserIcon from '@/assets/svg/User.svg'
+import EmailAddressIcon from '@/assets/svg/emailaddress.svg'
+import PasswordIcon from '@/assets/svg/password.svg'
 
 const router = useRouter();
 const toast = useToast();
 
 const formData = ref({
-  fullName: "",
+  full_name: "",
   email: "",
   password: "",
   confirmPassword: "",
-  so_dien_thoai: "",
-  dia_chi: "",
   agreeTerms: false,
 });
 
@@ -449,21 +312,15 @@ const passwordMismatch = ref(false);
 
 const fullNameInput = ref(null);
 const emailInput = ref(null);
-const phoneInput = ref(null);
-const addressInput = ref(null);
 const passwordInput = ref(null);
 const confirmInput = ref(null);
 const agreeRef = ref(null);
 
 const inputRefs = {
-  fullName: fullNameInput,
+  full_name: fullNameInput,
   email: emailInput,
   password: passwordInput,
   confirmPassword: confirmInput,
-  so_dien_thoai: phoneInput,
-  dia_chi: addressInput,
-  ho_ten: fullNameInput, 
-  mat_khau: passwordInput,
   agreeTerms: agreeRef,
 };
 
@@ -479,11 +336,9 @@ const focusByKey = (key) => {
 
 const focusFirstError = (errs) => {
   const order = [
-    "ho_ten",
+    "full_name",
     "email",
-    "mat_khau",
-    "so_dien_thoai",
-    "dia_chi",
+    "password",
     "agreeTerms",
   ];
   for (const k of order) {
@@ -499,7 +354,7 @@ const handleSubmit = async () => {
   passwordMismatch.value = false;
   isSubmitting.value = true;
 
-  const required = ["fullName", "email", "password", "confirmPassword"];
+  const required = ["full_name", "email", "password", "confirmPassword"];
   const missingKey = required.find((k) => !formData.value[k]);
   if (missingKey) {
     toast.error("Vui lòng điền đầy đủ các trường bắt buộc");
@@ -527,11 +382,9 @@ const handleSubmit = async () => {
   }
 
   const payload = {
-    ho_ten: formData.value.fullName,
+    full_name: formData.value.full_name,
     email: formData.value.email,
-    mat_khau: formData.value.password,
-    so_dien_thoai: formData.value.so_dien_thoai || null,
-    dia_chi: formData.value.dia_chi || null,
+    password: formData.value.password,
   };
 
   try {
@@ -561,6 +414,97 @@ const handleSubmit = async () => {
     isSubmitting.value = false;
   }
 };
+
+// Xử lý đăng nhập Google
+const handleGoogleLogin = () => {
+  const width = 500;
+  const height = 600;
+  const left = window.screen.width / 2 - width / 2;
+  const top = window.screen.height / 2 - height / 2;
+  
+  // Mở popup đăng nhập Google
+  const popup = window.open(
+    'http://127.0.0.1:8000/api/auth/google',
+    'Google Login',
+    `width=${width},height=${height},left=${left},top=${top}`
+  );
+  
+  // Lắng nghe thông điệp từ cửa sổ popup
+  const messageHandler = (event) => {
+    // Kiểm tra nguồn gốc để đảm bảo bảo mật
+    if (event.origin !== 'http://127.0.0.1:8000') return;
+    
+    const authData = event.data;
+    
+    if (authData && authData.status && authData.token) {
+      // Lưu token và user data
+      localStorage.setItem('auth_token', authData.token);
+      if (authData.data) {
+        localStorage.setItem('auth_user', JSON.stringify(authData.data));
+      }
+      
+      // Đóng popup
+      if (popup) popup.close();
+      
+      // Hiển thị thông báo
+      toast.success('Đăng nhập Google thành công!');
+      
+      // Redirect về trang chủ
+      setTimeout(() => {
+        router.push('/');
+        window.location.reload(); // Reload để cập nhật header
+      }, 500);
+      
+      // Xóa listener
+      window.removeEventListener('message', messageHandler);
+    }
+  };
+  
+  window.addEventListener('message', messageHandler);
+};
+
+// Xử lý đăng nhập Facebook
+const handleFacebookLogin = () => {
+  const width = 500;
+  const height = 600;
+  const left = window.screen.width / 2 - width / 2;
+  const top = window.screen.height / 2 - height / 2;
+  
+  // Mở popup đăng nhập Facebook
+  const popup = window.open(
+    'http://127.0.0.1:8000/api/auth/facebook',
+    'Facebook Login',
+    `width=${width},height=${height},left=${left},top=${top}`
+  );
+  
+  // Lắng nghe message từ popup
+  const messageHandler = (event) => {
+    if (event.origin !== 'http://127.0.0.1:8000') return;
+    
+    const authData = event.data;
+    
+    if (authData && authData.status && authData.token) {
+      localStorage.setItem('auth_token', authData.token);
+      if (authData.data) {
+        localStorage.setItem('auth_user', JSON.stringify(authData.data));
+      }
+      
+      if (popup) popup.close();
+      
+      toast.success('Đăng nhập Facebook thành công!');
+      
+      setTimeout(() => {
+        router.push('/');
+        window.location.reload();
+      }, 500);
+      
+      window.removeEventListener('message', messageHandler);
+    }
+  };
+  
+  window.addEventListener('message', messageHandler);
+};
+
 </script>
 
 <style scoped>

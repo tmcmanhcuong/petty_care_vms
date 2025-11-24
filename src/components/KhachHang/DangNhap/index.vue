@@ -134,17 +134,17 @@
                 placeholder="Nhập mật khẩu"
                 autocomplete="current-password"
                 class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-600"
-                :class="{ 'border-red-500': errors.mat_khau }"
-                aria-invalid="errors.mat_khau ? 'true' : 'false'"
+                :class="{ 'border-red-500': errors.password }"
+                aria-invalid="errors.password ? 'true' : 'false'"
                 aria-describedby="password-error"
                 required
               />
               <p
-                v-if="errors.mat_khau"
+                v-if="errors.password"
                 id="password-error"
                 class="mt-1 text-sm text-red-600"
               >
-                {{ errors.mat_khau[0] }}
+                {{ errors.password[0] }}
               </p>
             </div>
           </div>
@@ -187,6 +187,7 @@
 
         <div class="flex justify-center gap-4">
           <button
+            @click="handleGoogleLogin"
             class="p-2.5 bg-gray-200 rounded-xl hover:scale-105 transition"
           >
             <img
@@ -196,15 +197,7 @@
             />
           </button>
           <button
-            class="p-2.5 bg-gray-200 rounded-xl hover:scale-105 transition"
-          >
-            <img
-              src="https://www.figma.com/api/mcp/asset/7c54eaab-dcdb-4090-9d0c-d71c650c8b40"
-              alt="Apple"
-              class="w-7 h-7"
-            />
-          </button>
-          <button
+            @click="handleFacebookLogin"
             class="p-2.5 bg-gray-200 rounded-xl hover:scale-105 transition"
           >
             <img
@@ -231,6 +224,7 @@
 </template>
 
 <script setup>
+// Import các thư viện cần thiết
 import { ref, nextTick, watch } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
@@ -252,6 +246,7 @@ const emailInput = ref(null);
 const passwordInput = ref(null);
 const agreeRef = ref(null);
 
+// Lấy thông tin user đã lưu (nếu có)
 let storedUser = null;
 try {
   const su = localStorage.getItem("auth_user");
@@ -269,7 +264,7 @@ const showStoredSuggestion = ref(false);
 const focusByKey = async (key) => {
   await nextTick();
   if (key === "email") emailInput.value?.focus();
-  else if (key === "mat_khau" || key === "password")
+  else if (key === "password")
     passwordInput.value?.focus();
 };
 
@@ -279,6 +274,7 @@ const checkShowSuggestion = () => {
     storedUser && storedUser.email && e === storedUser.email.toLowerCase();
 };
 
+// Kiểm tra xem đã đăng nhập chưa
 const existingToken =
   localStorage.getItem("auth_token") || sessionStorage.getItem("auth_token");
 if (existingToken) {
@@ -286,6 +282,7 @@ if (existingToken) {
   router.push("/");
 }
 
+// Xử lý đăng nhập
 const handleLogin = async () => {
   errors.value = {};
   isSubmitting.value = true;
@@ -308,7 +305,7 @@ const handleLogin = async () => {
   try {
     const payload = {
       email: form.value.email,
-      mat_khau: form.value.password,
+      password: form.value.password,
     };
     const res = await axios.post(
       "http://127.0.0.1:8000/api/khach-hang/dang-nhap",
@@ -349,7 +346,7 @@ const handleLogin = async () => {
       errors.value = err.response.data.errors || {};
       toast.error("Vui lòng kiểm tra lại thông tin đăng nhập");
       if (errors.value.email) focusByKey("email");
-      else if (errors.value.mat_khau) focusByKey("mat_khau");
+      else if (errors.value.password) focusByKey("password");
     } else {
       toast.error(err.response?.data?.message || "Đã có lỗi xảy ra");
     }
@@ -380,6 +377,16 @@ watch(
     checkShowSuggestion();
   }
 );
+
+// Xử lý đăng nhập Google
+const handleGoogleLogin = () => {
+  window.location.href = 'http://127.0.0.1:8000/api/auth/google';
+};
+
+// Xử lý đăng nhập Facebook
+const handleFacebookLogin = () => {
+  window.location.href = 'http://127.0.0.1:8000/api/auth/facebook';
+};
 </script>
 
 <style scoped>

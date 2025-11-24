@@ -519,9 +519,66 @@
 </template>
 
 <script setup>
+// Import các thư viện và component cần thiết
+import { onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
+import axios from 'axios';
 import SunIcon from '@/assets/svg/sun-medium.svg'
 import VaccineIcon from '@/assets/svg/vaccine.svg'
-import BriefcaseIcon from '@/assets/svg/briefcase.svg'  
+import BriefcaseIcon from '@/assets/svg/briefcase.svg'
+
+const route = useRoute();
+const router = useRouter();
+const toast = useToast();
+
+// Xử lý callback sau khi đăng nhập qua mạng xã hội
+onMounted(async () => {
+  const token = route.query.token;
+  const verified = route.query.verified;
+  
+  if (token && verified === 'true') {
+    try {
+      // Lưu token vào localStorage
+      localStorage.setItem('auth_token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      // Thử gọi API để lấy thông tin người dùng
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/user');
+        
+        if (response.data && response.data.status) {
+          // Lưu thông tin người dùng
+          localStorage.setItem('auth_user', JSON.stringify(response.data.data));
+        }
+      } catch (apiError) {
+        console.warn('API /api/user không khả dụng, bỏ qua việc lấy thông tin người dùng:', apiError);
+        // Không có endpoint /api/user, nhưng vẫn giữ token
+        // Thông tin người dùng sẽ được tải khi cần thiết
+      }
+      
+      toast.success('Đăng nhập thành công!');
+      
+      // Xóa tham số truy vấn khỏi URL
+      router.replace({ path: '/', query: {} });
+      
+      // Tải lại trang để cập nhật header
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+      
+    } catch (error) {
+      console.error('Lỗi tự động đăng nhập:', error);
+      toast.error('Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại.');
+      
+      // Xóa token lỗi
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      delete axios.defaults.headers.common['Authorization'];
+    }
+  }
+});
+
 const avatarImages = [
   "./src/assets/img_imports/public_img/hp-pic13.jpg",
   "./src/assets/img_imports/public_img/hp-pic14.jpg",

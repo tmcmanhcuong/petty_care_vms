@@ -481,7 +481,7 @@ function formatNameRaw(input) {
 
 const displayName = computed(() => {
   if (!user.value) return "";
-  const full = user.value.ho_ten || user.value.name;
+  const full = user.value.full_name || user.value.name;
   if (full && String(full).trim()) return formatNameRaw(full);
 
   const email = user.value.email || "";
@@ -609,7 +609,7 @@ const handleLogout = () => {
 
 const handleMobileLogout = () => {
   handleLogout();
-  mobileMenuOpen = false;
+  mobileMenuOpen.value = false;
 };
 
 const onBellClick = () => {
