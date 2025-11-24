@@ -11,29 +11,37 @@ use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\AbstractProvider;
+use App\Models\SocialAccount;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerifyEmail;
+use Illuminate\Support\Facades\URL;
 
 class KhachHangController extends Controller
 {
     public function dangKi(Request $request): JsonResponse
     {
         $input = $request->all();
-        if (isset($input['so_dien_thoai'])) {
-            $input['so_dien_thoai'] = preg_replace('/\D+/', '', (string) $input['so_dien_thoai']);
+        if (isset($input['phone'])) {
+            $input['phone'] = preg_replace('/\D+/', '', (string) $input['phone']);
         }
 
         $rules = [
-            'ho_ten' => 'required|string|max:191',
+            'full_name' => 'required|string|max:191',
             'email' => 'required|email|unique:khach_hangs,email',
-            'mat_khau' => 'required|string|min:8',
-            'so_dien_thoai' => ['required', 'regex:/^[0-9]{10}$/'],
-            'dia_chi' => 'nullable|string|max:255',
+            'password' => 'required|string|min:8',
+            'phone' => ['nullable', 'regex:/^[0-9]{10}$/', 'unique:khach_hangs,phone'],
+            'address' => 'nullable|string|max:255',
             'anh_dai_dien' => 'nullable|string|max:255',
-            'trang_thai' => 'nullable|integer|in:0,1',
         ];
 
         $messages = [
-            'so_dien_thoai.required' => Lang::get('messages.phone_required'),
-            'so_dien_thoai.regex' => Lang::get('messages.phone_invalid'),
+            'phone.regex' => Lang::get('messages.phone_invalid'),
+            'phone.unique' => Lang::get('messages.phone_taken'),
+            'email.required' => Lang::get('messages.email_required'),
+            'email.unique' => Lang::get('messages.email_taken'),
         ];
 
         $validator = Validator::make($input, $rules, $messages);
@@ -48,25 +56,33 @@ class KhachHangController extends Controller
 
         $data = $validator->validated();
 
-        [$ho_lot, $ten] = $this->splitFullName($data['ho_ten']);
-
         $payload = [
-            'ho_lot' => $ho_lot,
-            'ten' => $ten,
+            'full_name' => $data['full_name'],
             'email' => $data['email'],
-            'mat_khau' => Hash::make($data['mat_khau']),
-            'so_dien_thoai' => $data['so_dien_thoai'],
-            'dia_chi' => $data['dia_chi'] ?? null,
+            'password' => Hash::make($data['password']),
+            'phone' => $data['phone'] ?? null,
+            'address' => $data['address'] ?? null,
             'anh_dai_dien' => $data['anh_dai_dien'] ?? null,
-            'trang_thai' => $data['trang_thai'] ?? 1,
+            'rank' => 'Silver',
+            'trang_thai' => 'active',
         ];
 
         try {
             $customer = KhachHang::create($payload);
+
+            // Tạo URL xác thực có chữ ký
+            $verificationUrl = URL::temporarySignedRoute(
+                'verification.verify',
+                now()->addMinutes(60),
+                ['id' => $customer->id, 'hash' => sha1($customer->email)]
+            );
+
+            // Gửi Email
+            Mail::to($customer->email)->send(new VerifyEmail($verificationUrl));
         } catch (\Exception $e) {
             $safePayload = $payload;
-            if (isset($safePayload['mat_khau'])) {
-                unset($safePayload['mat_khau']);
+            if (isset($safePayload['password'])) { // Đã đổi từ mat_khau sang password
+                unset($safePayload['password']);
             }
             Log::error('KhachHang::create failed', [
                 'message' => $e->getMessage(),
@@ -81,26 +97,20 @@ class KhachHangController extends Controller
         }
 
         if (method_exists($customer, 'makeHidden')) {
-            $customer->makeHidden(['mat_khau']);
+            $customer->makeHidden(['password']);
         } else {
-            unset($customer->mat_khau);
+            unset($customer->password);
         }
 
         return response()->json([
             'status' => true,
-            'message' => Lang::get('messages.registration_success'),
+            'message' => 'Đăng ký thành công. Vui lòng kiểm tra email để kích hoạt tài khoản.',
             'data' => $customer,
         ], 201);
     }
 
 
-    private function splitFullName(string $fullName): array
-    {
-        $parts = preg_split('/\s+/', trim($fullName));
-        $ten = array_pop($parts);
-        $ho_lot = implode(' ', $parts) ?: '';
-        return [$ho_lot, $ten];
-    }
+
 
     private function handleAvatarUpload(Request $request)
     {
@@ -125,22 +135,16 @@ class KhachHangController extends Controller
 
     private function assignProfileFields(KhachHang $model, array $data, Request $request): void
     {
-        [$ho_lot, $ten] = $this->splitFullName($data['ho_ten']);
-        $model->ho_lot = $ho_lot;
-        $model->ten = $ten;
-        $model->email = $data['email'];
-        $model->so_dien_thoai = $data['so_dien_thoai'];
-        $model->dia_chi = $data['dia_chi'] ?? $model->dia_chi;
+        $model->full_name = $data['full_name'];
+        $model->email = $data['email'] ?? $model->email;
+        $model->phone = $data['phone'];
+        $model->address = $data['address'] ?? $model->address;
 
         if ($request->hasFile('anh_dai_dien')) {
             $url = $this->handleAvatarUpload($request);
             if ($url) $model->anh_dai_dien = $url;
         } else {
             $model->anh_dai_dien = $data['anh_dai_dien'] ?? $model->anh_dai_dien;
-        }
-
-        if (isset($data['zalo']) && Schema::hasColumn('khach_hangs', 'zalo')) {
-            $model->zalo = $data['zalo'];
         }
     }
 
@@ -149,7 +153,7 @@ class KhachHangController extends Controller
     {
         $rules = [
             'email' => 'required|email',
-            'mat_khau' => 'required|string',
+            'password' => 'required|string',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -164,11 +168,19 @@ class KhachHangController extends Controller
         $credentials = $validator->validated();
 
         $customer = KhachHang::where('email', $credentials['email'])->first();
-        if (! $customer || ! \Illuminate\Support\Facades\Hash::check($credentials['mat_khau'], $customer->mat_khau)) {
+        if (! $customer || ! \Illuminate\Support\Facades\Hash::check($credentials['password'], $customer->password)) {
             return response()->json([
                 'status' => false,
                 'message' => Lang::get('messages.login_failed'),
             ], 401);
+        }
+
+        // Kiểm tra xem email đã được xác thực chưa
+        if (is_null($customer->email_verified_at)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Tài khoản chưa được kích hoạt. Vui lòng kiểm tra email.',
+            ], 403);
         }
 
         try {
@@ -179,7 +191,7 @@ class KhachHangController extends Controller
         }
 
         if (method_exists($customer, 'makeHidden')) {
-            $customer->makeHidden(['mat_khau']);
+            $customer->makeHidden(['password']);
         }
 
         return response()->json([
@@ -198,21 +210,21 @@ class KhachHangController extends Controller
         }
 
         $input = $request->all();
-        if (isset($input['so_dien_thoai'])) {
-            $input['so_dien_thoai'] = preg_replace('/\D+/', '', (string) $input['so_dien_thoai']);
+        if (isset($input['phone'])) {
+            $input['phone'] = preg_replace('/\D+/', '', (string) $input['phone']);
         }
 
         $rules = [
-            'ho_ten' => 'required|string|max:191',
+            'full_name' => 'required|string|max:191',
             'email' => 'required|email|unique:khach_hangs,email,' . $user->id,
-            'so_dien_thoai' => ['required', 'regex:/^[0-9]{10}$/'],
-            'dia_chi' => 'nullable|string|max:255',
+            'phone' => ['nullable', 'regex:/^[0-9]{10}$/', 'unique:khach_hangs,phone,' . $user->id],
+            'address' => 'nullable|string|max:255',
             'anh_dai_dien' => 'nullable',
         ];
 
         $messages = [
-            'so_dien_thoai.required' => Lang::get('messages.phone_required'),
-            'so_dien_thoai.regex' => Lang::get('messages.phone_invalid'),
+            'phone.regex' => Lang::get('messages.phone_invalid'),
+            'phone.unique' => Lang::get('messages.phone_taken'),
         ];
 
         $validator = Validator::make($input, $rules, $messages);
@@ -257,21 +269,21 @@ class KhachHangController extends Controller
         }
 
         $input = $request->all();
-        if (isset($input['so_dien_thoai'])) {
-            $input['so_dien_thoai'] = preg_replace('/\D+/', '', (string) $input['so_dien_thoai']);
+        if (isset($input['phone'])) {
+            $input['phone'] = preg_replace('/\D+/', '', (string) $input['phone']);
         }
 
         $rules = [
-            'ho_ten' => 'required|string|max:191',
+            'full_name' => 'required|string|max:191',
             'email' => 'required|email|unique:khach_hangs,email,' . $target->id,
-            'so_dien_thoai' => ['required', 'regex:/^[0-9]{10}$/'],
-            'dia_chi' => 'nullable|string|max:255',
+            'phone' => ['nullable', 'regex:/^[0-9]{10}$/', 'unique:khach_hangs,phone,' . $target->id],
+            'address' => 'nullable|string|max:255',
             'anh_dai_dien' => 'nullable',
         ];
 
         $validator = Validator::make($input, $rules, [
-            'so_dien_thoai.required' => Lang::get('messages.phone_required'),
-            'so_dien_thoai.regex' => Lang::get('messages.phone_invalid'),
+            'phone.regex' => Lang::get('messages.phone_invalid'),
+            'phone.unique' => Lang::get('messages.phone_taken'),
         ]);
 
         if ($validator->fails()) {
@@ -303,5 +315,134 @@ class KhachHangController extends Controller
         }
 
         return response()->json(['status' => true, 'message' => Lang::get('messages.update_success'), 'user' => $target], 200);
+    }
+
+    // --- Các phương thức đăng nhập mạng xã hội ---
+
+    public function redirectToGoogle()
+    {
+        /** @var \Laravel\Socialite\Two\GoogleProvider $driver */
+        $driver = Socialite::driver('google');
+        return $driver->stateless()->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        return $this->handleSocialCallback('google');
+    }
+
+    public function redirectToFacebook()
+    {
+        /** @var \Laravel\Socialite\Two\FacebookProvider $driver */
+        $driver = Socialite::driver('facebook');
+        return $driver->stateless()->redirect();
+    }
+
+    public function handleFacebookCallback()
+    {
+        return $this->handleSocialCallback('facebook');
+    }
+
+    private function handleSocialCallback($provider)
+    {
+        try {
+            /** @var \Laravel\Socialite\Two\AbstractProvider $driver */
+            $driver = Socialite::driver($provider);
+            $socialUser = $driver->stateless()->user();
+        } catch (\Exception $e) {
+            Log::error($provider . ' login failed: ' . $e->getMessage());
+            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            return redirect($frontendUrl . '/khach-hang/dang-nhap?error=social_login_failed');
+        }
+
+        $socialId = $socialUser->getId();
+        $email = $socialUser->getEmail();
+        $name = $socialUser->getName();
+        $avatar = $socialUser->getAvatar();
+
+        // 1. Kiểm tra xem tài khoản mạng xã hội này đã tồn tại chưa
+        $account = SocialAccount::where('provider', $provider)
+            ->where('provider_user_id', $socialId)
+            ->first();
+
+        if ($account) {
+            $customer = $account->khachHang;
+            $token = $customer->createToken('api-token')->plainTextToken;
+
+            // Chuyển hướng về Frontend kèm token
+            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            $userData = base64_encode(json_encode($customer));
+            return redirect($frontendUrl . '/auth/callback?token=' . $token . '&user=' . $userData);
+        }
+
+        // 2. Nếu tài khoản mạng xã hội chưa tồn tại, kiểm tra xem email đã tồn tại trong KhachHang chưa
+        // Sử dụng DB transaction để đảm bảo tính toàn vẹn dữ liệu
+        DB::beginTransaction();
+        try {
+            $customer = null;
+            if ($email) {
+                $customer = KhachHang::where('email', $email)->first();
+            }
+
+            if (! $customer) {
+                // 3. Tạo khách hàng mới nếu chưa tồn tại
+                $customer = KhachHang::create([
+                    'full_name' => $name,
+                    'email' => $email,
+                    'password' => null, // Không có mật khẩu cho đăng nhập mạng xã hội
+                    'anh_dai_dien' => $avatar,
+                    'rank' => 'Silver',
+                    'trang_thai' => 'active',
+                ]);
+            }
+
+            // Liên kết tài khoản mạng xã hội
+            SocialAccount::create([
+                'khach_hang_id' => $customer->id,
+                'provider' => $provider,
+                'provider_user_id' => $socialId,
+            ]);
+
+            DB::commit();
+
+            $token = $customer->createToken('api-token')->plainTextToken;
+
+            // Chuyển hướng về Frontend kèm token
+            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            $userData = base64_encode(json_encode($customer));
+            return redirect($frontendUrl . '/auth/callback?token=' . $token . '&user=' . $userData);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Social login transaction failed: ' . $e->getMessage());
+            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            return redirect($frontendUrl . '/khach-hang/dang-nhap?error=server_error');
+        }
+    }
+
+    public function verifyEmail(Request $request, $id)
+    {
+        if (! $request->hasValidSignature()) {
+            return response()->json(['status' => false, 'message' => 'Liên kết xác thực không hợp lệ hoặc đã hết hạn.'], 403);
+        }
+
+        $customer = KhachHang::find($id);
+
+        if (! $customer) {
+            return response()->json(['status' => false, 'message' => 'Tài khoản không tồn tại.'], 404);
+        }
+
+        if (! hash_equals((string) $request->route('hash'), sha1($customer->email))) {
+            return response()->json(['status' => false, 'message' => 'Liên kết xác thực không hợp lệ.'], 403);
+        }
+
+        if (! $customer->hasVerifiedEmail()) {
+            $customer->markEmailAsVerified();
+        }
+
+        // Tạo token để tự động đăng nhập
+        $token = $customer->createToken('api-token')->plainTextToken;
+
+        // Chuyển hướng về Frontend kèm token
+        return redirect('http://localhost:5173/?token=' . $token . '&verified=true');
     }
 }
