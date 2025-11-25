@@ -226,11 +226,12 @@
 <script setup>
 // Import các thư viện cần thiết
 import { ref, nextTick, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 import { useToast } from "vue-toastification";
 
 const router = useRouter();
+const route = useRoute();
 const toast = useToast();
 
 const form = ref({
@@ -264,8 +265,7 @@ const showStoredSuggestion = ref(false);
 const focusByKey = async (key) => {
   await nextTick();
   if (key === "email") emailInput.value?.focus();
-  else if (key === "password")
-    passwordInput.value?.focus();
+  else if (key === "password") passwordInput.value?.focus();
 };
 
 const checkShowSuggestion = () => {
@@ -280,6 +280,12 @@ const existingToken =
 if (existingToken) {
   axios.defaults.headers.common["Authorization"] = `Bearer ${existingToken}`;
   router.push("/");
+}
+
+// If user was redirected here because they tried to access a protected page,
+// show an informational toast asking them to login first.
+if (route.query && route.query.redirect) {
+  toast.info("Vui lòng đăng nhập để tiếp tục");
 }
 
 // Xử lý đăng nhập
@@ -337,7 +343,16 @@ const handleLogin = async () => {
         }
       }
 
-      router.push("/");
+      // After login, redirect to original page if provided
+      const redirectPath =
+        route.query && route.query.redirect
+          ? String(route.query.redirect)
+          : null;
+      if (redirectPath && redirectPath.startsWith("/")) {
+        router.push(redirectPath);
+      } else {
+        router.push("/");
+      }
     } else {
       toast.error(res.data.message || "Đăng nhập thất bại");
     }
@@ -380,12 +395,12 @@ watch(
 
 // Xử lý đăng nhập Google
 const handleGoogleLogin = () => {
-  window.location.href = 'http://127.0.0.1:8000/api/auth/google';
+  window.location.href = "http://127.0.0.1:8000/api/auth/google";
 };
 
 // Xử lý đăng nhập Facebook
 const handleFacebookLogin = () => {
-  window.location.href = 'http://127.0.0.1:8000/api/auth/facebook';
+  window.location.href = "http://127.0.0.1:8000/api/auth/facebook";
 };
 </script>
 

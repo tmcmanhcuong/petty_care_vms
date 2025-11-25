@@ -71,14 +71,16 @@ export function logout(router) {
   clearAuth();
   // If router provided, navigate to login page; otherwise do a hard navigation
   try {
-    if (router && typeof router.push === "function") {
-      router.push("/khach-hang/dang-nhap");
+    if (router && typeof router.replace === "function") {
+      // replace so the current history entry is replaced (reduces chance of going back)
+      router.replace("/khach-hang/dang-nhap");
     } else {
-      window.location.href = "/khach-hang/dang-nhap";
+      // use location.replace to avoid adding a new history entry
+      window.location.replace("/khach-hang/dang-nhap");
     }
   } catch (e) {
     // fallback
-    window.location.href = "/khach-hang/dang-nhap";
+    window.location.replace("/khach-hang/dang-nhap");
   }
 }
 
