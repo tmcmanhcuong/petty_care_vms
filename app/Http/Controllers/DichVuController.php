@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\DichVu;
+use Illuminate\Http\Request;
+
+class DichVuController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        // Return list of active services (id and name) for selection lists
+        $services = DichVu::query()
+            ->when(request()->has('only_active'), function ($q) {
+                $q->where('trang_thai', 'active');
+            })
+            ->orderBy('ten')
+            ->get(['id', 'ten']);
+
+        return response()->json([
+            'status' => true,
+            'data' => $services,
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(DichVu $dichVu)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(DichVu $dichVu)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, DichVu $dichVu)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(DichVu $dichVu)
+    {
+        //
+    }
+}

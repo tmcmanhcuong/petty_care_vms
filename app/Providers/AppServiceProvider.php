@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use App\Models\ThuCung;
+use App\Policies\ThuCungPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register ThuCung policy so authorization can use $this->authorize()
+        Gate::policy(ThuCung::class, ThuCungPolicy::class);
     }
 }

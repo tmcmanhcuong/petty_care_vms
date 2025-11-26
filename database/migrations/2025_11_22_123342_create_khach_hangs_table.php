@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('khach_hangs', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->unique(); //Login bằng email
+            $table->string('email')->unique(); 
             $table->string('phone')->nullable();
             $table->string('password')->nullable();
             $table->string('full_name');
