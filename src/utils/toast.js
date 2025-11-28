@@ -1,52 +1,39 @@
 import { useToast } from "vue-toastification";
 import MyToast from "@/components/ToastMessage/mytoast.vue";
 
-const toast = useToast();
+const makePayload = (type, title, message, duration) => ({
+  component: MyToast,
+  props: {
+    title,
+    message,
+    type,
+    duration,
+  },
+});
 
 export const showSuccessToast = (title, message, duration = 4000) => {
-    toast.success({
-        component: MyToast,
-        props: {
-            title: title,
-            message: message,
-            type: 'success',
-            duration: duration
-        }
-    }, {
-        icon: false,
-        closeButton: false,
-        timeout: duration
-    });
+  const toast = useToast();
+  toast.success(makePayload("success", title, message, duration), {
+    icon: false,
+    closeButton: false,
+    timeout: duration,
+  });
 };
 
 export const showErrorToast = (title, message, duration = 4000) => {
-    toast.error({
-        component: MyToast,
-        props: {
-            title: title,
-            message: message,
-            type: 'error',
-            duration: duration
-        }
-    }, {
-        icon: false,
-        closeButton: false,
-        timeout: duration
-    });
+  const toast = useToast();
+  toast.error(makePayload("error", title, message, duration), {
+    icon: false,
+    closeButton: false,
+    timeout: duration,
+  });
 };
 
 export const showInfoToast = (title, message, duration = 4000) => {
-    toast.info({
-        component: MyToast,
-        props: {
-            title: title,
-            message: message,
-            type: 'info',
-            duration: duration
-        }
-    }, {
-        icon: false,
-        closeButton: false,
-        timeout: duration
-    });
+  const toast = useToast();
+  toast.info(makePayload("info", title, message, duration), {
+    icon: false,
+    closeButton: false,
+    timeout: duration,
+  });
 };

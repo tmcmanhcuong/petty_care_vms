@@ -9,7 +9,9 @@
         <div class="h-5">
           <div class="flex gap-2 items-center h-5">
             <div class="flex gap-2 items-center h-5">
-              <p class="font-nunitoSans font-bold text-[#0d9488] text-base leading-6">
+              <p
+                class="font-nunitoSans font-bold text-[#0d9488] text-base leading-6"
+              >
                 {{ pageTitle }}
               </p>
             </div>
@@ -23,7 +25,9 @@
             <div
               class="absolute bg-[#f3f4f6] border border-[rgba(0,0,0,0.15)] h-9 left-0 rounded-lg top-0 w-64"
             >
-              <div class="flex h-9 items-center overflow-hidden pl-10 pr-3 py-1 rounded-lg w-64">
+              <div
+                class="flex h-9 items-center overflow-hidden pl-10 pr-3 py-1 rounded-lg w-64"
+              >
                 <input
                   v-model="searchQuery"
                   type="text"
@@ -45,7 +49,11 @@
             aria-label="Thông báo"
           >
             <div class="w-4 h-4">
-              <img :src="notificationIcon" alt="Notification" class="w-full h-full" />
+              <img
+                :src="notificationIcon"
+                alt="Notification"
+                class="w-full h-full"
+              />
             </div>
             <!-- Notification Badge -->
             <div
@@ -59,19 +67,38 @@
             class="flex gap-2 items-center justify-center rounded-lg hover:bg-gray-50 p-1 transition-colors"
             @click="toggleUserMenu"
           >
-            <!-- Avatar -->
-            <div class="bg-[#0d9488] rounded-full w-8 h-8 flex items-center justify-center">
-              <p class="font-nunitoSans font-medium text-white text-sm text-center">
-                {{ userInitials }}
-              </p>
+            <!-- Avatar: show image if available, otherwise initials -->
+            <div>
+              <template v-if="userAvatar">
+                <img
+                  :src="userAvatar"
+                  alt="Avatar"
+                  class="rounded-full w-8 h-8 object-cover"
+                />
+              </template>
+              <template v-else>
+                <div
+                  class="bg-[#0d9488] rounded-full w-8 h-8 flex items-center justify-center"
+                >
+                  <p
+                    class="font-nunitoSans font-medium text-white text-sm text-center"
+                  >
+                    {{ userInitials }}
+                  </p>
+                </div>
+              </template>
             </div>
-            
+
             <!-- User Info -->
             <div class="flex flex-col items-start">
-              <p class="font-nunitoSans font-medium text-black text-sm leading-6">
+              <p
+                class="font-nunitoSans font-medium text-black text-sm leading-6"
+              >
                 {{ userName }}
               </p>
-              <p class="font-nunitoSans font-medium text-[#6b7280] text-sm leading-6">
+              <p
+                class="font-nunitoSans font-medium text-[#6b7280] text-sm leading-6"
+              >
                 {{ userEmail }}
               </p>
             </div>
@@ -109,8 +136,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import axios from "axios";
+import { showSuccessToast, showInfoToast } from "@/utils/toast";
 
 const router = useRouter();
 const route = useRoute();
@@ -119,52 +148,91 @@ const route = useRoute();
 const props = defineProps({
   title: {
     type: String,
-    default: 'Dashboard'
+    default: "Dashboard",
   },
+  // Optional user prop; if not provided we'll prefer the stored auth_user
   user: {
     type: Object,
     default: () => ({
-      name: 'Admin User',
-      email: 'admin@petty.vn',
-      avatar: null
-    })
+      name: "Admin User",
+      email: "admin@petty.vn",
+      avatar: null,
+    }),
+  },
+});
+
+// Prefer stored auth_user (set by login) if present
+const storedUser = (() => {
+  try {
+    const raw =
+      localStorage.getItem("auth_user") || sessionStorage.getItem("auth_user");
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
   }
+})();
+
+// Normalized user data used by the template
+const userData = computed(() => {
+  // BE returns fields like ho_ten, email, anh_dai_dien
+  if (storedUser && Object.keys(storedUser).length > 0) {
+    return {
+      ho_ten: storedUser.ho_ten || storedUser.name || null,
+      email: storedUser.email || null,
+      anh_dai_dien: storedUser.anh_dai_dien || storedUser.avatar || null,
+    };
+  }
+  // fall back to prop
+  return {
+    ho_ten: props.user?.name || null,
+    email: props.user?.email || null,
+    anh_dai_dien: props.user?.avatar || null,
+  };
 });
 
 // Icons from Figma
-const searchIcon = "https://www.figma.com/api/mcp/asset/1c5e1070-66d5-4289-be1e-c05be4b2cbf1";
-const notificationIcon = "https://www.figma.com/api/mcp/asset/ef0a35ec-1c9b-40d8-908a-051f762ff10d";
+const searchIcon =
+  "https://www.figma.com/api/mcp/asset/1c5e1070-66d5-4289-be1e-c05be4b2cbf1";
+const notificationIcon =
+  "https://www.figma.com/api/mcp/asset/ef0a35ec-1c9b-40d8-908a-051f762ff10d";
 
 // State
-const searchQuery = ref('');
+const searchQuery = ref("");
 const showUserMenu = ref(false);
 const hasUnreadNotifications = ref(true); // Example: set to true to show notification badge
 
 // Computed
 const pageTitle = computed(() => props.title);
-const userName = computed(() => props.user?.name || 'Admin User');
-const userEmail = computed(() => props.user?.email || 'admin@petty.vn');
+const userName = computed(() => userData.value.ho_ten || "Admin User");
+const userEmail = computed(() => userData.value.email || "admin@petty.vn");
 
 const userInitials = computed(() => {
-  const name = userName.value;
-  if (!name) return 'AD';
-  
-  const parts = name.split(' ');
+  // If avatar exists, we won't show initials (template will prefer avatar)
+  const name = userData.value.ho_ten || "";
+  if (!name) return "AD";
+  const parts = name.trim().split(/\s+/);
   if (parts.length >= 2) {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
   return name.substring(0, 2).toUpperCase();
 });
 
+const userAvatar = computed(() => {
+  const a = userData.value.anh_dai_dien;
+  if (!a) return null;
+  // If avatar is stored as relative path on server, you may need to prefix with base URL.
+  return a;
+});
+
 // Methods
 const handleSearch = () => {
-  console.log('Search query:', searchQuery.value);
+  console.log("Search query:", searchQuery.value);
   // Implement search logic here
   // Example: router.push({ name: 'search', query: { q: searchQuery.value } });
 };
 
 const handleNotificationClick = () => {
-  console.log('Notification clicked');
+  console.log("Notification clicked");
   // Implement notification panel toggle or navigation
   // Example: router.push({ name: 'notifications' });
 };
@@ -174,42 +242,77 @@ const toggleUserMenu = () => {
 };
 
 const handleProfile = () => {
-  console.log('Navigate to profile');
+  console.log("Navigate to profile");
   showUserMenu.value = false;
   // router.push({ name: 'profile' });
 };
 
 const handleSettings = () => {
-  console.log('Navigate to settings');
+  console.log("Navigate to settings");
   showUserMenu.value = false;
   // router.push({ name: 'settings' });
 };
 
-const handleLogout = () => {
-  console.log('Logout');
+const handleLogout = async () => {
   showUserMenu.value = false;
-  // Implement logout logic
-  // Example:
-  // localStorage.removeItem('authToken');
-  // router.push('/admin/dang-nhap');
+
+  try {
+    // Call backend logout to revoke current token
+    await axios.post("http://127.0.0.1:8000/api/admin/dang-xuat");
+  } catch (err) {
+    // If backend call fails (network or 401), we still proceed to clear client state.
+    // No toast here: the login page will show the logout success message via query flag.
+  }
+
+  // Clear stored auth token and user (both localStorage and sessionStorage)
+  try {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_user");
+  } catch (e) {}
+  try {
+    sessionStorage.removeItem("auth_token");
+    sessionStorage.removeItem("auth_user");
+  } catch (e) {}
+
+  // Remove axios default header if set
+  try {
+    if (
+      axios &&
+      axios.defaults &&
+      axios.defaults.headers &&
+      axios.defaults.headers.common
+    ) {
+      delete axios.defaults.headers.common["Authorization"];
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  // Replace current location so browser back won't restore protected page.
+  // Add a query flag so the login page can show a success toast after redirect.
+  try {
+    window.location.replace("/admin/dang-nhap?logged_out=1");
+  } catch (e) {
+    router.replace({ path: "/admin/dang-nhap", query: { logged_out: 1 } });
+  }
 };
 
 // Close dropdown when clicking outside
 const handleClickOutside = (event) => {
-  const dropdown = event.target.closest('.absolute.right-6');
-  const button = event.target.closest('button');
-  
-  if (!dropdown && !button?.querySelector('.bg-\\[\\#0d9488\\]')) {
+  const dropdown = event.target.closest(".absolute.right-6");
+  const button = event.target.closest("button");
+
+  if (!dropdown && !button?.querySelector(".bg-\\[\\#0d9488\\]")) {
     showUserMenu.value = false;
   }
 };
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
+  document.addEventListener("click", handleClickOutside);
 });
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
+  document.removeEventListener("click", handleClickOutside);
 });
 </script>
 
