@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KhachHangController;
+use App\Http\Controllers\AdminController;
 use App\Models\KhachHang;
 use App\Http\Controllers\ThuCungController;
 use App\Http\Controllers\LichHenController;
@@ -52,3 +53,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Public: list services
 Route::get('/dich-vu', [DichVuController::class, 'index']);
+
+// Admin login route
+Route::post('/admin/dang-nhap', [AdminController::class, 'dangNhap']);
+
+// Admin authenticated routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/admin/dang-xuat', [AdminController::class, 'dangXuat']);
+});
+
+//Khoa
+

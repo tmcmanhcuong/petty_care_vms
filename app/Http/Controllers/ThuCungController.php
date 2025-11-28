@@ -55,7 +55,7 @@ class ThuCungController extends Controller
             if ($total > self::MAX_RETURN_ALL && ! $request->boolean('force')) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Result set too large. Use pagination or add `force=1` to bypass (not recommended).',
+                    'message' => \Illuminate\Support\Facades\Lang::get('messages.result_too_large'),
                     'meta' => ['total' => $total, 'max_allowed' => self::MAX_RETURN_ALL]
                 ], 413);
             }
@@ -141,7 +141,7 @@ class ThuCungController extends Controller
             ], 201);
         } catch (\Throwable $e) {
             Log::error('ThuCung store error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['status' => false, 'message' => 'Lỗi khi lưu thú cưng. Vui lòng thử lại.'], 500);
+            return response()->json(['status' => false, 'message' => \Illuminate\Support\Facades\Lang::get('messages.pet_save_error')], 500);
         }
     }
 
@@ -153,11 +153,11 @@ class ThuCungController extends Controller
         $user = request()->user();
         if (Schema::hasColumn('thu_cungs', 'khach_hang_id')) {
             if (! $user || $thuCung->khach_hang_id !== $user->id) {
-                return response()->json(['status' => false, 'message' => 'Forbidden'], 403);
+                return response()->json(['status' => false, 'message' => \Illuminate\Support\Facades\Lang::get('messages.forbidden')], 403);
             }
         } else {
             if (! $user) {
-                return response()->json(['status' => false, 'message' => 'Forbidden'], 403);
+                return response()->json(['status' => false, 'message' => \Illuminate\Support\Facades\Lang::get('messages.forbidden')], 403);
             }
         }
 
@@ -179,12 +179,12 @@ class ThuCungController extends Controller
         $user = $request->user();
         if (Schema::hasColumn('thu_cungs', 'khach_hang_id')) {
             if (! $user || $thuCung->khach_hang_id !== $user->id) {
-                return response()->json(['status' => false, 'message' => 'Forbidden'], 403);
+                return response()->json(['status' => false, 'message' => \Illuminate\Support\Facades\Lang::get('messages.forbidden')], 403);
             }
         } else {
             // if the column does not exist, require authentication but skip owner comparison
             if (! $user) {
-                return response()->json(['status' => false, 'message' => 'Forbidden'], 403);
+                return response()->json(['status' => false, 'message' => \Illuminate\Support\Facades\Lang::get('messages.forbidden')], 403);
             }
         }
 
@@ -250,7 +250,7 @@ class ThuCungController extends Controller
         if (empty($data)) {
             return response()->json([
                 'status' => true,
-                'message' => 'Không có thay đổi',
+                'message' => \Illuminate\Support\Facades\Lang::get('messages.no_changes'),
                 'data' => $this->formatThuCung($thuCung)
             ]);
         }
@@ -259,12 +259,12 @@ class ThuCungController extends Controller
             $thuCung->update($data);
             return response()->json([
                 'status' => true,
-                'message' => 'Cập nhật thành công',
+                'message' => \Illuminate\Support\Facades\Lang::get('messages.update_success'),
                 'data' => $this->formatThuCung($thuCung->fresh())
             ]);
         } catch (\Throwable $e) {
             Log::error('ThuCung update error: ' . $e->getMessage(), ['exception' => $e, 'id' => $thuCung->id]);
-            return response()->json(['status' => false, 'message' => 'Lỗi khi cập nhật thú cưng. Vui lòng thử lại.'], 500);
+            return response()->json(['status' => false, 'message' => \Illuminate\Support\Facades\Lang::get('messages.pet_update_error')], 500);
         }
     }
     /**
@@ -275,11 +275,11 @@ class ThuCungController extends Controller
         $user = request()->user();
         if (Schema::hasColumn('thu_cungs', 'khach_hang_id')) {
             if (! $user || $thuCung->khach_hang_id !== $user->id) {
-                return response()->json(['status' => false, 'message' => 'Forbidden'], 403);
+                return response()->json(['status' => false, 'message' => \Illuminate\Support\Facades\Lang::get('messages.forbidden')], 403);
             }
         } else {
             if (! $user) {
-                return response()->json(['status' => false, 'message' => 'Forbidden'], 403);
+                return response()->json(['status' => false, 'message' => \Illuminate\Support\Facades\Lang::get('messages.forbidden')], 403);
             }
         }
 
@@ -296,7 +296,7 @@ class ThuCungController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Thu cưng đã được xóa.'
+            'message' => \Illuminate\Support\Facades\Lang::get('messages.pet_deleted')
         ]);
     }
 

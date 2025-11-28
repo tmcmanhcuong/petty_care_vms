@@ -21,4 +21,20 @@ return [
     'missing_fields' => 'Thiếu thông tin bắt buộc. Vui lòng điền đầy đủ.',
     'phone_required' => 'Vui lòng nhập số điện thoại.',
     'phone_invalid' => 'Số điện thoại không hợp lệ. Vui lòng chỉ nhập chữ số (10 chữ số).',
+    // Thu cưng / pets
+    'result_too_large' => 'Tập kết quả quá lớn. Vui lòng phân trang hoặc thêm `force=1` để vượt qua (không khuyến nghị).',
+    'forbidden' => 'Bạn không có quyền thực hiện hành động này.',
+    'pet_save_error' => 'Lỗi khi lưu thú cưng. Vui lòng thử lại.',
+    'pet_update_error' => 'Lỗi khi cập nhật thú cưng. Vui lòng thử lại.',
+    'no_changes' => 'Không có thay đổi.',
+    'pet_deleted' => 'Thu cưng đã được xóa.',
+
+    // Lịch hẹn / appointments
+    'invalid_date_format' => 'Định dạng ngày tháng không hợp lệ cho from_date hoặc to_date.',
+    'appointment_unauthorized_view' => 'Bạn không có quyền xem lịch hẹn này.',
+    'appointment_unauthorized_update' => 'Bạn không có quyền cập nhật lịch hẹn này.',
+    'appointment_unauthorized_delete' => 'Bạn không có quyền xóa lịch hẹn này.',
+    'appointment_deleted_success' => 'Lịch hẹn đã được xóa thành công.',
+    'pet_not_owner' => 'Thu cưng được chọn không thuộc về khách hàng đã đăng nhập.',
+    'logout_success' => 'Đã đăng xuất thành công.',
 ];

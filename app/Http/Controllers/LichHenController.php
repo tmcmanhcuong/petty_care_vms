@@ -36,7 +36,7 @@ class LichHenController extends Controller
 
             if (! $owns) {
                 throw ValidationException::withMessages([
-                    'thu_cung_id' => ['The selected pet does not belong to the authenticated customer.'],
+                    'thu_cung_id' => [\Illuminate\Support\Facades\Lang::get('messages.pet_not_owner')],
                 ]);
             }
         }
@@ -88,7 +88,7 @@ class LichHenController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Invalid date format for from_date or to_date',
+                'message' => \Illuminate\Support\Facades\Lang::get('messages.invalid_date_format'),
             ], 422);
         }
 
@@ -126,7 +126,7 @@ class LichHenController extends Controller
         if ($lichHen->khach_hang_id !== $user->id) {
             return response()->json([
                 'status' => false,
-                'message' => 'You are not authorized to view this appointment.'
+                'message' => \Illuminate\Support\Facades\Lang::get('messages.appointment_unauthorized_view')
             ], 403);
         }
 
@@ -145,7 +145,7 @@ class LichHenController extends Controller
         if ($lichHen->khach_hang_id !== $user->id) {
             return response()->json([
                 'status' => false,
-                'message' => 'You are not authorized to update this appointment.'
+                'message' => \Illuminate\Support\Facades\Lang::get('messages.appointment_unauthorized_update')
             ], 403);
         }
 
@@ -171,7 +171,7 @@ class LichHenController extends Controller
         if ($lichHen->khach_hang_id !== $user->id) {
             return response()->json([
                 'status' => false,
-                'message' => 'You are not authorized to delete this appointment.'
+                'message' => \Illuminate\Support\Facades\Lang::get('messages.appointment_unauthorized_delete')
             ], 403);
         }
 
@@ -179,7 +179,7 @@ class LichHenController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Appointment deleted successfully.',
+            'message' => \Illuminate\Support\Facades\Lang::get('messages.appointment_deleted_success'),
         ]);
     }
 }
