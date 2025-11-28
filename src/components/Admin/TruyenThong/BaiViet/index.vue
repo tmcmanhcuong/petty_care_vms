@@ -7,7 +7,7 @@
         <p class="text-base text-[#4a5565] leading-6">Tạo và quản lý nội dung cho website</p>
       </div>
       <button 
-        @click="$emit('create-post')"
+        @click="router.push('/admin/bai-viet/them-moi')"
         class="bg-[#00a63e] text-white rounded-lg px-4 py-2 h-9 flex items-center gap-2 text-sm font-medium hover:bg-[#008c35] transition-colors"
       >
         <img :src="iconPlus" alt="" class="w-4 h-4" />
@@ -108,14 +108,14 @@
               <td class="py-4 px-2">
                 <div class="flex items-center justify-end gap-2">
                   <button 
-                    @click="$emit('edit-post', post.id)"
+                    @click="router.push(`/admin/bai-viet/chinh-sua/${post.id}`)"
                     class="w-9 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
                     title="Chỉnh sửa"
                   >
                     <img :src="iconEdit" alt="" class="w-4 h-4" />
                   </button>
                   <button 
-                    @click="$emit('delete-post', post.id)"
+                    @click="handleDeletePost(post)"
                     class="w-9 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
                     title="Xóa"
                   >
@@ -127,12 +127,23 @@
           </tbody>
         </table>
       </div>
+
     </div>
+
+    <!-- Modals -->
+    <XoaBaiViet
+      v-if="isDeletePostModalOpen"
+      :post-title="selectedPostForDelete?.title"
+      @close="isDeletePostModalOpen = false"
+      @confirm="handleDeleteConfirm"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import XoaBaiViet from './XoaBaiViet/index.vue';
 
 // Icons
 const iconPlus = 'https://www.figma.com/api/mcp/asset/bd491dc9-ee5e-4b10-88a8-62b03bef9093';
@@ -144,8 +155,13 @@ const iconDelete = 'https://www.figma.com/api/mcp/asset/9c38866f-8dd6-447a-84f8-
 // Define emits
 const emit = defineEmits(['create-post', 'edit-post', 'delete-post']);
 
+// Router
+const router = useRouter();
+
 // Search query
 const searchQuery = ref('');
+const isDeletePostModalOpen = ref(false);
+const selectedPostForDelete = ref(null);
 
 // Sample posts data
 const posts = ref([
@@ -234,6 +250,18 @@ const getStatusClass = (status) => {
     hidden: 'bg-[#ffe2e2] text-[#c10007]'
   };
   return classes[status] || 'bg-gray-100 text-gray-700';
+};
+
+const handleDeletePost = (post) => {
+  selectedPostForDelete.value = post;
+  isDeletePostModalOpen.value = true;
+};
+
+const handleDeleteConfirm = () => {
+  console.log('Deleting post:', selectedPostForDelete.value?.id);
+  // Logic to delete post goes here
+  isDeletePostModalOpen.value = false;
+  selectedPostForDelete.value = null;
 };
 </script>
 

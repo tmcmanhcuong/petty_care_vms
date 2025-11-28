@@ -118,6 +118,51 @@ const routes = [
     component: () => import("../components/Admin/TruyenThong/BaiViet/index.vue"),
     meta: { layout: "sidebar" },
   },
+  {
+    path: "/admin/bai-viet/them-moi",
+    component: () => import("../components/Admin/TruyenThong/BaiViet/ThemBaiMoi/index.vue"),
+    meta: { layout: "sidebar" },
+  },
+  {
+    path: "/admin/bai-viet/chinh-sua/:id",
+    component: () => import("../components/Admin/TruyenThong/BaiViet/ChinhSuaBaiViet/index.vue"),
+    meta: { layout: "sidebar" },
+  },
+  {
+    path: "/admin/khuyen-mai",
+    component: () => import("../components/Admin/TruyenThong/KhuyenMai/index.vue"),
+    meta: { layout: "sidebar" },
+  },
+  {
+    path: "/admin/khuyen-mai/them-moi",
+    component: () => import("../components/Admin/TruyenThong/KhuyenMai/TaoKhuyenMai/index.vue"),
+    meta: { layout: "sidebar" },
+  },
+  {
+    path: "/admin/khuyen-mai/chinh-sua/:id",
+    component: () => import("../components/Admin/TruyenThong/KhuyenMai/ChinhSuaKhuyenMai/index.vue"),
+    meta: { layout: "sidebar" },
+  },
+  {
+    path: "/admin/bao-cao-doanh-thu",
+    component: () => import("../components/Admin/BaoCao/DoanhThu/index.vue"),
+    meta: { layout: "sidebar" },
+  },
+  {
+    path: "/admin/bao-cao-hieu-suat",
+    component: () => import("../components/Admin/BaoCao/HieuSuat/index.vue"),
+    meta: { layout: "sidebar" },
+  },
+  {
+    path: "/admin/bao-cao-thuoc-vat-tu",
+    component: () => import("../components/Admin/BaoCao/KhoThuoc&VatTu/index.vue"),
+    meta: { layout: "sidebar" },
+  },
+  {
+    path: "/admin/cau-hinh",
+    component: () => import("../components/Admin/CauHinh/index.vue"),
+    meta: { layout: "sidebar" },
+  },
   //********************** Bác Sĩ ************************* */s
 
   //********************** Y Tá ************************* */
