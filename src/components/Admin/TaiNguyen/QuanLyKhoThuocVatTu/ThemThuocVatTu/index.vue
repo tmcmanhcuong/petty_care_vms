@@ -12,7 +12,7 @@
       <!-- Header -->
       <div class="flex flex-col gap-2 px-6 pt-6 pb-4">
         <h2 class="font-nunito font-semibold text-lg leading-[18px] text-neutral-950 tracking-tight">
-          Thêm thuốc & vật tư mới
+          Thêm Hàng Hoá mới
         </h2>
         <p class="font-nunito text-sm leading-5 text-[#717182] tracking-tight">
           Tạo mã hàng mới trong hệ thống
@@ -23,11 +23,11 @@
       <div class="px-6 py-4">
         <div class="flex flex-col gap-[66px]">
           <!-- Row 1: Code & Name -->
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 gap-2">
             <!-- Code -->
             <div class="flex flex-col gap-0">
               <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-0">
-                Mã Thuốc & Vật Tư
+                Mã hàng hoá
               </label>
               <input
                 v-model="formData.code"
@@ -40,7 +40,7 @@
             <!-- Name -->
             <div class="flex flex-col gap-0">
               <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-0">
-                Tên hàng hóa
+                Tên mặt hàng
               </label>
               <input
                 v-model="formData.name"

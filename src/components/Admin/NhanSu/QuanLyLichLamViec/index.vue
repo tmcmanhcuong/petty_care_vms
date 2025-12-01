@@ -52,14 +52,7 @@
 
         <!-- Right Side: Filters and Add Button -->
         <div class="flex items-center gap-2">
-          <!-- Department Filter -->
-          <button class="bg-[#f3f3f5] rounded-lg h-9 px-3 flex items-center justify-between gap-2 w-[200px] hover:bg-gray-200 transition-colors">
-            <span class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight">
-              Tất cả các Khoa
-            </span>
-            <img :src="iconChevronDown" alt="Dropdown" class="w-4 h-4" />
-          </button>
-
+        
           <!-- Role Filter -->
           <button class="bg-[#f3f3f5] rounded-lg h-9 px-3 flex items-center justify-between gap-2 w-[180px] hover:bg-gray-200 transition-colors">
             <span class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight">
@@ -235,8 +228,6 @@ const emit = defineEmits(['add-shift', 'add-shift-for-staff'])
 // Sample Data
 const departments = ref([
   {
-    icon: '🏥',
-    name: 'Khoa Lâm Sàng',
     staff: [
       {
         avatar: 'https://www.figma.com/api/mcp/asset/0334ef4a-d77a-4533-bc59-984f45cbcbcf',
@@ -259,8 +250,6 @@ const departments = ref([
     ]
   },
   {
-    icon: '💊',
-    name: 'Khoa Dược',
     staff: [
       {
         avatar: 'https://www.figma.com/api/mcp/asset/f0f6c2a4-bf3a-4bfb-8d1c-e6d71fdd6107',
@@ -271,8 +260,6 @@ const departments = ref([
     ]
   },
   {
-    icon: '🛎️',
-    name: 'Sảnh Vận hành',
     staff: [
       {
         avatar: 'https://www.figma.com/api/mcp/asset/c6264e0c-8428-459b-8be9-9486836d664f',
@@ -283,8 +270,6 @@ const departments = ref([
     ]
   },
   {
-    icon: '🔬',
-    name: 'Khoa Chẩn đoán hình ảnh',
     staff: [
       {
         avatar: 'https://www.figma.com/api/mcp/asset/eb6f01bb-02c2-46e1-82e3-cef45f2ae925',

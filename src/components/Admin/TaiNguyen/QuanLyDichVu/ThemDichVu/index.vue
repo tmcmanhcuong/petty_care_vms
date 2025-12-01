@@ -13,26 +13,12 @@
 
       <!-- Form Content -->
       <div class="flex flex-col gap-4">
-        <!-- Step 1: Select Department -->
-        <div class="flex flex-col gap-0 h-[50px]">
-          <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]">
-            Bước 1: Chọn Khoa (*)
-          </label>
-          <button
-            class="bg-[#f3f3f5] border-none rounded-lg h-9 px-[13px] py-0.5 flex items-center justify-between hover:bg-gray-200 transition-colors"
-            @click="toggleDepartmentDropdown"
-          >
-            <span class="font-nunito text-sm leading-5 tracking-tight" :class="selectedDepartment ? 'text-neutral-950' : 'text-[#717182]'">
-              {{ selectedDepartment || 'Chọn khoa' }}
-            </span>
-            <img :src="iconChevronDown" alt="" class="w-4 h-4" />
-          </button>
-        </div>
+       
 
-        <!-- Step 2: Select Category -->
+        <!-- Step 1: Select Category -->
         <div class="relative h-[58px]">
           <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight absolute top-0 left-0">
-            Bước 2: Chọn Danh mục dịch vụ (*)
+            Bước 1: Chọn Danh mục dịch vụ (*)
           </label>
           <button
             class="bg-[#f3f3f5] border-none rounded-lg h-9 px-[13px] py-0.5 flex items-center justify-between absolute top-[22px] left-0 w-full transition-colors"
@@ -47,10 +33,10 @@
           </button>
         </div>
 
-        <!-- Step 3: Details -->
+        <!-- Step 2: Details -->
         <div class="border-t border-gray-200/60 pt-[17px] flex flex-col gap-3">
           <h4 class="font-nunito font-semibold text-sm leading-5 text-neutral-950 tracking-tight">
-            Bước 3: Thông tin chi tiết
+            Bước 2: Thông tin chi tiết
           </h4>
 
           <div class="flex flex-col gap-4">
@@ -138,28 +124,6 @@
               ></textarea>
             </div>
 
-            <!-- Require Booking -->
-            <div class="bg-gray-50 rounded-[10px] h-[54px] px-3 flex items-center justify-between">
-              <div class="flex flex-col">
-                <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight">
-                  Yêu cầu đặt lịch trước
-                </label>
-                <p class="font-nunito text-xs leading-4 text-[#4a5565]">
-                  Khách hàng phải đặt lịch trước khi sử dụng
-                </p>
-              </div>
-              <button
-                type="button"
-                class="relative w-8 h-[18.398px] rounded-full transition-colors"
-                :class="formData.requireBooking ? 'bg-[#030213]' : 'bg-gray-300'"
-                @click="formData.requireBooking = !formData.requireBooking"
-              >
-                <span
-                  class="absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform"
-                  :class="formData.requireBooking ? 'left-[15px]' : 'left-0.5'"
-                ></span>
-              </button>
-            </div>
 
             <!-- Status -->
             <div class="bg-gray-50 rounded-[10px] h-[54px] px-3 flex items-center justify-between">

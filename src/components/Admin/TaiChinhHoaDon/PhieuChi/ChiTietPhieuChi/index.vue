@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 font-nunito">
-    <div class="bg-white border border-black/10 rounded-[10px] w-full max-w-[510px] max-h-[90vh] p-6 flex flex-col gap-4">
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-[9999] pt-24 font-nunito">
+    <div class="bg-white border border-gray-200/60 rounded-[10px] w-full max-w-[510px] max-h-[85vh] p-6 flex flex-col gap-4 shadow-xl relative">
       <!-- Header -->
       <div class="flex flex-col gap-2">
         <h2 class="text-2xl font-semibold text-neutral-950 leading-8">
@@ -90,14 +90,14 @@
           <!-- Header with Button -->
           <div class="flex items-center justify-between">
             <h3 class="text-base text-[#101828] leading-6">Lịch sử thanh toán</h3>
-            <button 
+            <!-- <button 
               v-if="expense.remainingAmount > 0"
               @click="$emit('add-payment')"
               class="bg-[#f54900] text-white rounded-lg px-3 py-2 h-8 flex items-center gap-2 text-sm font-medium hover:bg-[#d43f00] transition-colors"
             >
               <img :src="iconPlus" alt="" class="w-4 h-4" />
               Thanh toán thêm
-            </button>
+            </button> -->
           </div>
 
           <!-- Payment History Items -->

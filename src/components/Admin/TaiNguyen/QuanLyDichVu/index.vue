@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <!-- Page Header -->
-    <div class="page-header">
+    <div class="page-header" style="align-items: start;">
       <div class="header-content">
         <h1 class="page-title">Quản lý Dịch Vụ</h1>
       </div>
@@ -18,7 +18,7 @@
         <div class="card-actions">
           <button class="btn-secondary" @click="handleManageCategories">
             <img :src="iconFolder" alt="" class="btn-icon" />
-            <span class="btn-text">Quản lý Danh Mục</span>
+            <span class="btn-text">Danh Mục Dịch Vụ</span>
           </button>
           <button class="btn-primary" @click="handleAddService">
             <img :src="iconPlus" alt="" class="btn-icon" />
@@ -39,15 +39,9 @@
           />
         </div>
 
-        <button class="filter-button" @click="toggleDepartmentFilter">
-          <img :src="iconFilter" alt="" class="filter-icon" />
-          <span class="filter-text">Tất cả Khoa</span>
-          <img :src="iconChevronDown" alt="" class="chevron-icon" />
-        </button>
-
         <button class="filter-button disabled" @click="toggleGroupFilter">
           <img :src="iconFilter" alt="" class="filter-icon" />
-          <span class="filter-text">Tất cả Nhóm</span>
+          <span class="filter-text">Tất cả Danh Mục</span>
           <img :src="iconChevronDown" alt="" class="chevron-icon" />
         </button>
 
@@ -165,22 +159,18 @@
       </div>
     </div>
     <!-- Manage Categories Modal -->
-    <div v-if="isManageCategoriesModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="w-[512px] h-[600px]">
-        <DanhMucDichVu @close="isManageCategoriesModalOpen = false" />
-      </div>
-    </div>
+    <DanhMucDichVu v-if="isManageCategoriesModalOpen" @close="isManageCategoriesModalOpen = false" />
 
     <!-- Add Service Modal -->
-    <div v-if="isAddServiceModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="w-[600px] h-[90vh] max-h-[800px]">
+    <div v-if="isAddServiceModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-[1000] pt-24">
+      <div class="w-[600px] max-h-[85vh] flex flex-col shadow-xl">
         <ThemDichVu @close="isAddServiceModalOpen = false" @save="handleSaveService" />
       </div>
     </div>
 
     <!-- Edit Service Modal -->
-    <div v-if="isEditServiceModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="w-[600px] h-[90vh] max-h-[800px]">
+    <div v-if="isEditServiceModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-[1000] pt-24">
+      <div class="w-[600px] max-h-[85vh] flex flex-col shadow-xl">
         <ChinhSuaDichVu 
           :service="selectedServiceForEdit"
           @close="isEditServiceModalOpen = false" 
@@ -191,7 +181,7 @@
     </div>
 
     <!-- Delete Service Modal -->
-    <div v-if="isDeleteServiceModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div v-if="isDeleteServiceModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
       <XoaDichVu 
         :modal-type="deleteServiceModalType"
         :service="selectedServiceForDelete"

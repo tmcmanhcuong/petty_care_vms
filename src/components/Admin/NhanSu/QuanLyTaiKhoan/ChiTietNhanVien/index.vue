@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white border border-gray-200/60 rounded-[10px] shadow-lg w-[495px] max-h-[90vh] overflow-y-auto">
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-[1000] pt-24">
+    <div class="bg-white border border-gray-200/60 rounded-[10px] shadow-xl w-[495px] max-h-[85vh] overflow-y-auto">
       <div class="p-6 flex flex-col gap-4">
         <!-- Header -->
         <div class="flex flex-col gap-2">
@@ -75,10 +75,6 @@
                       {{ role.name }}
                     </span>
                   </div>
-                </div>
-                <div class="flex flex-col">
-                  <span class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight">Khoa trực thuộc</span>
-                  <span class="font-nunito text-base leading-6 text-[#101828] tracking-tight">{{ staff.department }}</span>
                 </div>
               </div>
               <div class="flex flex-col">

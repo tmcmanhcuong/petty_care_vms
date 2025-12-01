@@ -13,21 +13,6 @@
 
       <!-- Form Content -->
       <div class="flex flex-col gap-4">
-        <!-- Department -->
-        <div class="flex flex-col gap-0 h-[50px]">
-          <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]">
-            Khoa (*)
-          </label>
-          <button
-            class="bg-[#f3f3f5] border-none rounded-lg h-9 px-[13px] py-0.5 flex items-center justify-between hover:bg-gray-200 transition-colors"
-            @click="toggleDepartmentDropdown"
-          >
-            <span class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight">
-              {{ formData.department }}
-            </span>
-            <img :src="iconChevronDown" alt="" class="w-4 h-4" />
-          </button>
-        </div>
 
         <!-- Category -->
         <div class="flex flex-col gap-2 h-[60px]">
@@ -137,28 +122,6 @@
               ></textarea>
             </div>
 
-            <!-- Require Booking -->
-            <div class="bg-gray-50 rounded-[10px] h-[54px] px-3 flex items-center justify-between">
-              <div class="flex flex-col">
-                <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight">
-                  Yêu cầu đặt lịch trước
-                </label>
-                <p class="font-nunito text-xs leading-4 text-[#4a5565]">
-                  Khách hàng phải đặt lịch trước khi sử dụng
-                </p>
-              </div>
-              <button
-                type="button"
-                class="relative w-8 h-[18.398px] rounded-full transition-colors"
-                :class="formData.requireBooking ? 'bg-[#030213]' : 'bg-gray-300'"
-                @click="formData.requireBooking = !formData.requireBooking"
-              >
-                <span
-                  class="absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform"
-                  :class="formData.requireBooking ? 'left-[15px]' : 'left-0.5'"
-                ></span>
-              </button>
-            </div>
 
             <!-- Status -->
             <div class="bg-gray-50 rounded-[10px] h-[54px] px-3 flex items-center justify-between">

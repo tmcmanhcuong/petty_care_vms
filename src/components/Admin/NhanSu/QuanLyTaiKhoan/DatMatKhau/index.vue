@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white border border-gray-200/60 rounded-[10px] shadow-lg w-[510px] relative">
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-[1000] pt-24">
+    <div class="bg-white border border-gray-200/60 rounded-[10px] shadow-xl w-[510px] relative">
       <div class="p-6 flex flex-col gap-4">
         <!-- Close Button -->
         <button

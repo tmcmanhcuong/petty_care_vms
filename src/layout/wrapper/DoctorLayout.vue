@@ -1,26 +1,25 @@
 <template>
-    <div class="wrapper">
-        <!-- Sidebar Wrapper: Contains the Sidebar component -->
-        <!-- app.js expects .sidebar-wrapper for toggle functionality -->
-        <div class="sidebar-wrapper">
-            <SideBar></SideBar>
-        </div>
-        
-        <!-- Header -->
-        <div class="topbar">
-            <Header />
-        </div>
-        
-        <!-- Content -->
-        <div class="page-wrapper">
-            <div class="page-content">
-                <router-view />
-            </div>
-        </div>
+  <div class="wrapper">
+    <!-- Sidebar Wrapper: Doctor Role -->
+    <div class="sidebar-wrapper">
+      <SideBar role="doctor" />
     </div>
+    
+    <!-- Header -->
+    <div class="topbar">
+      <Header role="doctor" />
+    </div>
+    
+    <!-- Content -->
+    <div class="page-wrapper">
+      <div class="page-content">
+        <router-view />
+      </div>
+    </div>
+  </div>
 </template>
 
-<script>
+<script setup>
 import SideBar from "../components/SideBar.vue";
 import Header from "../components/Header.vue";
 import "../../assets/js/bootstrap.bundle.min.js";
@@ -31,17 +30,9 @@ import "../../assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js";
 import "../../assets/js/index.js";
 import "../../assets/js/app.js";
 import "../../assets/js/pace.min.js";
-
-export default {
-    name: "app",
-    components: {
-       SideBar, 
-       Header
-    }
-}
 </script>
 
-<style>
+<style scoped>
 @import "../../assets/plugins/simplebar/css/simplebar.css";
 @import "../../assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css";
 @import "../../assets/plugins/metismenu/css/metisMenu.min.css";
@@ -58,39 +49,39 @@ export default {
 
 /* Custom Layout Overrides */
 .sidebar-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 256px; /* w-64 */
-    height: 100%;
-    z-index: 1000;
-    background-color: #2f5755;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 256px; /* w-64 */
+  height: 100%;
+  z-index: 1000;
+  background-color: #2f5755;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
 .topbar {
-    position: fixed;
-    top: 0;
-    left: 256px; /* Push right by sidebar width */
-    right: 0;
-    width: calc(100% - 256px);
-    height: 93px; /* Match sidebar logo height */
-    background: #ffffff;
-    z-index: 900;
-    padding: 0;
-    display: flex;
-    align-items: center;
+  position: fixed;
+  top: 0;
+  left: 256px; /* Push right by sidebar width */
+  right: 0;
+  width: calc(100% - 256px);
+  height: 80px; /* Match sidebar logo height */
+  background: #ffffff;
+  z-index: 900;
+  padding: 0;
+  display: flex;
+  align-items: center;
 }
 
 .page-wrapper {
-    margin-left: 256px;
-    margin-top: 93px; /* Match header height */ 
-    min-height: calc(100vh - 93px);
-    background-color: #EEE;
-    padding: 0;
+  margin-left: 256px;
+  margin-top: 80px; /* Match header height */ 
+  min-height: calc(100vh - 80px);
+  background-color: #EEE;
+  padding: 0;
 }
 
 .page-content {
-    padding: 1.5rem;
+  padding: 1.5rem;
 }
 </style>

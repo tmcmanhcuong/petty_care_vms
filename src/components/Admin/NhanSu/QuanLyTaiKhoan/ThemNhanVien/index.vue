@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white border border-gray-200/60 rounded-[10px] shadow-lg w-[495px] max-h-[90vh] overflow-y-auto">
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-[1000] pt-24">
+    <div class="bg-white border border-gray-200/60 rounded-[10px] shadow-xl w-[495px] max-h-[85vh] overflow-y-auto">
       <div class="p-6 flex flex-col gap-4">
         <!-- Header -->
         <div class="flex flex-col gap-2">
@@ -111,29 +111,17 @@
             </div>
           </div>
 
-          <!-- Department & Position -->
-          <div class="grid grid-cols-2 gap-4">
-            <div class="flex flex-col gap-0">
-              <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-0">
-                Khoa trực thuộc *
-              </label>
-              <button class="bg-[#f3f3f5] border-none rounded-lg h-9 px-3 py-[1px] flex items-center justify-between hover:bg-[#e8e8ea] transition-colors mt-0">
-                <span class="font-nunito text-sm leading-5 text-[#717182] tracking-tight">Chọn khoa</span>
-                <img :src="iconChevronDown" alt="Dropdown" class="w-4 h-4" />
-              </button>
-              <p class="font-nunito text-xs leading-4 text-[#6a7282] mt-[4px]">
-                Bắt buộc để tính biên chế (Lương thưởng, báo cáo)
-              </p>
-            </div>
-            <div class="flex flex-col gap-0">
-              <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-0">
-                Chức danh
-              </label>
-              <button class="bg-[#f3f3f5] border-none rounded-lg h-9 px-3 py-[1px] flex items-center justify-between hover:bg-[#e8e8ea] transition-colors mt-0">
-                <span class="font-nunito text-sm leading-5 text-[#717182] tracking-tight">Chọn chức danh</span>
-                <img :src="iconChevronDown" alt="Dropdown" class="w-4 h-4" />
-              </button>
-            </div>
+          <!-- Position -->
+          <div class="flex flex-col gap-0">
+            <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-0">
+              Chức danh
+            </label>
+            <input
+              v-model="formData.position"
+              type="text"
+              placeholder="VD: Trưởng khoa"
+              class="bg-[#f3f3f5] border-none rounded-lg h-9 px-3 py-1 font-nunito text-sm text-neutral-950 tracking-tight outline-none placeholder:text-[#717182] mt-0"
+            />
           </div>
 
           <!-- Education & Experience Section -->
@@ -261,8 +249,7 @@ const isFormValid = computed(() => {
     formData.value.fullName &&
     formData.value.email &&
     formData.value.phone &&
-    formData.value.selectedRoles.length > 0 &&
-    formData.value.department
+    formData.value.selectedRoles.length > 0
   )
 })
 

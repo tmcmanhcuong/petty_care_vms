@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full min-h-screen bg-gray-50 p-6">
+  <div class="w-full min-h-screen p-6">
     <!-- Back Button (only show in detail view) -->
     <button
       v-if="selectedPatient"
@@ -76,12 +76,12 @@
                 123 Nguyễn Huệ, Q.1, TP.HCM
               </p>
             </div>
-            <button class="bg-white border border-[#ffb86a] rounded-lg h-8 px-[10px] mt-2 flex items-center gap-1 hover:bg-orange-50 transition-colors">
+            <!-- <button class="bg-white border border-[#ffb86a] rounded-lg h-8 px-[10px] mt-2 flex items-center gap-1 hover:bg-orange-50 transition-colors">
               <img :src="iconWarning" alt="Warning" class="w-4 h-4" />
               <span class="font-nunito font-medium text-sm leading-5 text-[#f54900] tracking-tight">
                 Cảnh báo
               </span>
-            </button>
+            </button> -->
           </div>
         </div>
 
@@ -140,9 +140,7 @@
                   <p class="font-nunito text-xs leading-4 text-[#6a7282]">
                     Bởi: {{ visit.doctor }}
                   </p>
-                  <span class="inline-flex items-center px-2 py-[3px] rounded-lg font-nunito font-medium text-xs leading-4 border border-black/10 text-neutral-950 w-fit">
-                    {{ visit.department }}
-                  </span>
+                  
                 </div>
               </div>
             </button>
@@ -156,9 +154,9 @@
             <h3 class="font-nunito text-base leading-4 text-neutral-950 tracking-tight">
               Chi tiết phiếu khám - {{ selectedVisit.date }}
             </h3>
-            <span class="inline-flex items-center px-[9px] py-[3px] rounded-lg font-nunito font-medium text-xs leading-4 border border-black/10 text-neutral-950">
+            <!-- <span class="inline-flex items-center px-[9px] py-[3px] rounded-lg font-nunito font-medium text-xs leading-4 border border-black/10 text-neutral-950">
               {{ selectedVisit.department }}
-            </span>
+            </span> -->
           </div>
 
           <!-- Tabs -->
@@ -194,7 +192,7 @@
             <!-- Reason -->
             <div class="flex flex-col gap-1">
               <label class="font-nunito font-medium text-sm leading-[14px] text-[#364153] tracking-tight">
-                Lý do đến khám
+                Triệu chứng
               </label>
               <p class="font-nunito text-base leading-6 text-[#101828] tracking-tight">
                 {{ selectedVisit.reason }}
@@ -270,12 +268,12 @@
                 <label class="font-nunito font-medium text-sm leading-[14px] text-[#364153] tracking-tight">
                   Dịch vụ đã thực hiện
                 </label>
-                <button class="bg-white border border-black/10 rounded-lg h-8 px-[11px] flex items-center gap-1 hover:bg-gray-50 transition-colors">
+                <!-- <button class="bg-white border border-black/10 rounded-lg h-8 px-[11px] flex items-center gap-1 hover:bg-gray-50 transition-colors">
                   <img :src="iconPlus" alt="Add" class="w-4 h-4" />
                   <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
                     Thêm dịch vụ
                   </span>
-                </button>
+                </button> -->
               </div>
               <div class="flex flex-col gap-2">
                 <div class="bg-gray-50 border border-gray-200 rounded-[10px] px-[13px] py-[13px] flex flex-col gap-1">
@@ -303,12 +301,12 @@
                 <label class="font-nunito font-medium text-sm leading-[14px] text-[#364153] tracking-tight">
                   Đơn thuốc
                 </label>
-                <button class="bg-white border border-black/10 rounded-lg h-8 px-[11px] flex items-center gap-1 hover:bg-gray-50 transition-colors">
+                <!-- <button class="bg-white border border-black/10 rounded-lg h-8 px-[11px] flex items-center gap-1 hover:bg-gray-50 transition-colors">
                   <img :src="iconPlus" alt="Add" class="w-4 h-4" />
                   <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
                     Kê đơn
                   </span>
-                </button>
+                </button> -->
               </div>
               <div class="h-[52px] flex items-center justify-center">
                 <p class="font-nunito text-sm leading-5 text-[#6a7282] tracking-tight">
@@ -324,12 +322,6 @@
               <label class="font-nunito font-medium text-sm leading-[14px] text-[#364153] tracking-tight">
                 Hình ảnh & Kết quả xét nghiệm
               </label>
-              <button class="bg-white border border-black/10 rounded-lg h-8 px-[11px] flex items-center gap-1 hover:bg-gray-50 transition-colors">
-                <img :src="iconUpload" alt="Upload" class="w-4 h-4" />
-                <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
-                  Upload
-                </span>
-              </button>
             </div>
 
             <!-- Upload Area - Empty State -->
@@ -338,11 +330,87 @@
               <p class="font-nunito text-sm leading-5 text-[#6a7282] tracking-tight">
                 Chưa có hình ảnh hoặc tài liệu nào
               </p>
-              <button class="bg-white border border-black/10 rounded-lg h-8 px-[10px] flex items-center gap-1 hover:bg-gray-50 transition-colors">
+              <!-- <button class="bg-white border border-black/10 rounded-lg h-8 px-[10px] flex items-center gap-1 hover:bg-gray-50 transition-colors">
                 <img :src="iconPlus" alt="Add" class="w-4 h-4" />
                 <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
                   Upload file
                 </span>
+              </button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Re-examination Schedule Card -->
+      <div class="bg-gradient-to-r from-[#eff6ff] to-[#faf5ff] border-2 border-[#8ec5ff] rounded-[14px] p-[26px] flex flex-col gap-[42px]">
+        <!-- Card Title -->
+        <div class="flex items-center gap-2">
+          <img :src="iconClipboard" alt="Schedule" class="w-5 h-5" />
+          <p class="font-nunito text-[16px] leading-[16px] text-[#1c398e] tracking-[-0.3125px]">
+            📅 KẾ HOẠCH TÁI KHÁM & NHẮC LỊCH
+          </p>
+        </div>
+
+        <!-- Schedule Content -->
+        <div class="bg-white border-2 border-[#bedbff] rounded-[10px] p-[18px] flex flex-col gap-3">
+          <!-- Date and Badge -->
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col gap-1">
+              <div class="flex items-baseline gap-2">
+                <p class="font-nunito font-bold text-[18px] leading-[28px] text-[#101828] tracking-[-0.4395px]">
+                  04/12/2025
+                </p>
+                <p class="font-nunito text-[16px] leading-[24px] text-[#4a5565] tracking-[-0.3125px]">
+                  (Thứ Năm)
+                </p>
+              </div>
+              <p class="font-nunito text-[14px] leading-[20px] text-[#6a7282] tracking-[-0.1504px]">
+                Còn 3 ngày nữa
+              </p>
+            </div>
+            <span class="inline-flex items-center px-[9px] py-[3px] rounded-lg font-nunito font-medium text-xs leading-4 bg-purple-100 border border-[#dab2ff] text-[#8200db]">
+              💉 Tiêm phòng
+            </span>
+          </div>
+
+          <!-- Note Box -->
+          <div class="bg-blue-50 border border-[#bedbff] rounded-[10px] p-[13px] flex gap-3">
+            <img :src="iconInfo" alt="Info" class="w-5 h-5 mt-[2px]" />
+            <div class="flex flex-col gap-1">
+              <p class="font-nunito text-[14px] leading-[20px] text-[#101828] tracking-[-0.1504px]">
+                Hẹn tiêm mũi nhắc lại vắc-xin 7 bệnh (Mũi 3). Chủ nuôi nhớ mang theo sổ tiêm chủng.
+              </p>
+              <p class="font-nunito text-xs leading-4 text-[#6a7282]">
+                Ghi chú từ BS. Nguyễn Văn B
+              </p>
+            </div>
+          </div>
+
+          <!-- Status and Actions -->
+          <div class="border-t border-gray-200 pt-[1px] flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <p class="font-nunito text-[14px] leading-[20px] text-[#4a5565] tracking-[-0.1504px]">
+                Trạng thái:
+              </p>
+              <span class="inline-flex items-center px-[9px] py-[3px] rounded-lg font-nunito font-medium text-xs leading-4 bg-[#fef9c2] border border-[#ffdf20] text-[#a65f00]">
+                🟡 Chờ xử lý
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="bg-white border border-[#7bf1a8] rounded-lg h-8 px-[11px] flex items-center gap-1 hover:bg-green-50 transition-colors">
+                <img :src="iconPhoneCheck" alt="Call" class="w-4 h-4" />
+                <span class="font-nunito font-medium text-[14px] leading-[20px] text-[#00a63e] tracking-[-0.1504px]">
+                  📞 Xác nhận đã gọi
+                </span>
+              </button>
+              <button class="bg-[#155dfc] rounded-lg h-8 px-[10px] flex items-center gap-1 hover:bg-[#1350e0] transition-colors">
+                <img :src="iconCalendarPlus" alt="Book" class="w-4 h-4" />
+                <span class="font-nunito font-medium text-[14px] leading-[20px] text-white tracking-[-0.1504px]">
+                  📅 Đặt lịch ngay
+                </span>
+              </button>
+              <button class="bg-white border border-[#ffa2a2] rounded-lg w-[38px] h-8 flex items-center justify-center hover:bg-red-50 transition-colors">
+                <img :src="iconTrash" alt="Delete" class="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -532,6 +600,10 @@ const iconScale = "https://www.figma.com/api/mcp/asset/abea2973-bdc1-4361-85ea-7
 const iconPlus = "https://www.figma.com/api/mcp/asset/68e01bcc-9066-460d-bec2-8469281e6788"
 const iconUpload = "https://www.figma.com/api/mcp/asset/f0ca3ca3-39cf-41c9-a8e7-ae3f945c53d4"
 const iconImagePlaceholder = "https://www.figma.com/api/mcp/asset/b34534d4-96ca-4bb4-aaf9-85801b20c55f"
+const iconClipboard = "https://www.figma.com/api/mcp/asset/bc9e4feb-a504-49e2-b9a8-ecaa8e247dd9"
+const iconPhoneCheck = "https://www.figma.com/api/mcp/asset/a2d6229c-5bfc-4581-8d8d-1835060c47b5"
+const iconCalendarPlus = "https://www.figma.com/api/mcp/asset/ec9c9a09-6781-485d-9c4e-9596d60ea7f3"
+const iconTrash = "https://www.figma.com/api/mcp/asset/4394fffa-b9e9-4861-9796-7c6f6cac9986"
 
 // Emits
 const emit = defineEmits(['open-record'])
@@ -554,13 +626,11 @@ const medicalHistory = ref([
     date: '19/11/2025',
     reason: 'Tiêm phòng định kỳ',
     doctor: 'BS. Nguyễn Văn B',
-    department: 'Khoa Lâm Sàng'
   },
   {
     date: '15/10/2025',
     reason: 'Khám tiêu hóa - Bỏ ăn, nôn mửa',
-    doctor: 'BS. Trần Văn C',
-    department: 'Khoa Lâm Sàng'
+    doctor: 'BS. Trần Văn C'
   }
 ])
 

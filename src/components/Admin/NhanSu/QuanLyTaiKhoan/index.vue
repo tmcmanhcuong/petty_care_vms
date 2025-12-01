@@ -314,7 +314,7 @@
       @reset="handleResetPasswordSubmit"
     />
 
-    <ChiTieKhachHang
+    <ChiTietKhachHang
       v-if="isViewCustomerModalOpen"
       :customer="selectedCustomerForView"
       @close="isViewCustomerModalOpen = false"
@@ -327,7 +327,7 @@ import { ref } from 'vue'
 import ThemNhanVien from './ThemNhanVien/index.vue'
 import ChiTietNhanVien from './ChiTietNhanVien/index.vue'
 import DatMatKhau from './DatMatKhau/index.vue'
-import ChiTieKhachHang from './ChiTieKhachHang/index.vue'
+import ChiTietKhachHang from './ChiTietKhachHang/index.vue'
 
 // Active Tab
 const activeTab = ref('staff') // 'staff' or 'customer'
@@ -429,7 +429,21 @@ const customerList = ref([
     petCount: '2 bé',
     totalSpent: 5200000,
     joinDate: '2024-11-20',
-    status: 'active'
+    status: 'active',
+    avatar: 'https://www.figma.com/api/mcp/asset/69ab4ed0-d5a9-4482-8a8e-baeaf0347487',
+    email: 'huong.tran@email.com',
+    rank: 'Gold',
+    rankIcon: '🥇',
+    address: '123 Lê Lợi, Quận 1, TP.HCM',
+    pets: ['Milo', 'Luna'],
+    recentVisits: [
+      {
+        service: 'Khám tổng quát',
+        date: '15/11/2024',
+        doctor: 'BS. Nguyễn Văn A',
+        cost: 500000
+      }
+    ]
   },
   {
     id: 2,
@@ -439,7 +453,21 @@ const customerList = ref([
     petCount: '1 bé',
     totalSpent: 2800000,
     joinDate: '2024-10-15',
-    status: 'active'
+    status: 'active',
+    avatar: 'https://www.figma.com/api/mcp/asset/69ab4ed0-d5a9-4482-8a8e-baeaf0347487',
+    email: 'kien.nguyen@email.com',
+    rank: 'Silver',
+    rankIcon: '🥈',
+    address: '456 Nguyễn Trãi, Quận 5, TP.HCM',
+    pets: ['Lu'],
+    recentVisits: [
+      {
+        service: 'Tiêm phòng',
+        date: '10/10/2024',
+        doctor: 'BS. Phạm Minh D',
+        cost: 300000
+      }
+    ]
   },
   {
     id: 3,
@@ -449,7 +477,21 @@ const customerList = ref([
     petCount: '3 bé',
     totalSpent: 8900000,
     joinDate: '2024-09-01',
-    status: 'active'
+    status: 'active',
+    avatar: 'https://www.figma.com/api/mcp/asset/69ab4ed0-d5a9-4482-8a8e-baeaf0347487',
+    email: 'mai.le@email.com',
+    rank: 'Gold',
+    rankIcon: '🥇',
+    address: '789 Võ Văn Kiệt, Quận 1, TP.HCM',
+    pets: ['Mimi', 'Nunu', 'Kiki'],
+    recentVisits: [
+      {
+        service: 'Spa trọn gói',
+        date: '01/11/2024',
+        doctor: 'KTV. Trần Thị B',
+        cost: 800000
+      }
+    ]
   },
   {
     id: 4,
@@ -459,7 +501,21 @@ const customerList = ref([
     petCount: '1 bé',
     totalSpent: 450000,
     joinDate: '2024-11-10',
-    status: 'blocked'
+    status: 'blocked',
+    avatar: 'https://www.figma.com/api/mcp/asset/69ab4ed0-d5a9-4482-8a8e-baeaf0347487',
+    email: 'nam.pham@email.com',
+    rank: 'Bronze',
+    rankIcon: '🥉',
+    address: '321 Điện Biên Phủ, Bình Thạnh, TP.HCM',
+    pets: ['Rex'],
+    recentVisits: [
+      {
+        service: 'Tư vấn dinh dưỡng',
+        date: '10/11/2024',
+        doctor: 'BS. Nguyễn Văn A',
+        cost: 0
+      }
+    ]
   }
 ])
 

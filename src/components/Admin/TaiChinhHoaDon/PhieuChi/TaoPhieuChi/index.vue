@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 font-nunito">
-    <div class="bg-white border border-black/10 rounded-[10px] shadow-lg w-full max-w-[510px] max-h-[90vh] flex flex-col">
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-[9999] pt-24 font-nunito">
+    <div class="bg-white border border-black/10 rounded-[10px] shadow-xl w-full max-w-[510px] max-h-[85vh] flex flex-col">
       <!-- Header -->
       <div class="flex items-start justify-between px-6 pt-6 pb-4">
         <div class="flex flex-col gap-2">

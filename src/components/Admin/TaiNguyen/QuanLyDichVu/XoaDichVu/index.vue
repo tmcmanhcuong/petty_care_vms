@@ -91,7 +91,7 @@
           <span class="font-semibold text-[#101828]">{{ service.name }}</span>
           không?
         </p>
-        <p class="font-nunito text-sm leading-5 text-[#ca3500] tracking-tight mt-5">
+        <p class="font-nunito text-sm leading-5 text-[#ca3500] tracking-tight mt-3">
           ⚠️ Lưu ý: Hành động này sẽ ẩn dịch vụ khỏi danh sách đặt lịch mới. Các hóa đơn và lịch sử cũ liên quan đến dịch vụ này vẫn được giữ nguyên.
         </p>
       </div>
