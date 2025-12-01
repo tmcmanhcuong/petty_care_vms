@@ -207,8 +207,8 @@ const routes = [
         component: () => import("../components/Doctor/TrangCaNhan/index.vue"),
       },
       {
-        path: "ca-nhan",
-        component: () => import("../components/Doctor/CaNhan/index.vue"),
+        path: "lich-lam-viec",
+        component: () => import("../components/Doctor/LichLamViec/index.vue"),
       },
     ],
   },
@@ -224,29 +224,29 @@ const router = createRouter({
 
 // Global navigation guard: redirect to login when a route requires auth
 router.beforeEach((to, from, next) => {
-  const token = getToken();
-  const requiresAuth = to.matched.some(
-    (record) => record.meta && record.meta.requiresAuth
-  );
-  if (requiresAuth && !token) {
-    // preserve intended route so we can redirect after login
-    next({ path: "/khach-hang/dang-nhap", query: { redirect: to.fullPath } });
-    return;
-  }
+  // const token = getToken();
+  // const requiresAuth = to.matched.some(
+  //   (record) => record.meta && record.meta.requiresAuth
+  // );
+  // if (requiresAuth && !token) {
+  //   // preserve intended route so we can redirect after login
+  //   next({ path: "/khach-hang/dang-nhap", query: { redirect: to.fullPath } });
+  //   return;
+  // }
 
-  // Protect admin routes: if user navigates to /admin/* (except the admin login page)
-  // and no token is present, redirect to admin login and preserve original path
-  if (
-    to.path.startsWith("/admin") &&
-    to.path !== "/admin/dang-nhap" &&
-    !token
-  ) {
-    next({
-      path: "/admin/dang-nhap",
-      query: { redirect: to.fullPath, reason: "admin_required" },
-    });
-    return;
-  }
+  // // Protect admin routes: if user navigates to /admin/* (except the admin login page)
+  // // and no token is present, redirect to admin login and preserve original path
+  // if (
+  //   to.path.startsWith("/admin") &&
+  //   to.path !== "/admin/dang-nhap" &&
+  //   !token
+  // ) {
+  //   next({
+  //     path: "/admin/dang-nhap",
+  //     query: { redirect: to.fullPath, reason: "admin_required" },
+  //   });
+  //   return;
+  // }
   next();
 });
 

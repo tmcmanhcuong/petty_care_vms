@@ -52,7 +52,6 @@ import "../../assets/js/pace.min.js";
   position: fixed;
   top: 0;
   left: 0;
-  width: 256px; /* w-64 */
   height: 100%;
   z-index: 1000;
   background-color: #2f5755;
@@ -64,24 +63,16 @@ import "../../assets/js/pace.min.js";
   top: 0;
   left: 256px; /* Push right by sidebar width */
   right: 0;
-  width: calc(100% - 256px);
-  height: 80px; /* Match sidebar logo height */
-  background: #ffffff;
-  z-index: 900;
-  padding: 0;
-  display: flex;
-  align-items: center;
 }
 
 .page-wrapper {
   margin-left: 256px;
-  margin-top: 80px; /* Match header height */ 
   min-height: calc(100vh - 80px);
   background-color: #EEE;
   padding: 0;
 }
 
 .page-content {
-  padding: 1.5rem;
+  padding: 0 32px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white border-b border-[#f3f4f6] flex flex-col justify-center px-6 w-full h-full"
+    class="bg-white border-b border-[#e6e6e6] shadow-sm flex flex-col justify-center px-6 py-10 w-full h-full"
     data-name="Header"
   >
     <div class="flex flex-col gap-2.5 items-start w-full">

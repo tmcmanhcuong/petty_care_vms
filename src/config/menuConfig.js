@@ -21,15 +21,15 @@ export const menuConfig = {
         icon: 'https://www.figma.com/api/mcp/asset/bb90decb-1ed7-40e9-8d18-1420a1ac4fa1',
         type: 'group',
         children: [
-          { 
-            key: 'quanLyDichVu', 
-            label: 'Quản lý Dịch vụ', 
-            path: '/admin/quan-ly-dich-vu' 
+          {
+            key: 'quanLyDichVu',
+            label: 'Quản lý Dịch vụ',
+            path: '/admin/quan-ly-dich-vu'
           },
-          { 
-            key: 'khoThuocVatTu', 
-            label: 'Kho thuốc & Vật tư', 
-            path: '/admin/kho-thuoc-vat-tu' 
+          {
+            key: 'khoThuocVatTu',
+            label: 'Kho thuốc & Vật tư',
+            path: '/admin/kho-thuoc-vat-tu'
           }
         ]
       },
@@ -39,15 +39,15 @@ export const menuConfig = {
         icon: 'https://www.figma.com/api/mcp/asset/88e96d06-b45f-4d93-aa39-5544f66e5d85',
         type: 'group',
         children: [
-          { 
-            key: 'nhanSu_Item1', 
-            label: 'Tài Khoản', 
-            path: '/admin/tai-khoan' 
+          {
+            key: 'nhanSu_Item1',
+            label: 'Tài Khoản',
+            path: '/admin/tai-khoan'
           },
-          { 
-            key: 'nhanSu_Item2', 
-            label: 'Lịch Làm Việc', 
-            path: '/admin/lich-lam-viec' 
+          {
+            key: 'nhanSu_Item2',
+            label: 'Lịch Làm Việc',
+            path: '/admin/lich-lam-viec'
           }
         ]
       },
@@ -57,15 +57,15 @@ export const menuConfig = {
         icon: 'https://www.figma.com/api/mcp/asset/6413c5d7-d9de-47f7-adb1-60d9c6fc64f0',
         type: 'group',
         children: [
-          { 
-            key: 'vanHanh_Item1', 
-            label: 'Quản lý lịch hẹn', 
-            path: '/admin/quan-ly-lich-hen' 
+          {
+            key: 'vanHanh_Item1',
+            label: 'Quản lý lịch hẹn',
+            path: '/admin/quan-ly-lich-hen'
           },
-          { 
-            key: 'vanHanh_Item2', 
-            label: 'Hồ sơ bệnh án', 
-            path: '/admin/ho-so-benh-an' 
+          {
+            key: 'vanHanh_Item2',
+            label: 'Hồ sơ bệnh án',
+            path: '/admin/ho-so-benh-an'
           }
         ]
       },
@@ -75,15 +75,15 @@ export const menuConfig = {
         icon: 'https://www.figma.com/api/mcp/asset/78f6f448-fb75-4de8-a234-173bbebee868',
         type: 'group',
         children: [
-          { 
-            key: 'taiChinh_Item1', 
-            label: 'Danh sách hóa đơn', 
-            path: '/admin/danh-sach-hoa-don' 
+          {
+            key: 'taiChinh_Item1',
+            label: 'Danh sách hóa đơn',
+            path: '/admin/danh-sach-hoa-don'
           },
-          { 
-            key: 'taiChinh_Item2', 
-            label: 'Phiếu chi', 
-            path: '/admin/phieu-chi' 
+          {
+            key: 'taiChinh_Item2',
+            label: 'Phiếu chi',
+            path: '/admin/phieu-chi'
           }
         ]
       },
@@ -93,15 +93,15 @@ export const menuConfig = {
         icon: 'https://www.figma.com/api/mcp/asset/420d4dcc-ebcb-4c4c-af6b-e3ef6d80dad3',
         type: 'group',
         children: [
-          { 
-            key: 'truyenThong_Item1', 
-            label: 'Bài viết', 
-            path: '/admin/bai-viet' 
+          {
+            key: 'truyenThong_Item1',
+            label: 'Bài viết',
+            path: '/admin/bai-viet'
           },
-          { 
-            key: 'truyenThong_Item2', 
-            label: 'Khuyến Mãi', 
-            path: '/admin/khuyen-mai' 
+          {
+            key: 'truyenThong_Item2',
+            label: 'Khuyến Mãi',
+            path: '/admin/khuyen-mai'
           }
         ]
       },
@@ -111,20 +111,20 @@ export const menuConfig = {
         icon: 'https://www.figma.com/api/mcp/asset/decd1476-2ded-4433-b7a9-727fd8bb498e',
         type: 'group',
         children: [
-          { 
-            key: 'baoCao_Item1', 
-            label: 'Doanh thu', 
-            path: '/admin/bao-cao-doanh-thu' 
+          {
+            key: 'baoCao_Item1',
+            label: 'Doanh thu',
+            path: '/admin/bao-cao-doanh-thu'
           },
-          { 
-            key: 'baoCao_Item2', 
-            label: 'Hiệu suất', 
-            path: '/admin/bao-cao-hieu-suat' 
+          {
+            key: 'baoCao_Item2',
+            label: 'Hiệu suất',
+            path: '/admin/bao-cao-hieu-suat'
           },
-          { 
-            key: 'baoCao_Item3', 
-            label: 'Thuốc & Vật Tư', 
-            path: '/admin/bao-cao-thuoc-vat-tu' 
+          {
+            key: 'baoCao_Item3',
+            label: 'Thuốc & Vật Tư',
+            path: '/admin/bao-cao-thuoc-vat-tu'
           }
         ]
       },
@@ -178,10 +178,10 @@ export const menuConfig = {
         type: 'single'
       },
       {
-        key: 'caNhan',
+        key: 'lichLamViec',
         label: 'Lịch Làm Việc',
         icon: 'https://www.figma.com/api/mcp/asset/256654dc-1ff0-4db3-963c-1a5c47cb7984',
-        path: '/doctor/ca-nhan',
+        path: '/doctor/lich-lam-viec',
         type: 'single'
       }
     ]
