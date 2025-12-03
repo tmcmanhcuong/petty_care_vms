@@ -20,7 +20,7 @@
         <div class="flex items-center gap-3">
           <!-- View Toggle -->
           <div class="bg-[#ececf0] rounded-[14px] p-1 flex items-center">
-            <button
+            <!-- <button
               @click="viewMode = 'calendar'"
               :class="[
                 'flex items-center gap-2 px-2 py-[5px] rounded-[14px] transition-colors',
@@ -31,7 +31,7 @@
               <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
                 Lịch biểu
               </span>
-            </button>
+            </button> -->
             <button
               @click="viewMode = 'list'"
               :class="[
@@ -54,7 +54,7 @@
             </span>
           </div>
 
-          <!-- Create Appointment Button -->
+          <!-- Create Appointment Button
           <button
             @click="isCreateAppointmentModalOpen = true"
             class="bg-[#00a63e] rounded-lg h-9 px-3 flex items-center gap-2 hover:bg-[#008c35] transition-colors"
@@ -63,7 +63,7 @@
             <span class="font-nunito font-medium text-sm leading-5 text-white tracking-tight">
               Tạo lịch hẹn
             </span>
-          </button>
+          </button> -->
         </div>
       </div>
 
@@ -84,14 +84,6 @@
         <button class="bg-[#f3f3f5] rounded-lg h-9 px-3 flex items-center justify-between gap-2 w-[204px] hover:bg-gray-200 transition-colors">
           <span class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight">
             Tất cả ngày
-          </span>
-          <img :src="iconChevronDown" alt="Dropdown" class="w-4 h-4" />
-        </button>
-
-        <!-- Department Filter -->
-        <button class="bg-[#f3f3f5] rounded-lg h-9 px-3 flex items-center justify-between gap-2 w-[204px] hover:bg-gray-200 transition-colors">
-          <span class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight">
-            Tất cả Khoa
           </span>
           <img :src="iconChevronDown" alt="Dropdown" class="w-4 h-4" />
         </button>
@@ -253,13 +245,13 @@
               <!-- Actions -->
               <td class="px-2 py-[10px]">
                 <div class="flex items-center justify-end gap-2">
-                  <button
+                  <!-- <button
                     v-if="appointment.status !== 'completed' && appointment.status !== 'cancelled'"
                     class="bg-white border border-gray-200/60 rounded-lg w-[38px] h-8 flex items-center justify-center hover:bg-gray-50 transition-colors"
                     title="Xác nhận"
                   >
                     <img :src="iconCheck" alt="Confirm" class="w-4 h-4" />
-                  </button>
+                  </button> -->
                   <button
                     class="bg-white border border-gray-200/60 rounded-lg w-[38px] h-8 flex items-center justify-center hover:bg-gray-50 transition-colors"
                     title="Xem chi tiết"
@@ -359,7 +351,6 @@ const appointments = ref([
     assignedStaff: {
       initial: 'B',
       name: 'BS. Nguyễn Văn B',
-      department: 'Khoa Lâm Sàng'
     },
     status: 'confirmed',
     paymentStatus: 'unpaid'
@@ -374,7 +365,6 @@ const appointments = ref([
     assignedStaff: {
       initial: 'D',
       name: 'NV. Lê Thị D',
-      department: 'Khoa Lâm Sàng'
     },
     status: 'in-progress',
     paymentStatus: 'unpaid'
@@ -400,7 +390,6 @@ const appointments = ref([
     assignedStaff: {
       initial: 'B',
       name: 'BS. Nguyễn Văn B',
-      department: 'Khoa Lâm Sàng'
     },
     status: 'completed',
     paymentStatus: 'paid'
@@ -415,7 +404,6 @@ const appointments = ref([
     assignedStaff: {
       initial: 'D',
       name: 'NV. Lê Thị D',
-      department: 'Khoa Lâm Sàng'
     },
     status: 'cancelled',
     paymentStatus: 'refunded'

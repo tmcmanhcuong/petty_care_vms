@@ -4,7 +4,7 @@ import router from "./router";
 import Default from "./layout/wrapper/index.vue";
 import trangchu from "./layout/wrapper/layout_rong.vue";
 import dangki_dangnhap from "./layout/wrapper/layout_dangki_dangnhap.vue";
-import sidebar from "./layout/wrapper/layout_sidebar.vue";
+// import sidebar from "./layout/wrapper/layout_sidebar.vue"; // ❌ Deprecated - Use AdminLayout/DoctorLayout instead
 
 import "./assets/css/main.css";
 
@@ -14,6 +14,7 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import "./assets/css/toast-override.css";
 import axios from "axios";
+import { attachToken } from "@/utils/api";
 import {
   logout as authLogout,
   getToken as authGetToken,
@@ -38,6 +39,9 @@ if (existingToken) {
   axios.defaults.headers.common["Authorization"] = `Bearer ${existingToken}`;
 }
 
+// ensure shared api client also has the token
+attachToken();
+
 // expose simple auth helper on globalProperties for components: this.$auth.logout(router)
 app.config.globalProperties.$auth = {
   logout: (router) => authLogout(router),
@@ -48,7 +52,6 @@ app.config.globalProperties.$auth = {
 app.component("default-layout", Default);
 app.component("trangchu-layout", trangchu);
 app.component("dangki_dangnhap-layout", dangki_dangnhap);
-app.component("sidebar-layout", sidebar);
-
+// app.component("sidebar-layout", sidebar); // ❌ Deprecated - Use AdminLayout/DoctorLayout instead
 
 app.mount("#app");

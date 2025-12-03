@@ -96,12 +96,13 @@
 
               <!-- Status -->
               <td class="py-4 px-2">
-                <span 
-                  class="inline-block px-3 py-1 rounded-lg border-0 text-xs font-medium"
+                <button 
+                  class="inline-block px-3 py-1 rounded-lg border-0 text-xs font-medium transition-opacity hover:opacity-80"
                   :class="getStatusClass(post.status)"
+                  @click="toggleStatus(post)"
                 >
                   {{ post.statusLabel }}
-                </span>
+                </button>
               </td>
 
               <!-- Actions -->
@@ -262,6 +263,16 @@ const handleDeleteConfirm = () => {
   // Logic to delete post goes here
   isDeletePostModalOpen.value = false;
   selectedPostForDelete.value = null;
+};
+
+const toggleStatus = (post) => {
+  if (post.status === 'published') {
+    post.status = 'draft';
+    post.statusLabel = 'Bản nháp';
+  } else {
+    post.status = 'published';
+    post.statusLabel = 'Đã xuất bản';
+  }
 };
 </script>
 

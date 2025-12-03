@@ -1,6 +1,10 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white border border-gray-200/60 rounded-[10px] shadow-lg w-[510px] relative">
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div
+      class="bg-white border border-gray-200/60 rounded-[10px] shadow-lg w-[510px] relative"
+    >
       <div class="p-6 flex flex-col gap-4">
         <!-- Close Button -->
         <button
@@ -12,10 +16,14 @@
 
         <!-- Header -->
         <div class="flex flex-col gap-2">
-          <h2 class="font-nunito font-semibold text-lg leading-[18px] text-neutral-950 tracking-tight">
+          <h2
+            class="font-nunito font-semibold text-lg leading-[18px] text-neutral-950 tracking-tight"
+          >
             Phân ca trực
           </h2>
-          <p class="font-nunito text-sm leading-5 text-[#717182] tracking-tight">
+          <p
+            class="font-nunito text-sm leading-5 text-[#717182] tracking-tight"
+          >
             Thêm ca làm việc cho nhân viên
           </p>
         </div>
@@ -24,50 +32,125 @@
         <div class="flex flex-col gap-4">
           <!-- Select Staff -->
           <div class="flex flex-col gap-2">
-            <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight">
+            <label
+              class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight"
+            >
               Chọn Nhân viên <span class="text-red-500">*</span>
             </label>
-            <button
-              class="bg-[#f3f3f5] border border-transparent rounded-lg h-9 px-3 flex items-center justify-between hover:bg-gray-200 transition-colors"
-            >
-              <span class="font-nunito text-sm leading-5 text-[#717182] tracking-tight">
-                Chọn nhân viên
-              </span>
-              <img :src="iconChevronDown" alt="Dropdown" class="w-4 h-4" />
-            </button>
+            <div class="relative">
+              <button
+                @click="toggleStaffDropdown"
+                type="button"
+                :class="[
+                  'bg-[#f3f3f5] rounded-lg h-9 px-3 flex items-center justify-between hover:bg-gray-200 transition-colors min-w-[460px]',
+                  props.serverErrors && props.serverErrors.nhan_vien_id
+                    ? 'border-red-500'
+                    : 'border-transparent',
+                ]"
+              >
+                <span
+                  class="font-nunito text-sm leading-5 text-[#717182] tracking-tight"
+                >
+                  {{
+                    selectedStaff &&
+                    (selectedStaff.full_name || selectedStaff.name)
+                      ? selectedStaff.full_name || selectedStaff.name
+                      : "Chọn nhân viên"
+                  }}
+                </span>
+                <img :src="iconChevronDown" alt="Dropdown" class="w-4 h-4" />
+              </button>
+
+              <!-- Dropdown list -->
+              <div
+                v-if="showStaffDropdown"
+                class="absolute left-0 mt-2 w-[260px] bg-white border rounded-lg shadow-lg z-50 max-h-56 overflow-auto"
+              >
+                <ul>
+                  <li v-for="staff in staffList" :key="staff.id">
+                    <button
+                      @click.prevent="selectStaff(staff)"
+                      class="w-full text-left px-3 py-2 hover:bg-gray-100"
+                    >
+                      <span class="font-nunito text-sm">{{ staff.name }}</span>
+                    </button>
+                  </li>
+                  <li
+                    v-if="staffList.length === 0"
+                    class="px-3 py-2 text-sm text-gray-500"
+                  >
+                    Không có nhân viên
+                  </li>
+                </ul>
+              </div>
+              <p
+                v-if="props.serverErrors && props.serverErrors.nhan_vien_id"
+                class="text-xs text-red-600 mt-1"
+              >
+                {{ props.serverErrors.nhan_vien_id[0] }}
+              </p>
+            </div>
           </div>
 
           <!-- Date and Room -->
           <div class="grid grid-cols-2 gap-4">
             <!-- Select Date -->
             <div class="flex flex-col gap-2">
-              <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight">
+              <label
+                class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight"
+              >
                 Chọn Ngày <span class="text-red-500">*</span>
               </label>
               <input
                 v-model="selectedDate"
                 type="date"
-                class="bg-[#f3f3f5] border border-transparent rounded-lg h-9 px-3 font-nunito text-sm text-neutral-950 focus:outline-none focus:ring-2 focus:ring-[#009689]"
+                :class="[
+                  'bg-[#f3f3f5] rounded-lg h-9 px-3 font-nunito text-sm text-neutral-950 focus:outline-none focus:ring-2 focus:ring-[#009689]',
+                  props.serverErrors && props.serverErrors.ngay_lam
+                    ? 'border-red-500'
+                    : 'border-transparent',
+                ]"
               />
+              <p
+                v-if="props.serverErrors && props.serverErrors.ngay_lam"
+                class="text-xs text-red-600 mt-1"
+              >
+                {{ props.serverErrors.ngay_lam[0] }}
+              </p>
             </div>
 
             <!-- Room -->
             <div class="flex flex-col gap-2">
-              <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight">
+              <label
+                class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight"
+              >
                 Phòng trực
               </label>
               <input
                 v-model="room"
                 type="text"
                 placeholder="VD: P. Khám 01"
-                class="bg-[#f3f3f5] border border-transparent rounded-lg h-9 px-3 font-nunito text-sm text-neutral-950 placeholder:text-[#717182] focus:outline-none focus:ring-2 focus:ring-[#009689]"
+                :class="[
+                  'bg-[#f3f3f5] rounded-lg h-9 px-3 font-nunito text-sm text-neutral-950 placeholder:text-[#717182] focus:outline-none focus:ring-2 focus:ring-[#009689]',
+                  props.serverErrors && props.serverErrors.phong_truc
+                    ? 'border-red-500'
+                    : 'border-transparent',
+                ]"
               />
+              <p
+                v-if="props.serverErrors && props.serverErrors.phong_truc"
+                class="text-xs text-red-600 mt-1"
+              >
+                {{ props.serverErrors.phong_truc[0] }}
+              </p>
             </div>
           </div>
 
           <!-- Shift Time Selection -->
           <div class="flex flex-col gap-3">
-            <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight">
+            <label
+              class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight"
+            >
               Thời gian (Ca trực) <span class="text-red-500">*</span>
             </label>
             <div class="flex flex-col gap-3">
@@ -79,7 +162,7 @@
                     'w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0',
                     selectedShift === 'morning'
                       ? 'border-[#030213]'
-                      : 'border-gray-300'
+                      : 'border-gray-300',
                   ]"
                 >
                   <div
@@ -89,10 +172,14 @@
                 </button>
                 <div class="flex items-center gap-2">
                   <img :src="iconSun" alt="Morning" class="w-4 h-4" />
-                  <span class="font-nunito text-base leading-6 text-neutral-950 tracking-tight">
+                  <span
+                    class="font-nunito text-base leading-6 text-neutral-950 tracking-tight"
+                  >
                     Ca Sáng
                   </span>
-                  <span class="font-nunito text-sm leading-5 text-[#6a7282] tracking-tight">
+                  <span
+                    class="font-nunito text-sm leading-5 text-[#6a7282] tracking-tight"
+                  >
                     (08:00 - 16:00)
                   </span>
                 </div>
@@ -106,7 +193,7 @@
                     'w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0',
                     selectedShift === 'afternoon'
                       ? 'border-[#030213]'
-                      : 'border-gray-300'
+                      : 'border-gray-300',
                   ]"
                 >
                   <div
@@ -116,10 +203,14 @@
                 </button>
                 <div class="flex items-center gap-2">
                   <img :src="iconSunset" alt="Afternoon" class="w-4 h-4" />
-                  <span class="font-nunito text-base leading-6 text-neutral-950 tracking-tight">
+                  <span
+                    class="font-nunito text-base leading-6 text-neutral-950 tracking-tight"
+                  >
                     Ca Chiều
                   </span>
-                  <span class="font-nunito text-sm leading-5 text-[#6a7282] tracking-tight">
+                  <span
+                    class="font-nunito text-sm leading-5 text-[#6a7282] tracking-tight"
+                  >
                     (13:00 - 21:00)
                   </span>
                 </div>
@@ -133,7 +224,7 @@
                     'w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0',
                     selectedShift === 'night'
                       ? 'border-[#030213]'
-                      : 'border-gray-300'
+                      : 'border-gray-300',
                   ]"
                 >
                   <div
@@ -143,10 +234,14 @@
                 </button>
                 <div class="flex items-center gap-2">
                   <img :src="iconMoon" alt="Night" class="w-4 h-4" />
-                  <span class="font-nunito text-base leading-6 text-neutral-950 tracking-tight">
+                  <span
+                    class="font-nunito text-base leading-6 text-neutral-950 tracking-tight"
+                  >
                     Ca Tối / Trực đêm
                   </span>
-                  <span class="font-nunito text-sm leading-5 text-[#6a7282] tracking-tight">
+                  <span
+                    class="font-nunito text-sm leading-5 text-[#6a7282] tracking-tight"
+                  >
                     (21:00 - 08:00)
                   </span>
                 </div>
@@ -154,7 +249,7 @@
 
               <!-- Custom Shift -->
               <div class="flex items-center gap-2">
-                <button
+                <!-- <button
                   @click="selectedShift = 'custom'"
                   :class="[
                     'w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0',
@@ -167,14 +262,20 @@
                     v-if="selectedShift === 'custom'"
                     class="w-2 h-2 rounded-full bg-[#030213]"
                   ></div>
-                </button>
-                <div class="flex items-center gap-2">
+                </button> -->
+                <!-- <div class="flex items-center gap-2">
                   <img :src="iconClock" alt="Custom" class="w-4 h-4" />
                   <span class="font-nunito text-base leading-6 text-neutral-950 tracking-tight">
                     Tùy chỉnh
                   </span>
-                </div>
+                </div> -->
               </div>
+              <p
+                v-if="props.serverErrors && props.serverErrors.thoi_gian_truc"
+                class="text-xs text-red-600 mt-1"
+              >
+                {{ props.serverErrors.thoi_gian_truc[0] }}
+              </p>
             </div>
           </div>
 
@@ -187,14 +288,26 @@
                   'w-4 h-4 rounded border flex items-center justify-center flex-shrink-0',
                   repeatWeekly
                     ? 'bg-[#030213] border-[#030213]'
-                    : 'bg-[#f3f3f5] border-gray-200/60'
+                    : 'bg-[#f3f3f5] border-gray-200/60',
                 ]"
               >
-                <svg v-if="repeatWeekly" class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 12 12">
-                  <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg
+                  v-if="repeatWeekly"
+                  class="w-3 h-3 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 12 12"
+                >
+                  <path
+                    d="M10 3L4.5 8.5L2 6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                 </svg>
               </button>
-              <label 
+              <label
                 @click="repeatWeekly = !repeatWeekly"
                 class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight cursor-pointer"
               >
@@ -208,21 +321,30 @@
         <div class="flex items-center justify-end gap-2">
           <button
             @click="$emit('close')"
-            class="bg-white border border-gray-200/60 rounded-lg h-9 px-[17px] py-[9px] hover:bg-gray-50 transition-colors"
+            :disabled="props.saving"
+            class="bg-white border border-gray-200/60 rounded-lg h-9 px-[17px] py-[9px] hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
-            <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Hủy</span>
+            <span
+              class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+              >Hủy</span
+            >
           </button>
           <button
             @click="handleSave"
-            :disabled="!isFormValid"
+            :disabled="!isFormValid || props.saving"
             :class="[
               'rounded-lg h-9 px-4 py-2 transition-colors',
-              isFormValid
+              isFormValid && !props.saving
                 ? 'bg-[#009689] hover:bg-[#007d72]'
-                : 'bg-gray-300 cursor-not-allowed'
+                : 'bg-gray-300 cursor-not-allowed',
             ]"
           >
-            <span class="font-nunito font-medium text-sm leading-5 text-white tracking-tight">Lưu</span>
+            <span
+              class="font-nunito font-medium text-sm leading-5 text-white tracking-tight"
+            >
+              <span v-if="props.saving">Đang lưu...</span>
+              <span v-else> Lưu</span>
+            </span>
           </button>
         </div>
       </div>
@@ -231,53 +353,72 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from "vue";
+import { listNhanVien } from "@/utils/nhanVien";
 
 // Props
 const props = defineProps({
   preselectedStaff: {
     type: Object,
-    default: null
+    default: null,
   },
   preselectedDate: {
     type: String,
-    default: ''
-  }
-})
+    default: "",
+  },
+  // server-side validation errors passed from parent
+  serverErrors: {
+    type: Object,
+    default: () => ({}),
+  },
+  // parent saving state
+  saving: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 // Emits
-const emit = defineEmits(['close', 'save'])
+const emit = defineEmits(["close", "save"]);
 
 // Icons (from Figma - expire in 7 days)
-const iconChevronDown = "https://www.figma.com/api/mcp/asset/d674c637-771a-470c-9ee9-bd998cfdd093"
-const iconSun = "https://www.figma.com/api/mcp/asset/c9e354c3-8fa1-4a4c-8b64-246eccd9b8f6"
-const iconSunset = "https://www.figma.com/api/mcp/asset/e2ad62cc-2427-490d-957f-0b54a8b145f8"
-const iconMoon = "https://www.figma.com/api/mcp/asset/035892ad-918a-4739-b1f7-206065cb2500"
-const iconClock = "https://www.figma.com/api/mcp/asset/34a32003-d33b-4e5d-a611-bb8554b77415"
-const iconClose = "https://www.figma.com/api/mcp/asset/c1aca6c3-953c-44dd-9939-0031d806bb2c"
+const iconChevronDown =
+  "https://www.figma.com/api/mcp/asset/d674c637-771a-470c-9ee9-bd998cfdd093";
+const iconSun =
+  "https://www.figma.com/api/mcp/asset/c9e354c3-8fa1-4a4c-8b64-246eccd9b8f6";
+const iconSunset =
+  "https://www.figma.com/api/mcp/asset/e2ad62cc-2427-490d-957f-0b54a8b145f8";
+const iconMoon =
+  "https://www.figma.com/api/mcp/asset/035892ad-918a-4739-b1f7-206065cb2500";
+const iconClock =
+  "https://www.figma.com/api/mcp/asset/34a32003-d33b-4e5d-a611-bb8554b77415";
+const iconClose =
+  "https://www.figma.com/api/mcp/asset/c1aca6c3-953c-44dd-9939-0031d806bb2c";
 
 // Reactive state
-const selectedStaff = ref(props.preselectedStaff)
-const selectedDate = ref(props.preselectedDate)
-const room = ref('')
-const selectedShift = ref('morning')
-const repeatWeekly = ref(false)
+const selectedStaff = ref(props.preselectedStaff);
+const staffList = ref([]);
+const showStaffDropdown = ref(false);
+const selectedDate = ref(props.preselectedDate);
+const room = ref("");
+const selectedShift = ref("morning");
+const repeatWeekly = ref(false);
 
 // Computed: Form validation
 const isFormValid = computed(() => {
-  return selectedStaff.value && selectedDate.value && selectedShift.value
-})
+  return selectedStaff.value && selectedDate.value && selectedShift.value;
+});
 
 // Methods
 const handleSave = () => {
-  if (!isFormValid.value) return
+  if (!isFormValid.value) return;
 
   const shiftTimes = {
-    morning: { start: '08:00', end: '16:00', label: 'Ca Sáng' },
-    afternoon: { start: '13:00', end: '21:00', label: 'Ca Chiều' },
-    night: { start: '21:00', end: '08:00', label: 'Ca Tối / Trực đêm' },
-    custom: { start: '', end: '', label: 'Tùy chỉnh' }
-  }
+    morning: { start: "08:00", end: "16:00", label: "Ca Sáng" },
+    afternoon: { start: "13:00", end: "21:00", label: "Ca Chiều" },
+    night: { start: "21:00", end: "08:00", label: "Ca Tối / Trực đêm" },
+    custom: { start: "", end: "", label: "Tùy chỉnh" },
+  };
 
   const shiftData = {
     staff: selectedStaff.value,
@@ -285,11 +426,35 @@ const handleSave = () => {
     room: room.value,
     shift: selectedShift.value,
     shiftTime: shiftTimes[selectedShift.value],
-    repeatWeekly: repeatWeekly.value
-  }
+    repeatWeekly: repeatWeekly.value,
+  };
 
-  emit('save', shiftData)
-}
+  emit("save", shiftData);
+};
+
+// Load staff list for dropdown
+onMounted(async () => {
+  try {
+    const items = await listNhanVien();
+    // map to simple objects if necessary
+    staffList.value = items.map((it) => ({
+      id: it.id,
+      name: it.full_name || it.name || it.ho_ten || "—",
+      raw: it,
+    }));
+  } catch (e) {
+    console.error("Failed to load staff list for shift dropdown", e);
+  }
+});
+
+const toggleStaffDropdown = () => {
+  showStaffDropdown.value = !showStaffDropdown.value;
+};
+
+const selectStaff = (staff) => {
+  selectedStaff.value = staff.raw || staff;
+  showStaffDropdown.value = false;
+};
 </script>
 
 <style scoped>

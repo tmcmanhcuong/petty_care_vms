@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 font-nunito">
-    <div class="bg-white border border-black/10 rounded-[10px] shadow-lg w-full max-w-[510px] relative">
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-[9999] pt-24 font-nunito">
+    <div class="bg-white border border-black/10 rounded-[10px] shadow-xl w-full max-w-[510px] relative">
       <!-- Close Button -->
       <button 
         @click="$emit('close')"

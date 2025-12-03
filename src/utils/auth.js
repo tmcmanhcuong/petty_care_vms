@@ -71,16 +71,39 @@ export function logout(router) {
   clearAuth();
   // If router provided, navigate to login page; otherwise do a hard navigation
   try {
+    // Decide which login page to redirect to based on current path.
+    // If the current location is under /admin, send to admin login; otherwise customer login.
+    const currentPath =
+      typeof window !== "undefined" &&
+      window.location &&
+      window.location.pathname
+        ? window.location.pathname
+        : "";
+    const target = currentPath.startsWith("/admin")
+      ? "/admin/dang-nhap"
+      : "/khach-hang/dang-nhap";
+
     if (router && typeof router.replace === "function") {
       // replace so the current history entry is replaced (reduces chance of going back)
-      router.replace("/khach-hang/dang-nhap");
+      router.replace(target);
     } else {
       // use location.replace to avoid adding a new history entry
-      window.location.replace("/khach-hang/dang-nhap");
+      window.location.replace(target);
     }
   } catch (e) {
     // fallback
-    window.location.replace("/khach-hang/dang-nhap");
+    try {
+      window.location.replace(
+        typeof window !== "undefined" &&
+          window.location &&
+          window.location.pathname &&
+          window.location.pathname.startsWith("/admin")
+          ? "/admin/dang-nhap"
+          : "/khach-hang/dang-nhap"
+      );
+    } catch (ee) {
+      // give up
+    }
   }
 }
 

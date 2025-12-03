@@ -81,9 +81,9 @@
                         {{ staff.name }}
                       </p>
                       <div class="flex items-center gap-2">
-                        <span class="bg-white border border-black/10 rounded-lg px-[9px] py-[3px] font-nunito font-medium text-xs leading-4 text-neutral-950">
+                        <!-- <span class="bg-white border border-black/10 rounded-lg px-[9px] py-[3px] font-nunito font-medium text-xs leading-4 text-neutral-950">
                           {{ staff.department }}
-                        </span>
+                        </span> -->
                         <div class="flex items-center gap-1">
                           <div class="w-[6px] h-[6px] rounded-full bg-[#00c950]"></div>
                           <span class="font-nunito text-xs leading-4 text-[#00a63e]">
@@ -137,9 +137,9 @@
                         {{ staff.name }}
                       </p>
                       <div class="flex items-center gap-2">
-                        <span class="bg-white border border-black/10 rounded-lg px-[9px] py-[3px] font-nunito font-medium text-xs leading-4 text-neutral-950">
+                        <!-- <span class="bg-white border border-black/10 rounded-lg px-[9px] py-[3px] font-nunito font-medium text-xs leading-4 text-neutral-950">
                           {{ staff.department }}
-                        </span>
+                        </span> -->
                         <span class="font-nunito text-xs leading-4 text-[#6a7282]">
                           Không có ca trực
                         </span>
@@ -202,14 +202,12 @@ const availableStaff = ref([
     id: 'staff1',
     name: 'BS. Nguyễn Văn B',
     initial: 'B',
-    department: 'Khoa Lâm Sàng',
     available: true
   },
   {
     id: 'staff2',
     name: 'BS. Phạm Thị H',
     initial: 'H',
-    department: 'Khoa Lâm Sàng',
     available: true
   }
 ])
@@ -219,7 +217,6 @@ const unavailableStaff = ref([
     id: 'staff3',
     name: 'NV. Lê Thị D',
     initial: 'D',
-    department: 'Khoa Lâm Sàng',
     available: false
   }
 ])

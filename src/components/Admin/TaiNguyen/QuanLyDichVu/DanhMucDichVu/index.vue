@@ -1,221 +1,250 @@
 <template>
-  <div class="flex flex-col bg-white rounded-[10px] shadow-xl w-full h-full overflow-hidden">
-    <!-- Header -->
-    <div class="flex items-start justify-between p-6 pb-4 border-b border-gray-100 shrink-0">
-      <div class="flex flex-col gap-1">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-[#f0fdfa] flex items-center justify-center">
-             <img :src="iconFolder" alt="" class="w-5 h-5" />
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-[1000] pt-24"
+    @click.self="$emit('close')"
+  >
+    <div
+      class="w-[512px] max-h-[85vh] bg-white rounded-[10px] overflow-hidden flex flex-col shadow-xl"
+    >
+      <div class="flex flex-col w-full h-full overflow-hidden p-6 gap-4">
+        <!-- Header -->
+        <div class="flex flex-col gap-2 shrink-0">
+          <div class="flex items-center gap-2">
+            <img :src="iconFolder" alt="" class="w-5 h-5" />
+            <h2 class="font-nunito font-semibold text-lg text-gray-900">
+              Quản lý Danh Mục Dịch vụ
+            </h2>
           </div>
-          <h2 class="font-nunito font-bold text-lg text-gray-900">
-            Quản lý Danh Mục Dịch vụ
-          </h2>
+          <p class="font-nunito text-sm text-gray-600">
+            Tạo và quản lý các danh mục dịch vụ để phân loại dịch vụ
+          </p>
         </div>
-        <p class="font-nunito text-sm text-gray-500 pl-10">
-          Tạo và quản lý các nhóm dịch vụ theo từng khoa
-        </p>
-      </div>
-      <button
-        class="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-md hover:bg-gray-100"
-        @click="$emit('close')"
-      >
-        <img :src="iconClose" alt="Close" class="w-5 h-5" />
-      </button>
-    </div>
 
-    <!-- Body -->
-    <div class="flex-1 flex flex-col min-h-0 p-6 pt-4 gap-4 overflow-hidden">
-      <!-- Department Selector -->
-      <div class="flex flex-col gap-1.5 shrink-0">
-        <label class="font-nunito font-semibold text-sm text-gray-700">
-          Chọn khoa
-        </label>
-        <div class="relative">
-          <select
-            v-model="selectedDepartment"
-            class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#5a9690] focus:border-[#5a9690] block p-2.5 appearance-none font-nunito cursor-pointer"
-          >
-            <option value="">Tất cả các khoa</option>
-            <option v-for="dept in uniqueDepartments" :key="dept" :value="dept">{{ dept }}</option>
-          </select>
-          <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-            <img :src="iconChevronDown" class="w-4 h-4 text-gray-500" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Categories List -->
-      <div class="flex-1 border border-gray-200 rounded-lg overflow-hidden flex flex-col min-h-0">
-        <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 shrink-0">
-          <span class="text-xs font-semibold text-gray-500 uppercase font-nunito">Danh sách nhóm ({{ filteredCategories.length }})</span>
-        </div>
-        <div class="flex-1 overflow-y-auto p-2 space-y-2 bg-white custom-scrollbar">
-          <div
-            v-for="category in filteredCategories"
-            :key="category.id"
-            class="group flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:border-[#5a9690]/30 hover:bg-[#5a9690]/5 transition-all"
-          >
-            <div class="flex flex-col">
-              <span class="font-nunito font-medium text-gray-900">{{ category.name }}</span>
-              <span class="text-xs text-gray-500 font-nunito">{{ category.department }} • {{ category.serviceCount }} dịch vụ</span>
-            </div>
-            <button
-              class="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-all"
-              @click="handleDeleteCategory(category)"
-              title="Xóa nhóm"
+        <!-- Categories List -->
+        <div
+          class="flex-1 bg-gray-50 border border-gray-200 rounded-lg overflow-hidden flex flex-col min-h-0 p-4"
+        >
+          <div class="flex-1 overflow-y-auto space-y-2 custom-scrollbar">
+            <div
+              v-for="category in categories"
+              :key="category.id"
+              class="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between hover:border-teal-600/30 hover:bg-teal-50/30 transition-all"
             >
-              <img :src="iconDelete" class="w-4 h-4" />
+              <div class="flex flex-col flex-1">
+                <span
+                  class="font-nunito font-normal text-base text-gray-900 leading-6"
+                  >{{ category.name }}</span
+                >
+                <span class="text-xs text-gray-600 font-nunito"
+                  >{{ category.description }} • {{ category.serviceCount }} dịch
+                  vụ</span
+                >
+              </div>
+              <button
+                class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                @click="handleDeleteCategory(category)"
+                :disabled="deletingId === category.id"
+                title="Xóa nhóm"
+              >
+                <img
+                  v-if="deletingId !== category.id"
+                  :src="iconDelete"
+                  class="w-4 h-4"
+                />
+                <span v-else class="text-xs text-gray-500">Đang xóa...</span>
+              </button>
+            </div>
+
+            <!-- Empty State -->
+            <div
+              v-if="categories.length === 0"
+              class="flex flex-col items-center justify-center h-full text-gray-400 py-8 gap-2"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center"
+              >
+                <img :src="iconFolder" class="w-6 h-6 opacity-20 grayscale" />
+              </div>
+              <p class="text-sm font-nunito">Chưa có danh mục nào</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer - Add New Category -->
+        <div class="border-t border-gray-200 pt-4 shrink-0 space-y-2">
+          <label class="font-nunito font-medium text-sm text-gray-900">
+            Thêm nhóm mới
+          </label>
+          <div class="space-y-3">
+            <input
+              v-model="newCategoryName"
+              type="text"
+              placeholder="Tên nhóm..."
+              class="w-full bg-gray-100 border-0 text-gray-700 text-sm rounded-lg focus:ring-teal-600 focus:border-teal-600 block p-2.5 font-nunito outline-none transition-all"
+              @keyup.enter="handleAddCategory"
+            />
+            <input
+              v-model="newCategoryDescription"
+              type="text"
+              placeholder="Mô tả (tùy chọn)..."
+              class="w-full bg-gray-100 border-0 text-gray-700 text-sm rounded-lg focus:ring-teal-600 focus:border-teal-600 block p-2.5 font-nunito outline-none transition-all"
+              @keyup.enter="handleAddCategory"
+            />
+            <button
+              class="w-full py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed font-nunito"
+              :disabled="!newCategoryName.trim() || adding"
+              @click="handleAddCategory"
+            >
+              <img :src="iconPlus" class="w-4 h-4 brightness-0 invert" />
+              <span v-if="!adding">Thêm nhóm</span>
+              <span v-else>Đang tạo...</span>
             </button>
           </div>
-          
-          <!-- Empty State -->
-          <div v-if="filteredCategories.length === 0" class="flex flex-col items-center justify-center h-full text-gray-400 py-8 gap-2">
-            <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center">
-              <img :src="iconFolder" class="w-6 h-6 opacity-20 grayscale" />
-            </div>
-            <p class="text-sm font-nunito">Không tìm thấy nhóm dịch vụ nào</p>
-          </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="p-6 pt-4 border-t border-gray-100 bg-gray-50/50 shrink-0">
-      <div class="flex flex-col gap-3">
-        <label class="font-nunito font-semibold text-sm text-gray-700">
-          Thêm nhóm mới
-        </label>
-        <div class="flex gap-2">
-          <input
-            v-model="newCategoryName"
-            type="text"
-            placeholder="Nhập tên nhóm..."
-            class="flex-1 bg-white border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#5a9690] focus:border-[#5a9690] block p-2.5 font-nunito outline-none transition-all"
-            :disabled="!selectedDepartment"
-            @keyup.enter="handleAddCategory"
-          />
-          <button
-            class="px-4 py-2 bg-[#5a9690] hover:bg-[#4a7f79] text-white rounded-lg font-medium text-sm transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed font-nunito shrink-0"
-            :disabled="!selectedDepartment || !newCategoryName.trim()"
-            @click="handleAddCategory"
-          >
-            <img :src="iconPlus" class="w-4 h-4 brightness-0 invert" />
-            Thêm
-          </button>
-        </div>
-        <p v-if="!selectedDepartment" class="text-xs text-amber-600 font-nunito flex items-center gap-1">
-          <span>⚠️</span> Vui lòng chọn khoa cụ thể để thêm nhóm mới
-        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted } from "vue";
+import api, { attachToken } from "@/utils/api";
+import { showSuccessToast, showErrorToast, showInfoToast } from "@/utils/toast";
+import { clearAuth } from "@/utils/auth";
 
-const emit = defineEmits(['close', 'addCategory', 'deleteCategory'])
+const emit = defineEmits(["close", "addCategory", "deleteCategory"]);
 
 // State
-const selectedDepartment = ref('')
-const newCategoryName = ref('')
+const newCategoryName = ref("");
+const newCategoryDescription = ref("");
+const categories = ref([]);
+const loading = ref(false);
+const adding = ref(false);
+const deletingId = ref(null);
 
-// Sample data
-const categories = ref([
-  {
-    id: 1,
-    name: 'Cắt tỉa',
-    department: 'Spa & Grooming',
-    serviceCount: 1
-  },
-  {
-    id: 2,
-    name: 'Tắm sấy',
-    department: 'Spa & Grooming',
-    serviceCount: 2
-  },
-  {
-    id: 3,
-    name: 'Nhuộm lông',
-    department: 'Spa & Grooming',
-    serviceCount: 0
-  },
-  {
-    id: 4,
-    name: 'Tiêm phòng',
-    department: 'Khoa Lâm Sàng',
-    serviceCount: 1
-  },
-  {
-    id: 5,
-    name: 'Khám bệnh',
-    department: 'Khoa Lâm Sàng',
-    serviceCount: 1
-  },
-  {
-    id: 6,
-    name: 'Xét nghiệm',
-    department: 'Khoa Lâm Sàng',
-    serviceCount: 1
-  },
-  {
-    id: 7,
-    name: 'Thức ăn',
-    department: 'Pet Shop',
-    serviceCount: 0
-  },
-  {
-    id: 8,
-    name: 'Phụ kiện',
-    department: 'Pet Shop',
-    serviceCount: 0
+// Icon URLs from Figma
+const iconFolder =
+  "https://www.figma.com/api/mcp/asset/4f9adbdd-1893-41d2-8672-ca8be0ced444";
+const iconDelete =
+  "https://www.figma.com/api/mcp/asset/ee18260a-445b-40bb-a50c-dbaeb3bdbfc7";
+const iconPlus =
+  "https://www.figma.com/api/mcp/asset/23574880-4357-4ba1-ab64-697061f1221b";
+
+// Helpers
+const normalize = (i) => ({
+  id: i.id,
+  name: i.ten_nhom ?? i.name ?? "",
+  description: i.mo_ta ?? i.description ?? "Chưa có mô tả",
+  serviceCount: i.service_count ?? 0,
+});
+
+const handleApiError = (e, defaultMsg = "Có lỗi xảy ra. Vui lòng thử lại.") => {
+  console.error("API error", e);
+  if (e && e.response) {
+    if (e.response.status === 401) {
+      showErrorToast(
+        "Chưa xác thực",
+        "Phiên đăng nhập đã hết hạn hoặc bạn chưa đăng nhập. Vui lòng đăng nhập lại."
+      );
+      try {
+        clearAuth();
+      } catch (_) {}
+      window.location.href = "/admin/dang-nhap";
+      return null;
+    }
+
+    const msg =
+      e.response.data && e.response.data.message
+        ? e.response.data.message
+        : defaultMsg;
+    showErrorToast("Lỗi", msg);
+    return null;
   }
-])
 
-// Computed
-const uniqueDepartments = computed(() => {
-  const depts = new Set(categories.value.map(c => c.department))
-  return Array.from(depts)
-})
+  showErrorToast("Lỗi", defaultMsg);
+  return null;
+};
 
-const filteredCategories = computed(() => {
-  if (!selectedDepartment.value) return categories.value
-  return categories.value.filter(c => c.department === selectedDepartment.value)
-})
+// Fetch categories from backend
+const fetchCategories = async () => {
+  loading.value = true;
+  try {
+    const res = await api.get("/danh-muc-dich-vu");
+    const items = (res && res.data && res.data.data) || [];
+    categories.value = items.map(normalize);
+  } catch (e) {
+    handleApiError(e, "Không tải được danh mục dịch vụ. Vui lòng thử lại.");
+  } finally {
+    loading.value = false;
+  }
+};
 
-// Icon URLs from Figma (expire in 7 days)
-const iconFolder = "https://www.figma.com/api/mcp/asset/748ca3f4-e562-4223-9e77-7e938a826bc9"
-const iconChevronDown = "https://www.figma.com/api/mcp/asset/3166eaf1-6101-478d-8d03-fdeb48468b43"
-const iconDelete = "https://www.figma.com/api/mcp/asset/c1bc743c-8931-46b2-9ddb-04a1e036c137"
-const iconPlus = "https://www.figma.com/api/mcp/asset/64f50774-2e92-4326-91d0-af089daa1df7"
-const iconClose = "https://www.figma.com/api/mcp/asset/a6a4548a-a1df-4511-8403-6bb9c4a0a210"
+onMounted(() => {
+  fetchCategories();
+});
 
 // Methods
-const handleAddCategory = () => {
-  if (selectedDepartment.value && newCategoryName.value.trim()) {
-    // In a real app, this would be an API call
-    const newId = Math.max(...categories.value.map(c => c.id)) + 1
-    categories.value.push({
-      id: newId,
-      name: newCategoryName.value.trim(),
-      department: selectedDepartment.value,
-      serviceCount: 0
-    })
-    
-    emit('addCategory', {
-      name: newCategoryName.value,
-      department: selectedDepartment.value
-    })
-    newCategoryName.value = ''
-  }
-}
+const handleAddCategory = async () => {
+  if (!newCategoryName.value.trim()) return;
+  adding.value = true;
+  try {
+    const payload = {
+      ten_nhom: newCategoryName.value.trim(),
+      mo_ta: newCategoryDescription.value.trim() || null,
+    };
 
-const handleDeleteCategory = (category) => {
-  if (confirm(`Bạn có chắc muốn xóa nhóm "${category.name}"?`)) {
-    categories.value = categories.value.filter(c => c.id !== category.id)
-    emit('deleteCategory', category)
+    // ensure token (api client will attach token if present)
+    attachToken();
+    const res = await api.post("/danh-muc-dich-vu", payload);
+
+    if (res && res.data && res.data.status) {
+      const created = res.data.data;
+      categories.value.unshift(normalize(created));
+      showSuccessToast("Thành công", "Tạo danh mục dịch vụ mới thành công.");
+      emit("addCategory", created);
+      newCategoryName.value = "";
+      newCategoryDescription.value = "";
+    } else {
+      const message =
+        (res && res.data && res.data.message) || "Lỗi khi tạo danh mục.";
+      showErrorToast("Lỗi", message);
+    }
+  } catch (e) {
+    console.error("create category error", e);
+    handleApiError(
+      e,
+      "Không thể tạo danh mục. Vui lòng kiểm tra quyền hoặc thử lại."
+    );
+  } finally {
+    adding.value = false;
   }
-}
+};
+
+const handleDeleteCategory = async (category) => {
+  if (!confirm(`Bạn có chắc muốn xóa nhóm "${category.name}"?`)) return;
+
+  deletingId.value = category.id;
+  try {
+    attachToken();
+    const res = await api.delete(`/danh-muc-dich-vu/${category.id}`);
+    if (res && res.data && res.data.status) {
+      categories.value = categories.value.filter((c) => c.id !== category.id);
+      showSuccessToast(
+        "Thành công",
+        res.data.message || "Xóa danh mục thành công."
+      );
+      emit("deleteCategory", category);
+    } else {
+      const message =
+        (res && res.data && res.data.message) || "Lỗi khi xóa danh mục.";
+      showErrorToast("Lỗi", message);
+    }
+  } catch (e) {
+    handleApiError(e, "Có lỗi xảy ra khi xóa danh mục. Vui lòng thử lại.");
+  } finally {
+    deletingId.value = null;
+  }
+};
 </script>
 
 <style scoped>

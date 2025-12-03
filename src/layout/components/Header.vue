@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white border-b border-[#f3f4f6] flex flex-col justify-center px-6 py-3 w-full h-full"
+    class="bg-white border-b border-[#e6e6e6] shadow-sm flex flex-col justify-center px-6 py-10 w-full h-full"
     data-name="Header"
   >
     <div class="flex flex-col gap-2.5 items-start w-full">
@@ -65,7 +65,7 @@
           <!-- User Profile Button -->
           <button
             class="flex gap-2 items-center justify-center rounded-lg hover:bg-gray-50 p-1 transition-colors"
-            @click="toggleUserMenu"
+            @click="handleProfileClick"
           >
             <!-- Avatar: show image if available, otherwise initials -->
             <div>
@@ -105,32 +105,6 @@
           </button>
         </div>
       </div>
-    </div>
-
-    <!-- User Dropdown Menu (Optional) -->
-    <div
-      v-if="showUserMenu"
-      class="absolute right-6 top-16 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-50 min-w-[200px]"
-    >
-      <button
-        class="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm font-nunitoSans"
-        @click="handleProfile"
-      >
-        Hồ sơ cá nhân
-      </button>
-      <button
-        class="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm font-nunitoSans"
-        @click="handleSettings"
-      >
-        Cài đặt
-      </button>
-      <hr class="my-2" />
-      <button
-        class="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 rounded text-sm font-nunitoSans"
-        @click="handleLogout"
-      >
-        Đăng xuất
-      </button>
     </div>
   </div>
 </template>
@@ -229,6 +203,14 @@ const handleSearch = () => {
   console.log("Search query:", searchQuery.value);
   // Implement search logic here
   // Example: router.push({ name: 'search', query: { q: searchQuery.value } });
+};
+
+const handleProfileClick = () => {
+  if (route.path.startsWith('/doctor')) {
+    router.push('/doctor/trang-ca-nhan');
+  } else {
+    router.push('/admin/trang-ca-nhan');
+  }
 };
 
 const handleNotificationClick = () => {

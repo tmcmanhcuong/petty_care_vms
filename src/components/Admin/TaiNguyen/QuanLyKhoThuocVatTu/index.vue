@@ -53,15 +53,21 @@
               <h3 class="font-nunito text-base leading-4 text-neutral-950 tracking-tight">
                 Danh sách hàng hóa
               </h3>
-              <button 
-                class="bg-[#5a9690] rounded-lg h-9 px-3 py-2 flex items-center gap-2 hover:bg-[#4a8580] transition-colors"
-                @click="isAddModalOpen = true"
-              >
-                <img :src="iconAddItem" alt="" class="w-4 h-4" />
-                <span class="font-nunito font-medium text-sm leading-5 text-white tracking-tight">
-                  Thêm thuốc & vật tư mới
-                </span>
-              </button>
+              <div class="flex items-center gap-3">
+                <button class="btn-secondary" @click="handleManageCategories">
+                  <img :src="iconFolder" alt="" class="btn-icon" />
+                  <span class="btn-text">Danh Mục Hàng Hoá</span>
+                </button>
+                <button 
+                  class="bg-[#5a9690] rounded-lg h-9 px-3 py-2 flex items-center gap-2 hover:bg-[#4a8580] transition-colors"
+                  @click="isAddModalOpen = true"
+                >
+                  <img :src="iconAddItem" alt="" class="w-4 h-4" />
+                  <span class="font-nunito font-medium text-sm leading-5 text-white tracking-tight">
+                    Thêm Hàng Hoá
+                  </span>
+                </button>
+              </div>
             </div>
 
             <!-- Search and Filters -->
@@ -584,6 +590,11 @@
       @delete="handleConfirmDeleteSupplier"
       @deactivate="handleDeactivateSupplier"
     />
+
+    <DanhMucHangHoa
+      v-if="isManageCategoriesModalOpen"
+      @close="isManageCategoriesModalOpen = false"
+    />
   </div>
 </template>
 
@@ -596,6 +607,7 @@ import ChiTietPhieuNhap from './ChiTietPhieuNhap/index.vue'
 import ThemDoiTacCungCap from './ThemDoiTacCungCap/index.vue'
 import SuaNhaCungCap from './SuaNhaCungCap/index.vue'
 import XoaNhaCungCap from './XoaNhaCungCap/index.vue'
+import DanhMucHangHoa from './DanhMucHangHoa/index.vue'
 
 // State
 const activeTab = ref('danh-sach')
@@ -616,6 +628,7 @@ const selectedSupplierForEdit = ref(null)
 const isXoaNhaCungCapModalOpen = ref(false)
 const selectedSupplierForDelete = ref(null)
 const relatedReceiptsForDelete = ref([])
+const isManageCategoriesModalOpen = ref(false)
 
 const tabs = [
   { id: 'danh-sach', name: 'Danh sách & Tồn kho' },
@@ -846,6 +859,7 @@ const iconEdit = "https://www.figma.com/api/mcp/asset/573f95f2-4c6a-475b-b38c-0c
 const iconDelete = "https://www.figma.com/api/mcp/asset/db259098-cbc5-4ede-9aac-244844d1ba0a"
 const iconChevronLeft = "https://www.figma.com/api/mcp/asset/6d46ecce-c14a-4ba9-afc1-b477dd7c7a66"
 const iconChevronRight = "https://www.figma.com/api/mcp/asset/dec0f180-4a84-46dc-8ecb-737a257369ae"
+const iconFolder = "https://www.figma.com/api/mcp/asset/d6fa9f58-18e9-46fb-a4c7-d6d5ac16c30b"
 
 // Methods
 const formatCurrency = (amount) => {
@@ -918,6 +932,14 @@ const handleDeactivateSupplier = () => {
   // Logic to deactivate supplier goes here
   isXoaNhaCungCapModalOpen.value = false
 }
+
+const handleManageCategories = () => {
+  isManageCategoriesModalOpen.value = true
+}
+
+const handleAddInventory = () => {
+  isAddModalOpen.value = true
+}
 </script>
 
 <style scoped>
@@ -932,5 +954,36 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+/* Button Styles */
+.btn-secondary {
+  background: white;
+  border: 1px solid #5a9690;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #f9fafb;
+}
+
+.btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+  color: #009689;
 }
 </style>

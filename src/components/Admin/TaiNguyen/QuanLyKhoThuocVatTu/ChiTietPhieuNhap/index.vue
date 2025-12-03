@@ -11,11 +11,11 @@
             Thông tin chi tiết phiếu nhập kho
           </p>
         </div>
-        <div class="bg-green-100 border border-[#b9f8cf] rounded-lg px-[9px] py-[3px] h-[22px]">
+        <!-- <div class="bg-green-100 border border-[#b9f8cf] rounded-lg px-[9px] py-[3px] h-[22px]">
           <span class="font-nunito font-medium text-xs leading-4 text-[#008236]">
             Đã nhập kho
           </span>
-        </div>
+        </div> -->
       </div>
 
       <!-- Content -->

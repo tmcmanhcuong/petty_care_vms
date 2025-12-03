@@ -1,9 +1,13 @@
 <template>
-  <div class="relative bg-white border border-gray-200/60 rounded-[10px] w-full h-full overflow-y-auto">
+  <div
+    class="relative bg-white border border-gray-200/60 rounded-[10px] w-full h-full overflow-y-auto"
+  >
     <div class="flex flex-col gap-4 p-6">
       <!-- Header -->
       <div class="flex flex-col gap-2 h-[46px]">
-        <h2 class="font-nunito font-semibold text-lg leading-[18px] text-neutral-950 tracking-tight">
+        <h2
+          class="font-nunito font-semibold text-lg leading-[18px] text-neutral-950 tracking-tight"
+        >
           Thêm dịch vụ mới
         </h2>
         <p class="font-nunito text-sm leading-5 text-[#717182] tracking-tight">
@@ -13,50 +17,95 @@
 
       <!-- Form Content -->
       <div class="flex flex-col gap-4">
-        <!-- Step 1: Select Department -->
-        <div class="flex flex-col gap-0 h-[50px]">
-          <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]">
-            Bước 1: Chọn Khoa (*)
-          </label>
-          <button
-            class="bg-[#f3f3f5] border-none rounded-lg h-9 px-[13px] py-0.5 flex items-center justify-between hover:bg-gray-200 transition-colors"
-            @click="toggleDepartmentDropdown"
-          >
-            <span class="font-nunito text-sm leading-5 tracking-tight" :class="selectedDepartment ? 'text-neutral-950' : 'text-[#717182]'">
-              {{ selectedDepartment || 'Chọn khoa' }}
-            </span>
-            <img :src="iconChevronDown" alt="" class="w-4 h-4" />
-          </button>
-        </div>
-
-        <!-- Step 2: Select Category -->
+        <!-- Step 1: Select Category -->
         <div class="relative h-[58px]">
-          <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight absolute top-0 left-0">
-            Bước 2: Chọn Danh mục dịch vụ (*)
+          <label
+            class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight absolute top-0 left-0"
+          >
+            Bước 1: Chọn Danh mục dịch vụ (*)
           </label>
           <button
-            class="bg-[#f3f3f5] border-none rounded-lg h-9 px-[13px] py-0.5 flex items-center justify-between absolute top-[22px] left-0 w-full transition-colors"
-            :class="!selectedDepartment ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200 cursor-pointer'"
-            :disabled="!selectedDepartment"
+            class="bg-[#f3f3f5] border-none rounded-lg h-9 px-[13px] py-0.5 flex items-center justify-between absolute top-[22px] left-0 w-full transition-colors hover:bg-gray-200 cursor-pointer"
             @click="toggleCategoryDropdown"
           >
-            <span class="font-nunito text-sm leading-5 text-[#717182] tracking-tight">
-              {{ selectedCategory || 'Vui lòng chọn khoa trước' }}
+            <span class="flex items-center gap-2">
+              <span
+                class="font-nunito text-sm leading-5 text-[#717182] tracking-tight"
+              >
+                {{ selectedCategory || "Vui lòng chọn danh mục dịch vụ trước" }}
+              </span>
+              <!-- small spinner when loading categories -->
+              <svg
+                v-if="loadingCats"
+                class="animate-spin h-4 w-4 text-gray-500"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+              </svg>
             </span>
             <img :src="iconChevronDown" alt="" class="w-4 h-4" />
           </button>
+          <!-- Category dropdown -->
+          <div
+            v-if="showCategoryDropdown"
+            class="absolute top-[66px] left-0 w-full z-50"
+          >
+            <div
+              class="bg-white border border-gray-200 rounded-lg max-h-48 overflow-auto shadow"
+            >
+              <button
+                v-for="c in categories"
+                :key="c.id"
+                @click="selectCategory(c)"
+                class="w-full text-left px-3 py-2 hover:bg-gray-100 transition-colors text-sm"
+              >
+                {{ c.ten_nhom }}
+              </button>
+              <div v-if="loadingCats" class="p-3 text-xs text-gray-500">
+                Đang tải...
+              </div>
+              <div
+                v-if="!loadingCats && categories.length === 0"
+                class="p-3 text-xs text-gray-500"
+              >
+                Chưa có danh mục
+              </div>
+            </div>
+          </div>
+          <!-- inline category error -->
+          <div v-if="errors.category" class="text-xs text-red-600 mt-1">
+            {{ errors.category }}
+          </div>
         </div>
 
-        <!-- Step 3: Details -->
+        <!-- Step 2: Details -->
         <div class="border-t border-gray-200/60 pt-[17px] flex flex-col gap-3">
-          <h4 class="font-nunito font-semibold text-sm leading-5 text-neutral-950 tracking-tight">
-            Bước 3: Thông tin chi tiết
+          <h4
+            class="font-nunito font-semibold text-sm leading-5 text-neutral-950 tracking-tight"
+          >
+            Bước 2: Thông tin chi tiết
           </h4>
 
           <div class="flex flex-col gap-4">
             <!-- Service Name -->
             <div class="flex flex-col gap-0 h-[50px]">
-              <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]">
+              <label
+                class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]"
+              >
                 Tên dịch vụ (*)
               </label>
               <input
@@ -65,11 +114,16 @@
                 placeholder="Ví dụ: Cắt tỉa lông chó < 5kg"
                 class="bg-[#f3f3f5] border-none rounded-lg h-9 px-3 py-1 font-nunito text-sm text-neutral-950 tracking-tight outline-none placeholder:text-[#717182]"
               />
+              <div v-if="errors.name" class="text-xs text-red-600 mt-1">
+                {{ errors.name }}
+              </div>
             </div>
 
             <!-- Service Code -->
             <div class="flex flex-col gap-0 h-[50px]">
-              <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]">
+              <label
+                class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]"
+              >
                 Mã Dịch Vụ (*)
               </label>
               <input
@@ -78,26 +132,39 @@
                 placeholder="Ví dụ: SPA-CT-001"
                 class="bg-[#f3f3f5] border-none rounded-lg h-9 px-3 py-1 font-nunito text-sm text-neutral-950 tracking-tight outline-none placeholder:text-[#717182]"
               />
+              <div v-if="errors.code" class="text-xs text-red-600 mt-1">
+                {{ errors.code }}
+              </div>
             </div>
 
             <!-- Price and Duration -->
             <div class="grid grid-cols-2 gap-4 h-[70px]">
               <!-- Price -->
               <div class="flex flex-col gap-0">
-                <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]">
+                <label
+                  class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]"
+                >
                   Giá bán (VNĐ) (*)
                 </label>
                 <input
-                  v-model.number="formData.price"
-                  type="number"
+                  v-model="formattedPrice"
+                  type="text"
+                  inputmode="numeric"
                   placeholder="200000"
+                  @input="onPriceInput"
+                  @keydown="priceKeydown"
                   class="bg-[#f3f3f5] border-none rounded-lg h-9 px-3 py-1 font-nunito text-sm text-neutral-950 tracking-tight outline-none placeholder:text-[#717182]"
                 />
+                <div v-if="errors.price" class="text-xs text-red-600 mt-1">
+                  {{ errors.price }}
+                </div>
               </div>
 
               <!-- Duration -->
               <div class="flex flex-col gap-0">
-                <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]">
+                <label
+                  class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]"
+                >
                   Thời gian (phút) (*)
                 </label>
                 <input
@@ -106,6 +173,9 @@
                   placeholder="60"
                   class="bg-[#f3f3f5] border-none rounded-lg h-9 px-3 py-1 font-nunito text-sm text-neutral-950 tracking-tight outline-none placeholder:text-[#717182]"
                 />
+                <div v-if="errors.duration" class="text-xs text-red-600 mt-1">
+                  {{ errors.duration }}
+                </div>
                 <p class="font-nunito text-xs leading-4 text-[#6a7282] mt-1">
                   Quan trọng để xếp lịch
                 </p>
@@ -114,7 +184,9 @@
 
             <!-- Description -->
             <div class="flex flex-col gap-0 h-[78px]">
-              <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]">
+              <label
+                class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]"
+              >
                 Mô tả
               </label>
               <textarea
@@ -127,7 +199,9 @@
 
             <!-- Instructions -->
             <div class="flex flex-col gap-0 h-[78px]">
-              <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]">
+              <label
+                class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]"
+              >
                 Hướng dẫn
               </label>
               <textarea
@@ -138,33 +212,14 @@
               ></textarea>
             </div>
 
-            <!-- Require Booking -->
-            <div class="bg-gray-50 rounded-[10px] h-[54px] px-3 flex items-center justify-between">
-              <div class="flex flex-col">
-                <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight">
-                  Yêu cầu đặt lịch trước
-                </label>
-                <p class="font-nunito text-xs leading-4 text-[#4a5565]">
-                  Khách hàng phải đặt lịch trước khi sử dụng
-                </p>
-              </div>
-              <button
-                type="button"
-                class="relative w-8 h-[18.398px] rounded-full transition-colors"
-                :class="formData.requireBooking ? 'bg-[#030213]' : 'bg-gray-300'"
-                @click="formData.requireBooking = !formData.requireBooking"
-              >
-                <span
-                  class="absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform"
-                  :class="formData.requireBooking ? 'left-[15px]' : 'left-0.5'"
-                ></span>
-              </button>
-            </div>
-
             <!-- Status -->
-            <div class="bg-gray-50 rounded-[10px] h-[54px] px-3 flex items-center justify-between">
+            <div
+              class="bg-gray-50 rounded-[10px] h-[54px] px-3 flex items-center justify-between"
+            >
               <div class="flex flex-col">
-                <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight">
+                <label
+                  class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight"
+                >
                   Trạng thái
                 </label>
                 <p class="font-nunito text-xs leading-4 text-[#4a5565]">
@@ -186,7 +241,9 @@
 
             <!-- Image Upload -->
             <div class="flex flex-col gap-0 h-[206px]">
-              <label class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]">
+              <label
+                class="font-nunito font-medium text-sm leading-[14px] text-neutral-950 tracking-tight mb-[10px]"
+              >
                 Ảnh đại diện
               </label>
               <div
@@ -194,7 +251,9 @@
                 @click="triggerFileInput"
               >
                 <img :src="iconUpload" alt="" class="w-12 h-12" />
-                <p class="font-nunito text-base leading-6 text-[#4a5565] tracking-tight">
+                <p
+                  class="font-nunito text-base leading-6 text-[#4a5565] tracking-tight"
+                >
                   Click để chọn ảnh
                 </p>
                 <p class="font-nunito text-xs leading-4 text-[#99a1af]">
@@ -219,16 +278,22 @@
           class="bg-white border border-gray-200/60 rounded-lg h-9 px-[17px] py-[9px] flex items-center justify-center hover:bg-gray-50 transition-colors"
           @click="handleCancel"
         >
-          <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
+          <span
+            class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+          >
             Hủy
           </span>
         </button>
         <button
-          class="bg-[#009689] rounded-lg h-9 px-4 py-2 flex items-center justify-center hover:bg-[#007d72] transition-colors"
+          class="bg-[#009689] rounded-lg h-9 px-4 py-2 flex items-center justify-center hover:bg-[#007d72] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           @click="handleSave"
+          :disabled="saving"
         >
-          <span class="font-nunito font-medium text-sm leading-5 text-white tracking-tight">
-            Lưu lại
+          <span
+            class="font-nunito font-medium text-sm leading-5 text-white tracking-tight"
+          >
+            <span v-if="!saving">Lưu lại</span>
+            <span v-else>Đang lưu...</span>
           </span>
         </button>
       </div>
@@ -237,96 +302,291 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from "vue";
+import api, { attachToken } from "@/utils/api";
+// API origin (strip trailing /api) so we can build absolute URLs for uploaded files
+const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000/api";
+const API_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
+import { showErrorToast, showSuccessToast } from "@/utils/toast";
 
-const emit = defineEmits(['close', 'save'])
+const emit = defineEmits(["close", "save"]);
 
 // State
-const selectedDepartment = ref('')
-const selectedCategory = ref('')
-const fileInput = ref(null)
+const selectedDepartment = ref("");
+const selectedCategory = ref("");
+const selectedCategoryId = ref(null);
+const showCategoryDropdown = ref(false);
+const categories = ref([]);
+const loadingCats = ref(false);
+// validation errors from server or client
+const errors = reactive({});
+const fileInput = ref(null);
 
 const formData = reactive({
-  name: '',
-  code: '',
+  name: "",
+  code: "",
   price: null,
   duration: null,
-  description: '',
-  instructions: '',
+  description: "",
+  instructions: "",
   requireBooking: true,
   isActive: true,
-  image: null
-})
+  image: null,
+});
+const saving = ref(false);
+
+// formatted price (VND) shown in the input while storing numeric value in formData.price
+const formattedPrice = computed({
+  get() {
+    const v = formData.price;
+    if (v === null || v === undefined || v === "") return "";
+    try {
+      return new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0,
+      }).format(Number(v));
+    } catch (e) {
+      return String(v);
+    }
+  },
+  set(val) {
+    // remove non-digit characters
+    const digits = String(val).replace(/[^0-9]/g, "");
+    if (digits === "") formData.price = null;
+    else formData.price = parseInt(digits, 10);
+  },
+});
 
 // Icon URLs from Figma (expire in 7 days)
-const iconChevronDown = "https://www.figma.com/api/mcp/asset/c1f4500a-976f-4d96-9aa9-7e5957c97728"
-const iconUpload = "https://www.figma.com/api/mcp/asset/f875eb22-4532-4e8e-a61d-a50ba158caec"
+const iconChevronDown =
+  "https://www.figma.com/api/mcp/asset/c1f4500a-976f-4d96-9aa9-7e5957c97728";
+const iconUpload =
+  "https://www.figma.com/api/mcp/asset/f875eb22-4532-4e8e-a61d-a50ba158caec";
 
 // Methods
 const toggleDepartmentDropdown = () => {
-  console.log('Toggle department dropdown')
-  // Implement dropdown logic here
-}
+  console.log("Toggle department dropdown");
+  // Implement department dropdown logic here
+};
 
-const toggleCategoryDropdown = () => {
-  if (selectedDepartment.value) {
-    console.log('Toggle category dropdown')
-    // Implement dropdown logic here
+const fetchCategories = async () => {
+  loadingCats.value = true;
+  try {
+    const res = await api.get("/danh-muc-dich-vu");
+    const items = (res && res.data && res.data.data) || [];
+    categories.value = items.map((i) => ({
+      id: i.id,
+      ten_nhom: i.ten_nhom,
+      mo_ta: i.mo_ta,
+    }));
+  } catch (e) {
+    console.error("fetchCategories error", e);
+    showErrorToast("Lỗi", "Không tải được danh mục dịch vụ. Vui lòng thử lại.");
+  } finally {
+    loadingCats.value = false;
   }
-}
+};
+
+const toggleCategoryDropdown = async () => {
+  // Allow selecting category without requiring a department
+  showCategoryDropdown.value = !showCategoryDropdown.value;
+  if (showCategoryDropdown.value && categories.value.length === 0) {
+    await fetchCategories();
+  }
+};
+
+const selectCategory = (c) => {
+  selectedCategory.value = c.ten_nhom;
+  selectedCategoryId.value = c.id;
+  showCategoryDropdown.value = false;
+  // clear prior category error
+  if (errors.category) delete errors.category;
+};
 
 const triggerFileInput = () => {
-  fileInput.value?.click()
-}
+  fileInput.value?.click();
+};
 
 const handleFileUpload = (event) => {
-  const file = event.target.files?.[0]
+  const file = event.target.files?.[0];
   if (file) {
     // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB')
-      return
+      alert("File size must be less than 5MB");
+      return;
     }
-    
+
     // Validate file type
-    const validTypes = ['image/png', 'image/jpeg', 'image/gif']
+    const validTypes = ["image/png", "image/jpeg", "image/gif"];
     if (!validTypes.includes(file.type)) {
-      alert('File type must be PNG, JPG, or GIF')
-      return
+      alert("File type must be PNG, JPG, or GIF");
+      return;
     }
-    
-    formData.image = file
-    console.log('File uploaded:', file.name)
+
+    formData.image = file;
+    console.log("File uploaded:", file.name);
   }
-}
+};
+
+// Ensure price input only accepts digits. This will strip non-digits on paste/input
+const onPriceInput = (event) => {
+  const raw = event.target.value || "";
+  const digits = String(raw).replace(/[^0-9]/g, "");
+  // Update computed setter via its .value to normalize and store numeric value
+  try {
+    formattedPrice.value = digits;
+  } catch (e) {
+    // fallback: directly set formData.price
+    formData.price = digits === "" ? null : parseInt(digits, 10);
+  }
+};
+
+// Prevent non-numeric keys (allow navigation, editing, and clipboard shortcuts)
+const priceKeydown = (e) => {
+  const allowed = [
+    "Backspace",
+    "Delete",
+    "ArrowLeft",
+    "ArrowRight",
+    "Tab",
+    "Enter",
+  ];
+  if (allowed.includes(e.key)) return;
+  if (e.ctrlKey || e.metaKey) return; // allow copy/paste/select all
+  // allow digits
+  if (/^[0-9]$/.test(e.key)) return;
+  // otherwise prevent
+  e.preventDefault();
+};
 
 const handleCancel = () => {
-  emit('close')
-}
+  emit("close");
+};
 
-const handleSave = () => {
-  // Validate required fields
-  if (!selectedDepartment.value) {
-    alert('Vui lòng chọn khoa')
-    return
-  }
-  
+const handleSave = async () => {
+  // clear prior errors
+  Object.keys(errors).forEach((k) => delete errors[k]);
+
+  // Client-side validation: set errors to show inline instead of alert
   if (!selectedCategory.value) {
-    alert('Vui lòng chọn danh mục dịch vụ')
-    return
+    errors.category = "Vui lòng chọn danh mục dịch vụ";
   }
-  
-  if (!formData.name || !formData.code || !formData.price || !formData.duration) {
-    alert('Vui lòng điền đầy đủ thông tin bắt buộc (*)')
-    return
+  if (!formData.name) errors.name = "Vui lòng nhập tên dịch vụ";
+  if (!formData.code) errors.code = "Vui lòng nhập mã dịch vụ";
+  if (!formData.price && formData.price !== 0)
+    errors.price = "Vui lòng nhập giá bán";
+  if (!formData.duration && formData.duration !== 0)
+    errors.duration = "Vui lòng nhập thời gian thực hiện";
+
+  if (Object.keys(errors).length > 0) {
+    // don't proceed if client-side errors
+    return;
   }
-  
-  emit('save', {
-    department: selectedDepartment.value,
-    category: selectedCategory.value,
-    ...formData
-  })
-}
+
+  saving.value = true;
+  try {
+    // attach token if present
+    try {
+      attachToken();
+    } catch (_) {}
+
+    // If image selected, upload it first and get a path
+    let imagePath = null;
+    if (formData.image) {
+      try {
+        const fd = new FormData();
+        fd.append("file", formData.image);
+        const upRes = await api.post("/upload", fd, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        // support various response shapes
+        if (upRes && upRes.data) {
+          imagePath =
+            (upRes.data.data &&
+              (upRes.data.data.path || upRes.data.data.url)) ||
+            upRes.data.path ||
+            upRes.data.url ||
+            null;
+        }
+        if (!imagePath) {
+          // fallback: some APIs return the stored filename under data.file
+          if (upRes && upRes.data && upRes.data.data && upRes.data.data.file)
+            imagePath = upRes.data.data.file;
+        }
+        // normalize to absolute URL if backend returned a relative path
+        if (imagePath && !/^https?:\/\//i.test(imagePath)) {
+          if (!imagePath.startsWith("/")) imagePath = "/" + imagePath;
+          imagePath = API_ORIGIN + imagePath;
+        }
+      } catch (ue) {
+        console.error("upload error", ue);
+        // if upload fails, show message and abort
+        const msg =
+          ue && ue.response && ue.response.data && ue.response.data.message
+            ? ue.response.data.message
+            : "Không thể tải ảnh lên. Vui lòng thử lại.";
+        showErrorToast("Lỗi upload", msg);
+        saving.value = false;
+        return;
+      }
+    }
+
+    // Build payload matching backend fields
+    const payload = {
+      ten: formData.name,
+      gia_tien: formData.price,
+      thoi_gian_thuc_hien: formData.duration,
+      mo_ta: formData.description || null,
+      ma_dich_vu: formData.code || null,
+      huong_dan: formData.instructions || null,
+      trang_thai: formData.isActive ? "kinh_doanh" : "ngung",
+      danh_muc_id: selectedCategoryId.value || null,
+      anh_dich_vu: imagePath || null,
+    };
+
+    const res = await api.post("/dich-vu", payload);
+    if (res && res.data && res.data.status) {
+      const created = res.data.data;
+      // emit created backend item so parent can update list
+      emit("save", created);
+      // show success and close modal
+      showSuccessToast("Thành công", "Tạo dịch vụ thành công.");
+      // auto-close modal
+      emit("close");
+    } else {
+      const msg =
+        (res && res.data && res.data.message) || "Lỗi khi tạo dịch vụ.";
+      showErrorToast("Lỗi", msg);
+    }
+  } catch (e) {
+    console.error("create service error", e);
+    // show server-side validation errors inline when available
+    if (e && e.response && e.response.status === 422) {
+      const respErrors = (e.response.data && e.response.data.errors) || {};
+      Object.keys(respErrors).forEach((k) => {
+        // map backend field names to our form keys if necessary
+        // backend may return 'ten', 'gia_tien', 'thoi_gian_thuc_hien', 'danh_muc_id', etc.
+        if (k === "ten") errors.name = respErrors[k].join(" ");
+        else if (k === "ma_dich_vu") errors.code = respErrors[k].join(" ");
+        else if (k === "gia_tien") errors.price = respErrors[k].join(" ");
+        else if (k === "thoi_gian_thuc_hien")
+          errors.duration = respErrors[k].join(" ");
+        else if (k === "danh_muc_id") errors.category = respErrors[k].join(" ");
+        else errors[k] = respErrors[k].join(" ");
+      });
+      // focus first error could be implemented by user if desired
+    } else {
+      const msg =
+        e && e.response && e.response.data && e.response.data.message
+          ? e.response.data.message
+          : "Không thể tạo dịch vụ. Vui lòng kiểm tra quyền hoặc thử lại.";
+      showErrorToast("Lỗi", msg);
+    }
+  } finally {
+    saving.value = false;
+  }
+};
 </script>
 
 <style scoped>

@@ -88,10 +88,10 @@
               <!-- Type -->
               <td class="py-4 px-2 align-top">
                 <span 
-                  class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg border text-xs font-medium"
+                  class="inline-flex items-center gap-2 px-2 py-1 rounded-lg border text-xs font-medium h-[22px]"
                   :class="getTypeClass(promo.type)"
                 >
-                  <span v-html="promo.type === 'voucher' ? svgVoucher : svgAuto"></span>
+                  <img :src="promo.type === 'voucher' ? iconVoucher : iconAuto" alt="" class="w-3 h-3" />
                   {{ promo.typeLabel }}
                 </span>
               </td>
@@ -122,9 +122,9 @@
 
               <!-- Status -->
               <td class="py-4 px-2 align-top">
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-[7.5px]">
                   <span 
-                    class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg border-0 text-xs font-medium w-fit"
+                    class="inline-flex items-center justify-center px-2 py-0.5 rounded-lg border-0 text-xs font-medium w-fit h-[22px]"
                     :class="getStatusClass(promo.status)"
                   >
                     {{ promo.statusLabel }}
@@ -133,16 +133,16 @@
                   <!-- Toggle Switch -->
                   <div class="flex items-center gap-2">
                     <button 
-                      class="relative w-8 h-4.5 rounded-full transition-colors duration-200 ease-in-out focus:outline-none"
+                      class="relative w-8 h-[18.4px] rounded-full transition-colors duration-200 ease-in-out focus:outline-none"
                       :class="promo.isEnabled ? 'bg-[#030213]' : 'bg-[#cbced4]'"
                       @click="toggleStatus(promo)"
                     >
                       <span 
-                        class="absolute left-0.5 top-0.5 w-3.5 h-3.5 bg-white rounded-full transition-transform duration-200 ease-in-out"
-                        :class="promo.isEnabled ? 'translate-x-3.5' : 'translate-x-0'"
+                        class="absolute top-[1px] w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-in-out"
+                        :class="promo.isEnabled ? 'left-[15px]' : 'left-[1px]'"
                       ></span>
                     </button>
-                    <span class="text-xs text-[#4a5565]">{{ promo.isEnabled ? 'Đang bật' : 'Đã tắt' }}</span>
+                    <span class="text-xs text-[#4a5565] leading-4">{{ promo.isEnabled ? 'Đang bật' : 'Đã tắt' }}</span>
                   </div>
                 </div>
               </td>
@@ -163,13 +163,13 @@
                   >
                     <img :src="iconEdit" alt="" class="w-4 h-4" />
                   </button>
-                  <button 
+                  <!-- <button 
                     @click="handleDelete(promo)"
                     class="w-9 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
                     title="Xóa"
                   >
                     <img :src="iconDelete" alt="" class="w-4 h-4" />
-                  </button>
+                  </button> -->
                 </div>
               </td>
             </tr>
@@ -186,23 +186,16 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-// Icons
+// Icons from Figma
 const iconPlus = 'https://www.figma.com/api/mcp/asset/bd491dc9-ee5e-4b10-88a8-62b03bef9093';
 const iconSearch = 'https://www.figma.com/api/mcp/asset/8df55cc2-682a-4eaf-baa1-55b3c1c1c558';
 const iconChevronDown = 'https://www.figma.com/api/mcp/asset/8d066934-07ff-48dd-abfa-6acf31386f7a';
-const iconEdit = 'https://www.figma.com/api/mcp/asset/ded66c3e-db3c-4c02-965a-702a4c0fdca8';
-const iconDelete = 'https://www.figma.com/api/mcp/asset/9c38866f-8dd6-447a-84f8-060c94dd483b';
-const iconCalendar = 'https://www.figma.com/api/mcp/asset/calendar-placeholder'; 
-// Using a placeholder/reused icon for Eye until asset is available, or we can use SVG string if needed.
-// For now, I'll use a generic placeholder URL or a data URI for the Eye icon to avoid breaking.
-// Better yet, I'll use an SVG string for the Eye icon as well to be safe, but since I'm using img tags for others, I'll try to find a suitable placeholder or reuse one. 
-// Actually, let's just use a simple SVG data URI for the Eye icon.
-const iconEye = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNDk1MDU3IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIgMTJzNC04IDEwLTggMTAgOCAxMCA4LTQgOC0xMCA4LTEwLTgtMTAtOHoiPjwvcGF0aD48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIzIj48L2NpcmNsZT48L3N2Zz4=';
-
-
-// Inline SVGs for types (Voucher/Auto) to ensure they render correctly without external assets
-const svgVoucher = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5 5.5C10.5 4.94772 10.9477 4.5 11.5 4.5V1.5H0.5V4.5C1.05228 4.5 1.5 4.94772 1.5 5.5C1.5 6.05228 1.05228 6.5 0.5 6.5V9.5H11.5V6.5C10.9477 6.5 10.5 6.05228 10.5 5.5Z" stroke="#8200DB" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const svgAuto = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.5 1L0.5 7H5.5L4.5 11L10.5 5H5.5L6.5 1Z" stroke="#BB4D00" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const iconVoucher = 'https://www.figma.com/api/mcp/asset/ad1dd362-a99c-4f98-a2de-06d8e30e7664';
+const iconAuto = 'https://www.figma.com/api/mcp/asset/00b0f86b-3ecd-43b4-b04c-bb40a7cbe478';
+const iconCalendar = 'https://www.figma.com/api/mcp/asset/bc5fe324-77bb-4170-975f-5a239914c750';
+const iconEye = 'https://www.figma.com/api/mcp/asset/0fa890c9-168a-4cb8-a147-33294ab5f8a1';
+const iconEdit = 'https://www.figma.com/api/mcp/asset/d29d4188-00c3-466a-be7b-334b9e84fe7a';
+const iconDelete = 'https://www.figma.com/api/mcp/asset/d7d8ae1f-948d-45bc-9bb4-944566004825';
 
 const router = useRouter();
 const searchQuery = ref('');
@@ -221,22 +214,22 @@ const promotions = ref([
     used: 45,
     total: 100,
     status: 'active',
-    statusLabel: '🟢 Đang chạy',
+    statusLabel: 'Đang chạy',
     isEnabled: true
   },
   {
     id: 2,
     name: 'Ưu đãi VIP - Tự động',
-    code: '', // No code for Auto type in design
+    code: '',
     value: '50.000đ',
-    maxDiscount: '', // No max discount shown for this one
+    maxDiscount: '',
     type: 'auto',
     typeLabel: 'Tự động',
     dateRange: '01-11 - 31/12/2025',
     used: 23,
     total: 50,
     status: 'active',
-    statusLabel: '🟢 Đang chạy',
+    statusLabel: 'Đang chạy',
     isEnabled: true
   },
   {
@@ -251,7 +244,7 @@ const promotions = ref([
     used: 0,
     total: 200,
     status: 'scheduled',
-    statusLabel: '⏰ Sắp diễn ra',
+    statusLabel: 'Sắp diễn ra',
     isEnabled: false
   },
   {
@@ -266,8 +259,8 @@ const promotions = ref([
     used: 150,
     total: 150,
     status: 'expired',
-    statusLabel: '🔴 Đã kết thúc',
-    isEnabled: false // Assuming ended means toggle off or just showing state
+    statusLabel: 'Đã kết thúc',
+    isEnabled: false
   },
   {
     id: 5,
@@ -281,7 +274,7 @@ const promotions = ref([
     used: 178,
     total: 300,
     status: 'paused',
-    statusLabel: '⏸️ Tạm dừng',
+    statusLabel: 'Tạm dừng',
     isEnabled: false
   }
 ]);

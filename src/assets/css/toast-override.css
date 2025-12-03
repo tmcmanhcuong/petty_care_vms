@@ -8,6 +8,8 @@
 .Vue-Toastification__container {
   padding: 10px !important;
   top: 80px !important; /* push down below header */
+  z-index: 11000 !important; /* ensure toasts appear above modals/overlays */
+  overflow: visible !important; /* allow long toasts to expand without being clipped */
 }
 
 .Vue-Toastification__toast {
@@ -18,7 +20,9 @@
   font-family: inherit !important;
   color: #ffffff !important;
   box-shadow: 0 6px 16px rgba(2, 6, 23, 0.15) !important;
-  overflow: hidden !important;
+  overflow: visible !important; /* allow inner content to wrap/show fully */
+  max-width: 520px !important;
+  width: auto !important;
 }
 
 /* Ensure any inner component (our custom MyToast) does not draw a white card
@@ -48,6 +52,21 @@
 }
 .Vue-Toastification__toast--warning {
   background-color: #d97706 !important; /* amber-600 */
+}
+
+/* Make close button area easier to tap and visible */
+.Vue-Toastification__toast button[role="button"] {
+  background: transparent !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  padding: 6px !important;
+  margin-left: 8px !important;
+}
+
+/* Slightly more subtle progress bar */
+.Vue-Toastification__progress-bar {
+  opacity: 0.85 !important;
+  background: rgba(255, 255, 255, 0.22) !important;
 }
 
 /* Ensure title/message have good contrast and spacing */

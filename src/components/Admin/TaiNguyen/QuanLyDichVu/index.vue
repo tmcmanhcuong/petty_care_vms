@@ -1,12 +1,12 @@
 <template>
   <div class="page-container">
     <!-- Page Header -->
-    <div class="page-header">
+    <div class="page-header" style="align-items: start">
       <div class="header-content">
         <h1 class="page-title">Quản lý Dịch Vụ</h1>
       </div>
       <div class="header-subtitle">
-        <p class="subtitle-text">Tổ chức và phân bổ nhân sự theo khoa và bộ phận</p>
+        <p class="subtitle-text">Tổ chức và phân bổ nhân sự theo bộ phận</p>
       </div>
     </div>
 
@@ -18,7 +18,7 @@
         <div class="card-actions">
           <button class="btn-secondary" @click="handleManageCategories">
             <img :src="iconFolder" alt="" class="btn-icon" />
-            <span class="btn-text">Quản lý Danh Mục</span>
+            <span class="btn-text">Danh Mục Dịch Vụ</span>
           </button>
           <button class="btn-primary" @click="handleAddService">
             <img :src="iconPlus" alt="" class="btn-icon" />
@@ -39,15 +39,9 @@
           />
         </div>
 
-        <button class="filter-button" @click="toggleDepartmentFilter">
-          <img :src="iconFilter" alt="" class="filter-icon" />
-          <span class="filter-text">Tất cả Khoa</span>
-          <img :src="iconChevronDown" alt="" class="chevron-icon" />
-        </button>
-
         <button class="filter-button disabled" @click="toggleGroupFilter">
           <img :src="iconFilter" alt="" class="filter-icon" />
-          <span class="filter-text">Tất cả Nhóm</span>
+          <span class="filter-text">Tất cả Danh Mục</span>
           <img :src="iconChevronDown" alt="" class="chevron-icon" />
         </button>
 
@@ -91,7 +85,7 @@
               <td class="cell-category">
                 <div class="category-container">
                   <p class="category-name">{{ service.category }}</p>
-                  <p class="category-department">({{ service.department }})</p>
+                  <p class="category-department">{{ service.mo_ta }}</p>
                 </div>
               </td>
 
@@ -111,10 +105,10 @@
                   class="status-badge"
                   :class="{
                     'status-active': service.status === 'active',
-                    'status-inactive': service.status === 'inactive'
+                    'status-inactive': service.status === 'inactive',
                   }"
                 >
-                  {{ service.status === 'active' ? 'Kinh doanh' : 'Ngừng' }}
+                  {{ service.status === "active" ? "Kinh doanh" : "Ngừng" }}
                 </span>
               </td>
 
@@ -124,7 +118,9 @@
                   <button
                     class="action-button"
                     @click="handleEdit(service)"
-                    :title="service.status === 'active' ? 'Xem chi tiết' : 'Chỉnh sửa'"
+                    :title="
+                      service.status === 'active' ? 'Xem chi tiết' : 'Chỉnh sửa'
+                    "
                   >
                     <img
                       :src="service.status === 'active' ? iconView : iconEdit"
@@ -149,15 +145,42 @@
       <!-- Pagination -->
       <div class="pagination-container">
         <div class="pagination-info">
-          <p class="info-text">Hiển thị 1 - 6 của 6 dịch vụ</p>
+          <p class="info-text">
+            Hiển thị
+            <span v-if="totalItems === 0">0</span>
+            <span v-else
+              >{{ (currentPage - 1) * perPage + 1 }} -
+              {{ Math.min(currentPage * perPage, totalItems) }}</span
+            >
+            của {{ totalItems }} dịch vụ
+          </p>
         </div>
         <div class="pagination-controls">
-          <button class="pagination-button disabled" disabled>
+          <button
+            class="pagination-button"
+            :class="{ disabled: currentPage <= 1 }"
+            :disabled="currentPage <= 1 || loadingServices"
+            @click="handlePrevPage"
+          >
             <img :src="iconChevronLeft" alt="" class="pagination-icon" />
             <span class="pagination-text">Previous</span>
           </button>
-          <button class="pagination-page active">1</button>
-          <button class="pagination-button disabled" disabled>
+          <template v-for="p in pages" :key="p">
+            <button
+              class="pagination-page"
+              :class="{ active: p === currentPage }"
+              @click="goToPage(p)"
+              :disabled="p === currentPage || loadingServices"
+            >
+              {{ p }}
+            </button>
+          </template>
+          <button
+            class="pagination-button"
+            :class="{ disabled: currentPage >= lastPage }"
+            :disabled="currentPage >= lastPage || loadingServices"
+            @click="handleNextPage"
+          >
             <span class="pagination-text">Next</span>
             <img :src="iconChevronRight" alt="" class="pagination-icon" />
           </button>
@@ -165,25 +188,33 @@
       </div>
     </div>
     <!-- Manage Categories Modal -->
-    <div v-if="isManageCategoriesModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="w-[512px] h-[600px]">
-        <DanhMucDichVu @close="isManageCategoriesModalOpen = false" />
-      </div>
-    </div>
+    <DanhMucDichVu
+      v-if="isManageCategoriesModalOpen"
+      @close="isManageCategoriesModalOpen = false"
+    />
 
     <!-- Add Service Modal -->
-    <div v-if="isAddServiceModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="w-[600px] h-[90vh] max-h-[800px]">
-        <ThemDichVu @close="isAddServiceModalOpen = false" @save="handleSaveService" />
+    <div
+      v-if="isAddServiceModalOpen"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-[1000] pt-24"
+    >
+      <div class="w-[600px] max-h-[85vh] flex flex-col shadow-xl">
+        <ThemDichVu
+          @close="isAddServiceModalOpen = false"
+          @save="handleSaveService"
+        />
       </div>
     </div>
 
     <!-- Edit Service Modal -->
-    <div v-if="isEditServiceModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="w-[600px] h-[90vh] max-h-[800px]">
-        <ChinhSuaDichVu 
+    <div
+      v-if="isEditServiceModalOpen"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-[1000] pt-24"
+    >
+      <div class="w-[600px] max-h-[85vh] flex flex-col shadow-xl">
+        <ChinhSuaDichVu
           :service="selectedServiceForEdit"
-          @close="isEditServiceModalOpen = false" 
+          @close="isEditServiceModalOpen = false"
           @update="handleUpdateService"
           @openCreateCategory="handleOpenCreateCategoryFromEdit"
         />
@@ -191,203 +222,276 @@
     </div>
 
     <!-- Delete Service Modal -->
-    <div v-if="isDeleteServiceModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <XoaDichVu 
+    <div
+      v-if="isDeleteServiceModalOpen"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]"
+    >
+      <XoaDichVu
         :modal-type="deleteServiceModalType"
         :service="selectedServiceForDelete"
         :appointments="serviceAppointments"
-        @close="isDeleteServiceModalOpen = false" 
-        @confirmDelete="handleSubmitDeleteService"
+        @close="isDeleteServiceModalOpen = false"
+        @deleted="handleModalDeleted"
       />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import DanhMucDichVu from './DanhMucDichVu/index.vue'
-import ThemDichVu from './ThemDichVu/index.vue'
-import ChinhSuaDichVu from './ChinhSuaDichVu/index.vue'
-import XoaDichVu from './XoaDichVu/index.vue'
+import { ref, onMounted, computed } from "vue";
+import api, { attachToken } from "@/utils/api";
+import { showErrorToast } from "@/utils/toast";
+import DanhMucDichVu from "./DanhMucDichVu/index.vue";
+import ThemDichVu from "./ThemDichVu/index.vue";
+import ChinhSuaDichVu from "./ChinhSuaDichVu/index.vue";
+import XoaDichVu from "./XoaDichVu/index.vue";
 
-// Sample data
-const services = ref([
-  {
-    id: 1,
-    name: 'Cắt tỉa lông chó < 5kg',
-    code: 'SPA-CT-001',
-    category: 'Cắt tỉa',
-    department: 'Spa & Grooming',
-    price: 200000,
-    duration: 60,
-    status: 'active',
-    image: 'https://www.figma.com/api/mcp/asset/cb5b7ccc-91b5-488d-9d89-d85ae5c5e4bb'
-  },
-  {
-    id: 2,
-    name: 'Khám tổng quát',
-    code: 'LS-KB-001',
-    category: 'Khám bệnh',
-    department: 'Khoa Lâm Sàng',
-    price: 150000,
-    duration: 30,
-    status: 'active',
-    image: 'https://www.figma.com/api/mcp/asset/6f5f86de-5961-4e45-8c7c-558243b2ccfd'
-  },
-  {
-    id: 3,
-    name: 'Vắc-xin 7 bệnh (Chó)',
-    code: 'LS-TP-001',
-    category: 'Tiêm phòng',
-    department: 'Khoa Lâm Sàng',
-    price: 150000,
-    duration: 15,
-    status: 'active',
-    image: 'https://www.figma.com/api/mcp/asset/e2cca71a-a79e-424e-a9df-922be6a4db73'
-  },
-  {
-    id: 4,
-    name: 'Spa cao cấp mèo',
-    code: 'SPA-TS-001',
-    category: 'Tắm sấy',
-    department: 'Spa & Grooming',
-    price: 300000,
-    duration: 90,
-    status: 'inactive',
-    image: 'https://www.figma.com/api/mcp/asset/93cfa310-2091-4089-bb11-9b6d9740b260'
-  },
-  {
-    id: 5,
-    name: 'Tắm sấy + Cắt móng chó nhỏ',
-    code: 'SPA-TS-002',
-    category: 'Tắm sấy',
-    department: 'Spa & Grooming',
-    price: 180000,
-    duration: 45,
-    status: 'active',
-    image: 'https://www.figma.com/api/mcp/asset/6f5f86de-5961-4e45-8c7c-558243b2ccfd'
-  },
-  {
-    id: 6,
-    name: 'Xét nghiệm máu',
-    code: 'LS-XN-001',
-    category: 'Xét nghiệm',
-    department: 'Khoa Lâm Sàng',
-    price: 250000,
-    duration: 30,
-    status: 'active',
-    image: 'https://www.figma.com/api/mcp/asset/6f5f86de-5961-4e45-8c7c-558243b2ccfd'
+const services = ref([]);
+const loadingServices = ref(false);
+
+// Pagination state
+const currentPage = ref(1);
+const perPage = ref(6); // show 6 per page by default
+const totalItems = ref(0);
+const lastPage = ref(1);
+
+// API origin used to build absolute image URLs when backend returns relative paths
+const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000/api";
+const API_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
+
+const mapApiToView = (item) => {
+  // decide image
+  let img = item.anh_dich_vu || item.image || "";
+  if (img && !/^https?:\/\//i.test(img)) {
+    if (!img.startsWith("/")) img = "/" + img;
+    img = API_ORIGIN + img;
   }
-])
 
-const searchQuery = ref('')
-const isManageCategoriesModalOpen = ref(false)
-const isAddServiceModalOpen = ref(false)
-const isEditServiceModalOpen = ref(false)
-const selectedServiceForEdit = ref(null)
-const isDeleteServiceModalOpen = ref(false)
-const selectedServiceForDelete = ref(null)
-const deleteServiceModalType = ref('confirm') // 'error' or 'confirm'
-const serviceAppointments = ref([])
+  return {
+    id: item.id,
+    name: item.ten || item.name || "",
+    code: item.ma_dich_vu || item.code || "",
+    category: item.ten_nhom || (item.danh_muc && item.danh_muc.ten_nhom) || "",
+    mo_ta: item.mo_ta || item.description || "",
+    price: item.gia_tien || 0,
+    duration: item.thoi_gian_thuc_hien || item.duration || 0,
+    status: item.trang_thai === "kinh_doanh" ? "active" : "inactive",
+    image: img,
+  };
+};
+
+const fetchServices = async (page = currentPage.value) => {
+  loadingServices.value = true;
+  try {
+    // Request paginated list
+    const res = await api.get(
+      `/dich-vu?per_page=${perPage.value}&page=${page}`
+    );
+    const items = (res && res.data && res.data.data) || [];
+    services.value = items.map(mapApiToView);
+
+    // read pagination meta when provided by backend
+    const meta = (res && res.data && res.data.meta) || null;
+    if (meta) {
+      currentPage.value = meta.current_page || page;
+      perPage.value = meta.per_page || perPage.value;
+      totalItems.value = meta.total || totalItems.value;
+      lastPage.value = meta.last_page || lastPage.value;
+    } else {
+      // fallback: if backend returned array without meta, set defaults
+      currentPage.value = page;
+      totalItems.value = services.value.length;
+      lastPage.value = 1;
+    }
+  } catch (e) {
+    console.error("fetchServices error", e);
+    // optional: show toast if utils/toast available
+  } finally {
+    loadingServices.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchServices();
+});
+
+const handlePrevPage = () => {
+  if (currentPage.value > 1) {
+    fetchServices(currentPage.value - 1);
+  }
+};
+
+const handleNextPage = () => {
+  if (currentPage.value < lastPage.value) {
+    fetchServices(currentPage.value + 1);
+  }
+};
+
+const pages = computed(() => {
+  const n = Number(lastPage.value) || 1;
+  const arr = [];
+  for (let i = 1; i <= n; i++) arr.push(i);
+  return arr;
+});
+
+const goToPage = (p) => {
+  if (p === currentPage.value || loadingServices.value) return;
+  fetchServices(p);
+};
+
+const searchQuery = ref("");
+const isManageCategoriesModalOpen = ref(false);
+const isAddServiceModalOpen = ref(false);
+const isEditServiceModalOpen = ref(false);
+const selectedServiceForEdit = ref(null);
+const isDeleteServiceModalOpen = ref(false);
+const selectedServiceForDelete = ref(null);
+const deleteServiceModalType = ref("confirm"); // 'error' or 'confirm'
+const serviceAppointments = ref([]);
 
 // Icon URLs from Figma (expire in 7 days)
-const iconFolder = "https://www.figma.com/api/mcp/asset/a0ed0f4f-6ef3-4551-9156-ba6da5df0653"
-const iconPlus = "https://www.figma.com/api/mcp/asset/5170a5d8-0d15-4cb9-b377-5b0d69005c9b"
-const iconFilter = "https://www.figma.com/api/mcp/asset/0242ea48-73a1-4260-bf48-1299ef6b29ac"
-const iconChevronDown = "https://www.figma.com/api/mcp/asset/3bbafe24-57e8-433c-be3b-fa608dce6e81"
-const iconSearch = "https://www.figma.com/api/mcp/asset/b5edddae-5d34-4f6d-bdce-cce4b27387d3"
-const iconView = "https://www.figma.com/api/mcp/asset/53d0ba8c-3289-4be6-b9ea-55a74008aa0b"
-const iconEdit = "https://www.figma.com/api/mcp/asset/21ba0590-5c8a-422f-8e50-3212ef378ef1"
-const iconDelete = "https://www.figma.com/api/mcp/asset/676e185d-491f-4f39-8a87-f81dbfb8dd14"
-const iconChevronLeft = "https://www.figma.com/api/mcp/asset/85a17750-00e0-497e-944e-80c6a95bab60"
-const iconChevronRight = "https://www.figma.com/api/mcp/asset/60ebc6a7-e00c-440f-96b5-a8f2d5fb6d49"
+const iconFolder =
+  "https://www.figma.com/api/mcp/asset/a0ed0f4f-6ef3-4551-9156-ba6da5df0653";
+const iconPlus =
+  "https://www.figma.com/api/mcp/asset/5170a5d8-0d15-4cb9-b377-5b0d69005c9b";
+const iconFilter =
+  "https://www.figma.com/api/mcp/asset/0242ea48-73a1-4260-bf48-1299ef6b29ac";
+const iconChevronDown =
+  "https://www.figma.com/api/mcp/asset/3bbafe24-57e8-433c-be3b-fa608dce6e81";
+const iconSearch =
+  "https://www.figma.com/api/mcp/asset/b5edddae-5d34-4f6d-bdce-cce4b27387d3";
+const iconView =
+  "https://www.figma.com/api/mcp/asset/53d0ba8c-3289-4be6-b9ea-55a74008aa0b";
+const iconEdit =
+  "https://www.figma.com/api/mcp/asset/21ba0590-5c8a-422f-8e50-3212ef378ef1";
+const iconDelete =
+  "https://www.figma.com/api/mcp/asset/676e185d-491f-4f39-8a87-f81dbfb8dd14";
+const iconChevronLeft =
+  "https://www.figma.com/api/mcp/asset/85a17750-00e0-497e-944e-80c6a95bab60";
+const iconChevronRight =
+  "https://www.figma.com/api/mcp/asset/60ebc6a7-e00c-440f-96b5-a8f2d5fb6d49";
 
 // Methods
 const formatPrice = (price) => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND'
-  }).format(price).replace('₫', '₫')
-}
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  })
+    .format(price)
+    .replace("₫", "₫");
+};
 
 const handleManageCategories = () => {
-  isManageCategoriesModalOpen.value = true
-}
+  isManageCategoriesModalOpen.value = true;
+};
 
 const handleAddService = () => {
-  isAddServiceModalOpen.value = true
-}
+  isAddServiceModalOpen.value = true;
+};
 
 const handleSaveService = (data) => {
-  console.log('Save service:', data)
-  // Implement save logic here
-  isAddServiceModalOpen.value = false
-}
+  // data is the backend-created item (controller returns created resource)
+  try {
+    const view = mapApiToView(data);
+    services.value.unshift(view);
+    // update total count if we have a server-side total
+    totalItems.value = (Number(totalItems.value) || 0) + 1;
+  } catch (e) {
+    console.error("handleSaveService mapping error", e);
+  } finally {
+    isAddServiceModalOpen.value = false;
+  }
+};
 
 const toggleDepartmentFilter = () => {
-  console.log('Toggle department filter')
-}
+  console.log("Toggle department filter");
+};
 
 const toggleGroupFilter = () => {
-  console.log('Toggle group filter')
-}
+  console.log("Toggle group filter");
+};
 
 const toggleStatusFilter = () => {
-  console.log('Toggle status filter')
-}
+  console.log("Toggle status filter");
+};
 
 const handleEdit = (service) => {
-  selectedServiceForEdit.value = service
-  isEditServiceModalOpen.value = true
-}
+  selectedServiceForEdit.value = service;
+  isEditServiceModalOpen.value = true;
+};
 
 const handleUpdateService = (data) => {
-  console.log('Update service:', data)
-  // Implement update logic here
-  // Find and update the service in the list
-  const index = services.value.findIndex(s => s.id === data.id)
-  if (index !== -1) {
-    services.value[index] = { ...services.value[index], ...data }
+  try {
+    const view = mapApiToView(data);
+    const index = services.value.findIndex((s) => s.id === view.id);
+    if (index !== -1) {
+      services.value[index] = { ...services.value[index], ...view };
+    }
+  } catch (e) {
+    console.error("handleUpdateService error", e);
+  } finally {
+    isEditServiceModalOpen.value = false;
   }
-  isEditServiceModalOpen.value = false
-}
+};
 
 const handleOpenCreateCategoryFromEdit = () => {
-  isEditServiceModalOpen.value = false
-  isManageCategoriesModalOpen.value = true
-}
+  isEditServiceModalOpen.value = false;
+  isManageCategoriesModalOpen.value = true;
+};
 
 const handleDelete = (service) => {
-  selectedServiceForDelete.value = service
-  
-  // Mock logic to determine if service has pending appointments
-  // For demonstration, let's say service with ID divisible by 3 has pending appointments
-  const hasPendingAppointments = service.id % 3 === 0
-  
-  if (hasPendingAppointments) {
-    deleteServiceModalType.value = 'error'
-    // Mock appointments
-    serviceAppointments.value = [
-      { time: '09:00', date: '25-11', petName: 'Milo', ownerName: 'Nguyễn Văn A' },
-      { time: '14:00', date: '26-11', petName: 'Max', ownerName: 'Lê Văn C' }
-    ]
-  } else {
-    deleteServiceModalType.value = 'confirm'
-    serviceAppointments.value = []
-  }
-  
-  isDeleteServiceModalOpen.value = true
-}
+  selectedServiceForDelete.value = service;
+  // Always allow deletion from the UI (open confirm modal)
+  deleteServiceModalType.value = "confirm";
+  serviceAppointments.value = [];
+  isDeleteServiceModalOpen.value = true;
+};
 
-const handleSubmitDeleteService = (data) => {
-  console.log('Delete service:', data)
-  // Implement delete logic here
-  const index = services.value.findIndex(s => s.id === data.serviceId)
-  if (index !== -1) {
-    services.value.splice(index, 1)
+const handleSubmitDeleteService = async (data) => {
+  try {
+    try {
+      attachToken();
+    } catch (_) {}
+    const res = await api.delete(`/dich-vu/${data.serviceId}`);
+    if (res && res.data && res.data.status) {
+      const index = services.value.findIndex((s) => s.id === data.serviceId);
+      if (index !== -1) services.value.splice(index, 1);
+      // decrement totalItems to keep pagination info in sync
+      totalItems.value = Math.max((Number(totalItems.value) || 0) - 1, 0);
+    } else {
+      // Try to show backend message when delete failed
+      const msg =
+        (res && res.data && res.data.message) || "Có lỗi khi xóa dịch vụ.";
+      showErrorToast("Lỗi", msg);
+      console.warn("Delete failed", res);
+    }
+  } catch (e) {
+    console.error("handleSubmitDeleteService error", e);
+    // Extract message from error response if available and show to user
+    const msg =
+      e && e.response && e.response.data && e.response.data.message
+        ? e.response.data.message
+        : "Có lỗi khi xóa dịch vụ.";
+    showErrorToast("Lỗi", msg);
+  } finally {
+    isDeleteServiceModalOpen.value = false;
   }
-  isDeleteServiceModalOpen.value = false
-}
+};
+
+// Handler for when XoaDichVu emits 'deleted' after successful delete
+const handleModalDeleted = (data) => {
+  try {
+    const id = data && data.serviceId;
+    const index = services.value.findIndex((s) => s.id === id);
+    if (index !== -1) services.value.splice(index, 1);
+    // decrement totalItems so the UI shows the updated total
+    totalItems.value = Math.max((Number(totalItems.value) || 0) - 1, 0);
+  } catch (e) {
+    console.error("handleModalDeleted error", e);
+  } finally {
+    isDeleteServiceModalOpen.value = false;
+  }
+};
 </script>
 
 <style scoped>
@@ -415,7 +519,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .page-title {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 700;
   font-size: 20px;
   line-height: 24px;
@@ -431,7 +535,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .subtitle-text {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
@@ -507,7 +611,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .btn-text {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
@@ -554,7 +658,7 @@ const handleSubmitDeleteService = (data) => {
   height: 36px;
   width: 100%;
   padding: 4px 12px 4px 40px;
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 14px;
   line-height: normal;
@@ -596,7 +700,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .filter-text {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
@@ -628,7 +732,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .services-table th {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
@@ -696,7 +800,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .service-name {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
@@ -706,7 +810,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .service-code {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
@@ -722,7 +826,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .category-name {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
@@ -732,7 +836,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .category-department {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
@@ -742,7 +846,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .price-text {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
@@ -752,7 +856,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .duration-text {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
@@ -766,7 +870,7 @@ const handleSubmitDeleteService = (data) => {
   display: inline-block;
   padding: 3px 8px;
   border-radius: 8px;
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 500;
   font-size: 12px;
   line-height: 16px;
@@ -830,7 +934,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .info-text {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
@@ -874,7 +978,7 @@ const handleSubmitDeleteService = (data) => {
 }
 
 .pagination-text {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
@@ -892,7 +996,7 @@ const handleSubmitDeleteService = (data) => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;

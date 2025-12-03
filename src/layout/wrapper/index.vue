@@ -1,21 +1,8 @@
 <template>
-    <div class="wrapper">
-		<div class="header-wrapper">
-            <TopRocker></TopRocker>
-            <MenuRocker></MenuRocker>
-		</div>
-		<div class="page-wrapper">
-			<div class="page-content">
-                <router-view> </router-view>
-            </div>
-		</div>
-        <BotRocker></BotRocker>
-	</div>
+  <router-view></router-view>
 </template>
+
 <script>
-import TopRocker from "../components/TopRocker.vue";
-import BotRocker from "../components/BotRocker.vue";
-import MenuRocker from "../components/MenuRocker.vue";
 import "../../assets/js/bootstrap.bundle.min.js";
 import "../../assets/js/jquery.min.js";
 import "../../assets/plugins/simplebar/js/simplebar.min.js";
@@ -24,13 +11,12 @@ import "../../assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js";
 import "../../assets/js/index.js";
 import "../../assets/js/app.js";
 import "../../assets/js/pace.min.js";
+
 export default {
-    name        :   "app",
-    components  :   {
-       TopRocker, BotRocker, MenuRocker
-    }
+  name: "app"
 }
 </script>
+
 <style>
 @import "../../assets/plugins/simplebar/css/simplebar.css";
 @import "../../assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css";

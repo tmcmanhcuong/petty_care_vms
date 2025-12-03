@@ -2,7 +2,9 @@
   <div class="w-full min-h-screen p-6">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="font-nunito font-medium text-2xl leading-9 text-[#101828] tracking-tight mb-0">
+      <h1
+        class="font-nunito font-medium text-2xl leading-9 text-[#101828] tracking-tight mb-0"
+      >
         Quản lý Người dùng
       </h1>
       <p class="font-nunito text-base leading-6 text-[#4a5565] tracking-tight">
@@ -13,17 +15,27 @@
     <!-- Content -->
     <div class="flex flex-col gap-8">
       <!-- Tabs -->
-      <div class="bg-[#f3f4f6] flex items-center p-1 rounded-[10px] shadow-sm w-fit">
+      <div
+        class="bg-[#f3f4f6] flex items-center p-1 rounded-[10px] shadow-sm w-fit"
+      >
         <button
           @click="activeTab = 'staff'"
-          :class="activeTab === 'staff' ? 'bg-white shadow-md text-[#0d9488]' : 'text-[#4b5563]'"
+          :class="
+            activeTab === 'staff'
+              ? 'bg-white shadow-md text-[#0d9488]'
+              : 'text-[#4b5563]'
+          "
           class="font-nunito font-medium text-sm leading-5 px-6 py-2.5 rounded-lg transition-all"
         >
           Danh sách Nhân viên
         </button>
         <button
           @click="activeTab = 'customer'"
-          :class="activeTab === 'customer' ? 'bg-white shadow-md text-[#0d9488]' : 'text-[#4b5563]'"
+          :class="
+            activeTab === 'customer'
+              ? 'bg-white shadow-md text-[#0d9488]'
+              : 'text-[#4b5563]'
+          "
           class="font-nunito font-medium text-sm leading-5 px-6 py-2.5 rounded-lg transition-all"
         >
           Danh sách Khách hàng
@@ -31,25 +43,37 @@
       </div>
 
       <!-- Staff List -->
-      <div v-if="activeTab === 'staff'" class="bg-white border border-gray-200/60 rounded-[14px] p-6">
+      <div
+        v-if="activeTab === 'staff'"
+        class="bg-white border border-gray-200/60 rounded-[14px] p-6"
+      >
         <!-- Card Header -->
         <div class="flex items-center justify-between mb-6">
-          <h2 class="font-nunito text-base leading-4 text-neutral-950 tracking-tight">
+          <h2
+            class="font-nunito text-base leading-4 text-neutral-950 tracking-tight"
+          >
             Danh sách Nhân viên
           </h2>
-          <button 
+          <button
             class="bg-[#009689] rounded-lg h-9 px-3 py-2 flex items-center gap-2 hover:bg-[#007d72] transition-colors"
             @click="isAddStaffModalOpen = true"
           >
             <img :src="iconPlus" alt="Add" class="w-4 h-4" />
-            <span class="font-nunito font-medium text-sm leading-5 text-white tracking-tight">Tạo tài khoản mới</span>
+            <span
+              class="font-nunito font-medium text-sm leading-5 text-white tracking-tight"
+              >Tạo tài khoản mới</span
+            >
           </button>
         </div>
 
         <!-- Search and Filter -->
         <div class="flex items-center gap-4 mb-6">
           <div class="flex-1 relative">
-            <img :src="iconSearch" alt="Search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
+            <img
+              :src="iconSearch"
+              alt="Search"
+              class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
+            />
             <input
               v-model="staffSearchQuery"
               type="text"
@@ -57,8 +81,13 @@
               class="w-full bg-[#f3f3f5] border-none rounded-lg h-9 pl-10 pr-3 py-1 font-nunito text-sm text-neutral-950 tracking-tight outline-none placeholder:text-[#717182]"
             />
           </div>
-          <button class="bg-[#f3f3f5] border-none rounded-lg h-9 px-3 py-[1px] flex items-center justify-between gap-2 min-w-[192px]">
-            <span class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight">Tất cả</span>
+          <button
+            class="bg-[#f3f3f5] border-none rounded-lg h-9 px-3 py-[1px] flex items-center justify-between gap-2 min-w-[192px]"
+          >
+            <span
+              class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight"
+              >Tất cả</span
+            >
             <img :src="iconChevronDown" alt="Dropdown" class="w-4 h-4" />
           </button>
         </div>
@@ -68,27 +97,72 @@
           <table class="w-full">
             <thead>
               <tr class="border-b border-gray-200/60">
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Nhân viên</th>
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Thông tin liên hệ</th>
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Vai trò</th>
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Ngày vào làm</th>
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Trạng thái</th>
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Lần đăng nhập cuối</th>
-                <th class="text-right py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Thao tác</th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Nhân viên
+                </th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Thông tin liên hệ
+                </th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Vai trò
+                </th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Ngày vào làm
+                </th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Trạng thái
+                </th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Lần đăng nhập cuối
+                </th>
+                <th
+                  class="text-right py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Thao tác
+                </th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="staff in staffList" :key="staff.id" class="border-b border-gray-200/60">
+              <tr
+                v-for="staff in pagedStaff"
+                :key="staff.id"
+                class="border-b border-gray-200/60"
+              >
                 <td class="py-3 px-2">
                   <div class="flex items-center gap-3">
-                    <img :src="staff.avatar" alt="" class="w-10 h-10 rounded-full object-cover" />
-                    <span class="font-nunito text-sm leading-5 text-[#101828] tracking-tight">{{ staff.name }}</span>
+                    <img
+                      :src="staff.avatar"
+                      alt=""
+                      class="w-10 h-10 rounded-full object-cover"
+                    />
+                    <span
+                      class="font-nunito text-sm leading-5 text-[#101828] tracking-tight"
+                      >{{ staff.name }}</span
+                    >
                   </div>
                 </td>
                 <td class="py-3 px-2">
                   <div class="flex flex-col">
-                    <span class="font-nunito text-sm leading-6 text-[#101828] tracking-tight">{{ staff.email }}</span>
-                    <span class="font-nunito text-sm leading-6 text-[#6a7282] tracking-tight">{{ staff.phone }}</span>
+                    <span
+                      class="font-nunito text-sm leading-6 text-[#101828] tracking-tight"
+                      >{{ staff.email }}</span
+                    >
+                    <span
+                      class="font-nunito text-sm leading-6 text-[#6a7282] tracking-tight"
+                      >{{ staff.phone }}</span
+                    >
                   </div>
                 </td>
                 <td class="py-3 px-2">
@@ -98,10 +172,13 @@
                       :key="index"
                       :class="[
                         'inline-flex items-center justify-center px-2 py-[3px] rounded-lg text-xs leading-4 font-nunito font-medium w-fit',
-                        role.color === 'blue' ? 'bg-blue-100 text-[#1447e6]' :
-                        role.color === 'green' ? 'bg-green-100 text-[#008236]' :
-                        role.color === 'purple' ? 'bg-purple-100 text-[#8200db]' :
-                        'bg-[#ffe2e2] text-[#c10007]'
+                        role.color === 'blue'
+                          ? 'bg-blue-100 text-[#1447e6]'
+                          : role.color === 'green'
+                          ? 'bg-green-100 text-[#008236]'
+                          : role.color === 'purple'
+                          ? 'bg-purple-100 text-[#8200db]'
+                          : 'bg-[#ffe2e2] text-[#c10007]',
                       ]"
                     >
                       {{ role.name }}
@@ -109,47 +186,83 @@
                   </div>
                 </td>
                 <td class="py-3 px-2">
-                  <span class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight">{{ staff.joinDate }}</span>
+                  <span
+                    class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight"
+                    >{{ staff.joinDate }}</span
+                  >
                 </td>
                 <td class="py-3 px-2">
                   <span
                     :class="[
                       'inline-flex items-center gap-2 px-2 py-[3px] rounded-lg text-xs leading-4 font-nunito font-medium',
-                      staff.status === 'active' ? 'bg-green-100 text-[#008236]' : 'bg-gray-100 text-[#364153]'
+                      staff.status === 'active'
+                        ? 'bg-green-100 text-[#008236]'
+                        : 'bg-gray-100 text-[#364153]',
                     ]"
                   >
-                    <img :src="staff.status === 'active' ? iconCheck : iconX" alt="" class="w-3 h-3" />
-                    {{ staff.status === 'active' ? 'Hoạt động' : 'Đã khóa' }}
+                    <img
+                      :src="staff.status === 'active' ? iconCheck : iconX"
+                      alt=""
+                      class="w-3 h-3"
+                    />
+                    {{ staff.status === "active" ? "Hoạt động" : "Đã khóa" }}
                   </span>
                 </td>
                 <td class="py-3 px-2">
-                  <span class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight">{{ staff.lastLogin }}</span>
+                  <span
+                    class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight"
+                    >{{ staff.lastLogin }}</span
+                  >
                 </td>
                 <td class="py-3 px-2">
                   <div class="flex items-center justify-end gap-2">
-                    <button 
+                    <button
                       class="bg-white border border-gray-200/60 rounded-lg w-[38px] h-8 flex items-center justify-center hover:bg-gray-50 transition-colors"
                       @click="handleViewStaff(staff)"
                     >
                       <img :src="iconEye" alt="View" class="w-4 h-4" />
                     </button>
-                    <button 
+                    <button
                       class="bg-white border border-gray-200/60 rounded-lg w-[38px] h-8 flex items-center justify-center hover:bg-gray-50 transition-colors"
                       @click="handleOpenResetPassword(staff)"
                     >
-                      <img :src="iconTrash" alt="Reset Password" class="w-4 h-4" />
+                      <img
+                        :src="iconTrash"
+                        alt="Reset Password"
+                        class="w-4 h-4"
+                      />
                     </button>
                     <button
                       v-if="staff.status === 'active'"
-                      class="bg-white border border-gray-200/60 rounded-lg px-3 h-8 hover:bg-gray-50 transition-colors"
+                      @click="toggleStaffStatus(staff)"
+                      :disabled="staff._loading"
+                      :class="[
+                        'bg-white border border-gray-200/60 rounded-lg px-3 h-8 transition-colors',
+                        staff._loading
+                          ? 'opacity-50 cursor-not-allowed'
+                          : 'hover:bg-gray-50',
+                      ]"
                     >
-                      <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Khóa</span>
+                      <span
+                        class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                        >Khóa</span
+                      >
                     </button>
                     <button
                       v-else
-                      class="bg-[#00a63e] rounded-lg px-3 h-8 hover:bg-[#008c35] transition-colors"
+                      @click="toggleStaffStatus(staff)"
+                      :disabled="staff._loading"
+                      :class="[
+                        'rounded-lg px-3 h-8 transition-colors',
+                        staff._loading
+                          ? 'opacity-50 cursor-not-allowed bg-[#00a63e]'
+                          : 'bg-[#00a63e] hover:bg-[#008c35]',
+                      ]"
                     >
-                      <span class="font-nunito font-medium text-sm leading-5 text-white tracking-tight">Kích hoạt</span>
+                      <span
+                        class="font-nunito font-medium text-sm leading-5 text-white tracking-tight"
+                        >Kích hoạt</span
+                      >
                     </button>
                   </div>
                 </td>
@@ -160,19 +273,58 @@
 
         <!-- Pagination -->
         <div class="flex items-center justify-between">
-          <p class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight">
-            Hiển thị 1 - {{ staffList.length }} của {{ staffList.length }} nhân viên
+          <p
+            class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight"
+          >
+            Hiển thị {{ startIndex }} - {{ endIndex }} của
+            {{ staffList.length }} nhân viên
           </p>
           <div class="flex items-center gap-1">
-            <button class="opacity-50 rounded-lg h-9 px-3 py-2 flex items-center gap-2" disabled>
+            <button
+              @click="prevPage"
+              :disabled="pagesShownCount === 1"
+              :class="[
+                'rounded-lg h-9 px-3 py-2 flex items-center gap-2 text-[#6b7280]',
+                pagesShownCount === 1 ? 'opacity-50' : 'hover:bg-gray-50',
+              ]"
+            >
               <img :src="iconChevronLeft" alt="Previous" class="w-4 h-4" />
-              <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Previous</span>
+              <span class="font-nunito font-medium text-sm leading-5"
+                >Previous</span
+              >
             </button>
-            <button class="bg-white border border-gray-200/60 rounded-lg w-9 h-9 flex items-center justify-center">
-              <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">1</span>
-            </button>
-            <button class="opacity-50 rounded-lg h-9 px-3 py-2 flex items-center gap-2" disabled>
-              <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Next</span>
+
+            <div class="flex items-center gap-2">
+              <button
+                v-for="p in pagesToShow"
+                :key="p"
+                @click="currentPage = p"
+                :class="[
+                  'w-9 h-9 rounded-lg flex items-center justify-center border',
+                  currentPage === p
+                    ? 'border-[#009689] text-[#009689] bg-white'
+                    : 'border-gray-200 text-[#101828] bg-white',
+                ]"
+              >
+                <span class="font-nunito font-medium text-sm leading-5">{{
+                  p
+                }}</span>
+              </button>
+            </div>
+
+            <button
+              @click="nextPage"
+              :disabled="pagesShownCount >= totalPages"
+              :class="[
+                'rounded-lg h-9 px-3 py-2 flex items-center gap-2 text-[#6b7280]',
+                pagesShownCount >= totalPages
+                  ? 'opacity-50'
+                  : 'hover:bg-gray-50',
+              ]"
+            >
+              <span class="font-nunito font-medium text-sm leading-5"
+                >Next</span
+              >
               <img :src="iconChevronRight" alt="Next" class="w-4 h-4" />
             </button>
           </div>
@@ -180,20 +332,31 @@
       </div>
 
       <!-- Customer List -->
-      <div v-if="activeTab === 'customer'" class="bg-white border border-gray-200/60 rounded-[14px] p-6">
+      <div
+        v-if="activeTab === 'customer'"
+        class="bg-white border border-gray-200/60 rounded-[14px] p-6"
+      >
         <!-- Card Header -->
         <div class="flex items-center justify-between mb-6">
-          <h2 class="font-nunito text-base leading-4 text-neutral-950 tracking-tight">
+          <h2
+            class="font-nunito text-base leading-4 text-neutral-950 tracking-tight"
+          >
             Danh sách Khách hàng
           </h2>
-          <p class="font-nunito text-sm leading-5 text-[#6a7282] tracking-tight">
+          <p
+            class="font-nunito text-sm leading-5 text-[#6a7282] tracking-tight"
+          >
             Tổng: {{ customerList.length }} khách hàng
           </p>
         </div>
 
         <!-- Search -->
         <div class="mb-6 relative">
-          <img :src="iconSearch" alt="Search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
+          <img
+            :src="iconSearch"
+            alt="Search"
+            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
+          />
           <input
             v-model="customerSearchQuery"
             type="text"
@@ -207,62 +370,133 @@
           <table class="w-full">
             <thead>
               <tr class="border-b border-gray-200/60">
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Khách hàng</th>
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Liên hệ</th>
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Số lượng Thú cưng</th>
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Tổng chi tiêu</th>
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Ngày tham gia</th>
-                <th class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Trạng thái</th>
-                <th class="text-right py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Thao tác</th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Khách hàng
+                </th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Liên hệ
+                </th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Số lượng Thú cưng
+                </th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Tổng chi tiêu
+                </th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Ngày tham gia
+                </th>
+                <th
+                  class="text-left py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Trạng thái
+                </th>
+                <th
+                  class="text-right py-2.5 px-2 font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >
+                  Thao tác
+                </th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="customer in customerList" :key="customer.id" class="border-b border-gray-200/60">
+              <tr
+                v-for="customer in customerList"
+                :key="customer.id"
+                class="border-b border-gray-200/60"
+              >
                 <td class="py-3 px-2">
-                  <span class="font-nunito text-sm leading-5 text-[#101828] tracking-tight">{{ customer.name }}</span>
+                  <span
+                    class="font-nunito text-sm leading-5 text-[#101828] tracking-tight"
+                    >{{ customer.name }}</span
+                  >
                 </td>
                 <td class="py-3 px-2">
                   <div class="flex flex-col">
-                    <span class="font-nunito text-base leading-6 text-[#101828] tracking-tight">{{ customer.phone }}</span>
-                    <span v-if="customer.zalo" class="font-nunito text-base leading-6 text-[#6a7282] tracking-tight">Zalo: {{ customer.zalo }}</span>
+                    <span
+                      class="font-nunito text-base leading-6 text-[#101828] tracking-tight"
+                      >{{ customer.phone }}</span
+                    >
+                    <span
+                      v-if="customer.zalo"
+                      class="font-nunito text-base leading-6 text-[#6a7282] tracking-tight"
+                      >Zalo: {{ customer.zalo }}</span
+                    >
                   </div>
                 </td>
                 <td class="py-3 px-2">
-                  <span class="font-nunito text-sm leading-5 text-[#009689] tracking-tight">{{ customer.petCount }}</span>
+                  <span
+                    class="font-nunito text-sm leading-5 text-[#009689] tracking-tight"
+                    >{{ customer.petCount }}</span
+                  >
                 </td>
                 <td class="py-3 px-2">
-                  <span class="font-nunito text-sm leading-5 text-[#009689] tracking-tight">{{ formatCurrency(customer.totalSpent) }}</span>
+                  <span
+                    class="font-nunito text-sm leading-5 text-[#009689] tracking-tight"
+                    >{{ formatCurrency(customer.totalSpent) }}</span
+                  >
                 </td>
                 <td class="py-3 px-2">
-                  <span class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight">{{ customer.joinDate }}</span>
+                  <span
+                    class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight"
+                    >{{ customer.joinDate }}</span
+                  >
                 </td>
                 <td class="py-3 px-2">
                   <span
                     :class="[
                       'inline-flex items-center gap-2 px-2 py-[3px] rounded-lg text-xs leading-4 font-nunito font-medium',
-                      customer.status === 'active' ? 'bg-green-100 text-[#008236]' : 'bg-[#ffe2e2] text-[#c10007]'
+                      customer.status === 'active'
+                        ? 'bg-green-100 text-[#008236]'
+                        : 'bg-[#ffe2e2] text-[#c10007]',
                     ]"
                   >
-                    <img :src="customer.status === 'active' ? iconCheck : iconBan" alt="" class="w-3 h-3" />
-                    {{ customer.status === 'active' ? 'Hoạt động' : 'Bị chặn' }}
+                    <img
+                      :src="customer.status === 'active' ? iconCheck : iconBan"
+                      alt=""
+                      class="w-3 h-3"
+                    />
+                    {{ customer.status === "active" ? "Hoạt động" : "Bị chặn" }}
                   </span>
                 </td>
                 <td class="py-3 px-2">
                   <div class="flex items-center justify-end gap-2">
-                    <button 
+                    <button
                       class="bg-white border border-gray-200/60 rounded-lg px-3 h-8 flex items-center gap-2 hover:bg-gray-50 transition-colors"
                       @click="handleViewCustomer(customer)"
                     >
                       <img :src="iconEye" alt="View" class="w-4 h-4" />
-                      <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Xem chi tiết</span>
+                      <span
+                        class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                        >Xem chi tiết</span
+                      >
                     </button>
                     <button
+                      @click="handleToggleCustomerStatus(customer)"
                       :class="[
-                        'rounded-full w-8 h-8 flex items-center justify-center',
-                        customer.status === 'active' ? 'hover:bg-gray-100' : 'hover:bg-green-50'
+                        'rounded-full w-8 h-8 flex items-center justify-center transition-colors',
+                        customer.status === 'active'
+                          ? 'hover:bg-gray-100'
+                          : 'hover:bg-green-50',
                       ]"
                     >
-                      <img :src="customer.status === 'active' ? iconCircleX : iconCircleCheck" alt="" class="w-4 h-4" />
+                      <img
+                        :src="
+                          customer.status === 'active'
+                            ? iconCircleX
+                            : iconCircleCheck
+                        "
+                        alt=""
+                        class="w-4 h-4"
+                      />
                     </button>
                   </div>
                 </td>
@@ -273,19 +507,39 @@
 
         <!-- Pagination -->
         <div class="flex items-center justify-between">
-          <p class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight">
-            Hiển thị 1 - {{ customerList.length }} của {{ customerList.length }} khách hàng
+          <p
+            class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight"
+          >
+            Hiển thị 1 - {{ customerList.length }} của
+            {{ customerList.length }} khách hàng
           </p>
           <div class="flex items-center gap-1">
-            <button class="opacity-50 rounded-lg h-9 px-3 py-2 flex items-center gap-2" disabled>
+            <button
+              class="opacity-50 rounded-lg h-9 px-3 py-2 flex items-center gap-2"
+              disabled
+            >
               <img :src="iconChevronLeft" alt="Previous" class="w-4 h-4" />
-              <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Previous</span>
+              <span
+                class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >Previous</span
+              >
             </button>
-            <button class="bg-white border border-gray-200/60 rounded-lg w-9 h-9 flex items-center justify-center">
-              <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">1</span>
+            <button
+              class="bg-white border border-gray-200/60 rounded-lg w-9 h-9 flex items-center justify-center"
+            >
+              <span
+                class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >1</span
+              >
             </button>
-            <button class="opacity-50 rounded-lg h-9 px-3 py-2 flex items-center gap-2" disabled>
-              <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">Next</span>
+            <button
+              class="opacity-50 rounded-lg h-9 px-3 py-2 flex items-center gap-2"
+              disabled
+            >
+              <span
+                class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                >Next</span
+              >
               <img :src="iconChevronRight" alt="Next" class="w-4 h-4" />
             </button>
           </div>
@@ -304,7 +558,11 @@
       v-if="isViewStaffModalOpen"
       :staff="selectedStaffForView"
       @close="isViewStaffModalOpen = false"
-      @edit="() => { isViewStaffModalOpen = false; /* Add logic to open edit modal */ }"
+      @edit="
+        () => {
+          isViewStaffModalOpen = false; /* Add logic to open edit modal */
+        }
+      "
     />
 
     <DatMatKhau
@@ -314,7 +572,7 @@
       @reset="handleResetPasswordSubmit"
     />
 
-    <ChiTieKhachHang
+    <ChiTietKhachHang
       v-if="isViewCustomerModalOpen"
       :customer="selectedCustomerForView"
       @close="isViewCustomerModalOpen = false"
@@ -323,177 +581,373 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import ThemNhanVien from './ThemNhanVien/index.vue'
-import ChiTietNhanVien from './ChiTietNhanVien/index.vue'
-import DatMatKhau from './DatMatKhau/index.vue'
-import ChiTieKhachHang from './ChiTieKhachHang/index.vue'
+import { ref, computed, onMounted } from "vue";
+import ThemNhanVien from "./ThemNhanVien/index.vue";
+import ChiTietNhanVien from "./ChiTietNhanVien/index.vue";
+import DatMatKhau from "./DatMatKhau/index.vue";
+import ChiTietKhachHang from "./ChiTietKhachHang/index.vue";
+import { listNhanVien } from "@/utils/nhanVien";
+import api from "@/utils/api";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 // Active Tab
-const activeTab = ref('staff') // 'staff' or 'customer'
-const isAddStaffModalOpen = ref(false)
-const isViewStaffModalOpen = ref(false)
-const selectedStaffForView = ref(null)
-const isResetPasswordModalOpen = ref(false)
-const selectedStaffForReset = ref(null)
-const isViewCustomerModalOpen = ref(false)
-const selectedCustomerForView = ref(null)
+const activeTab = ref("staff"); // 'staff' or 'customer'
+const isAddStaffModalOpen = ref(false);
+const isViewStaffModalOpen = ref(false);
+const selectedStaffForView = ref(null);
+const isResetPasswordModalOpen = ref(false);
+const selectedStaffForReset = ref(null);
+const isViewCustomerModalOpen = ref(false);
+const selectedCustomerForView = ref(null);
 
 // Search Queries
-const staffSearchQuery = ref('')
-const customerSearchQuery = ref('')
+const staffSearchQuery = ref("");
+const customerSearchQuery = ref("");
 
 // Icons (from Figma - expire in 7 days)
-const iconPlus = "https://www.figma.com/api/mcp/asset/1861026e-bdeb-4bf2-a3d3-9ff21ab066b6"
-const iconSearch = "https://www.figma.com/api/mcp/asset/6d0ae0ec-4e40-4fac-8e80-4f8fa582e4ae"
-const iconChevronDown = "https://www.figma.com/api/mcp/asset/fee71b28-5724-4268-8040-7ba3bd25621c"
-const iconCheck = "https://www.figma.com/api/mcp/asset/8ccdc7c5-0612-4096-932a-778665186719"
-const iconX = "https://www.figma.com/api/mcp/asset/1d86c67f-830e-4ef0-a6fe-45849993acf4"
-const iconEye = "https://www.figma.com/api/mcp/asset/5fd50ace-e27e-4604-a3cb-e9c8a84ce5dc"
-const iconTrash = "https://www.figma.com/api/mcp/asset/10cae540-2b86-46b4-b088-6ba421a8adb2"
-const iconChevronLeft = "https://www.figma.com/api/mcp/asset/34db4cab-de0b-4cf6-87d9-4fc3883b7cb3"
-const iconChevronRight = "https://www.figma.com/api/mcp/asset/7425ae58-4a4a-478b-91c3-f77cea0d92aa"
-const iconBan = "https://www.figma.com/api/mcp/asset/f4ce6ed5-a283-4323-9c1f-7f71b7840bd2"
-const iconCircleX = "https://www.figma.com/api/mcp/asset/74180182-1e94-4e9e-8db7-439b21f1bc32"
-const iconCircleCheck = "https://www.figma.com/api/mcp/asset/0ba993be-862d-4728-843e-bae67fc9d0f0"
+const iconPlus =
+  "https://www.figma.com/api/mcp/asset/1861026e-bdeb-4bf2-a3d3-9ff21ab066b6";
+const iconSearch =
+  "https://www.figma.com/api/mcp/asset/6d0ae0ec-4e40-4fac-8e80-4f8fa582e4ae";
+const iconChevronDown =
+  "https://www.figma.com/api/mcp/asset/fee71b28-5724-4268-8040-7ba3bd25621c";
+const iconCheck =
+  "https://www.figma.com/api/mcp/asset/8ccdc7c5-0612-4096-932a-778665186719";
+const iconX =
+  "https://www.figma.com/api/mcp/asset/1d86c67f-830e-4ef0-a6fe-45849993acf4";
+const iconEye =
+  "https://www.figma.com/api/mcp/asset/5fd50ace-e27e-4604-a3cb-e9c8a84ce5dc";
+const iconTrash =
+  "https://www.figma.com/api/mcp/asset/10cae540-2b86-46b4-b088-6ba421a8adb2";
+const iconChevronLeft =
+  "https://www.figma.com/api/mcp/asset/34db4cab-de0b-4cf6-87d9-4fc3883b7cb3";
+const iconChevronRight =
+  "https://www.figma.com/api/mcp/asset/7425ae58-4a4a-478b-91c3-f77cea0d92aa";
+const iconBan =
+  "https://www.figma.com/api/mcp/asset/f4ce6ed5-a283-4323-9c1f-7f71b7840bd2";
+const iconCircleX =
+  "https://www.figma.com/api/mcp/asset/74180182-1e94-4e9e-8db7-439b21f1bc32";
+const iconCircleCheck =
+  "https://www.figma.com/api/mcp/asset/0ba993be-862d-4728-843e-bae67fc9d0f0";
 
-// Staff List Data
-const staffList = ref([
-  {
-    id: 1,
-    name: 'BS. Nguyễn Văn A',
-    avatar: 'https://www.figma.com/api/mcp/asset/dc21fb81-fb43-419f-96a7-a21fc6b10373',
-    email: 'bsnguyen@vcms.vn',
-    phone: '0901234567',
-    roles: [{ name: 'Bác sĩ', color: 'blue' }],
-    joinDate: '2024-01-15',
-    status: 'active',
-    lastLogin: 'Vừa xong'
-  },
-  {
-    id: 2,
-    name: 'Trần Thị B',
-    avatar: 'https://www.figma.com/api/mcp/asset/a082ce65-1caa-4eab-8a20-a51f0f223c5e',
-    email: 'tranb@vcms.vn',
-    phone: '0907654321',
-    roles: [
-      { name: 'Điều dưỡng', color: 'green' },
-      { name: 'Lễ tân / Thu ngân', color: 'purple' }
-    ],
-    joinDate: '2024-02-20',
-    status: 'active',
-    lastLogin: '2 giờ trước'
-  },
-  {
-    id: 3,
-    name: 'Admin Lê Văn C',
-    avatar: 'https://www.figma.com/api/mcp/asset/2a15601f-8024-40ac-b8ef-c894005982eb',
-    email: 'admin@vcms.vn',
-    phone: '0909876543',
-    roles: [{ name: 'Admin', color: 'red' }],
-    joinDate: '2024-01-01',
-    status: 'active',
-    lastLogin: '1 ngày trước'
-  },
-  {
-    id: 4,
-    name: 'BS. Phạm Minh D',
-    avatar: 'https://www.figma.com/api/mcp/asset/82cb5e4e-7e6c-4104-bcef-bfe225041610',
-    email: 'bspham@vcms.vn',
-    phone: '0905432109',
-    roles: [{ name: 'Bác sĩ', color: 'blue' }],
-    joinDate: '2024-03-10',
-    status: 'locked',
-    lastLogin: '15 ngày trước'
-  },
-  {
-    id: 5,
-    name: 'Ngô Thị E',
-    avatar: 'https://www.figma.com/api/mcp/asset/8436495e-db6d-4375-9c7e-ec468e3de11a',
-    email: 'ngoe@vcms.vn',
-    phone: '0908765432',
-    roles: [{ name: 'Điều dưỡng', color: 'green' }],
-    joinDate: '2024-04-05',
-    status: 'active',
-    lastLogin: '5 giờ trước'
+// Staff List Data (populated from API)
+const staffList = ref([]);
+
+// Pagination
+const pageSize = ref(5);
+const currentPage = ref(1);
+// how many numbered page buttons are currently shown (start with 1)
+const pagesShownCount = ref(1);
+
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(staffList.value.length / pageSize.value))
+);
+
+const pagedStaff = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  return staffList.value.slice(start, start + pageSize.value);
+});
+
+const startIndex = computed(() =>
+  staffList.value.length === 0
+    ? 0
+    : (currentPage.value - 1) * pageSize.value + 1
+);
+const endIndex = computed(() =>
+  Math.min(staffList.value.length, currentPage.value * pageSize.value)
+);
+
+// Previous/Next here control the visible page buttons (not the current page selection)
+const prevPage = () => {
+  if (pagesShownCount.value > 1) {
+    pagesShownCount.value -= 1;
+    // ensure currentPage is within available pages
+    if (currentPage.value > pagesShownCount.value)
+      currentPage.value = pagesShownCount.value;
   }
-])
+};
+
+const nextPage = () => {
+  if (pagesShownCount.value < totalPages.value) {
+    pagesShownCount.value += 1;
+    // automatically select the newly shown page
+    currentPage.value = pagesShownCount.value;
+  }
+};
+
+// pagesToShow: show page buttons from 1..currentPage (so Next adds a new button)
+const pagesToShow = computed(() => {
+  const max = Math.max(1, Math.min(pagesShownCount.value, totalPages.value));
+  const arr = [];
+  for (let i = 1; i <= max; i++) arr.push(i);
+  return arr;
+});
+
+// Helpers
+const formatDate = (iso) => {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+};
+
+const formatDateTime = (iso) => {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  const hh = String(d.getHours()).padStart(2, "0");
+  const min = String(d.getMinutes()).padStart(2, "0");
+  return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
+};
+
+const mapRole = (vai_tro) => {
+  if (!vai_tro) return [{ name: "Chưa phân vai", color: "gray" }];
+  const r = String(vai_tro).toLowerCase();
+  if (r === "bac_si") return [{ name: "Bác sĩ", color: "blue" }];
+  if (r === "y_ta") return [{ name: "Y tá", color: "green" }];
+  // fallback
+  return [{ name: r.replace(/_/g, " "), color: "purple" }];
+};
+
+const populateStaffList = (items) => {
+  staffList.value = items.map((it) => ({
+    id: it.id,
+    name: it.full_name || it.name || "—",
+    avatar:
+      it.avatar || it.anh_dai_dien || "https://www.gravatar.com/avatar?d=mp",
+    email: it.email || "",
+    phone: it.so_dien_thoai || it.phone || "",
+    roles: mapRole(it.vai_tro),
+    joinDate: formatDate(it.created_at),
+    // map backend trang_thai ('hoat_dong'|'da_khoa') to frontend 'active'|'locked'
+    status:
+      it.trang_thai === "hoat_dong"
+        ? "active"
+        : it.trang_thai === "da_khoa"
+        ? "locked"
+        : it.status || "active",
+    lastLogin: it.last_login_at
+      ? formatDateTime(it.last_login_at)
+      : it.last_login
+      ? formatDateTime(it.last_login)
+      : "Chưa đăng nhập",
+  }));
+};
+
+onMounted(async () => {
+  try {
+    const items = await listNhanVien();
+    populateStaffList(items);
+  } catch (e) {
+    console.error("Failed to load staff list", e);
+  }
+});
 
 // Customer List Data
 const customerList = ref([
   {
     id: 1,
-    name: 'Trần Thị Hương',
-    phone: '0912345678',
-    zalo: '0912345678',
-    petCount: '2 bé',
+    name: "Trần Thị Hương",
+    phone: "0912345678",
+    zalo: "0912345678",
+    petCount: "2 bé",
     totalSpent: 5200000,
-    joinDate: '2024-11-20',
-    status: 'active'
+    joinDate: "2024-11-20",
+    status: "active",
+    avatar:
+      "https://www.figma.com/api/mcp/asset/69ab4ed0-d5a9-4482-8a8e-baeaf0347487",
+    email: "huong.tran@email.com",
+    rank: "Gold",
+    rankIcon: "🥇",
+    address: "123 Lê Lợi, Quận 1, TP.HCM",
+    pets: ["Milo", "Luna"],
+    recentVisits: [
+      {
+        service: "Khám tổng quát",
+        date: "15/11/2024",
+        doctor: "BS. Nguyễn Văn A",
+        cost: 500000,
+      },
+    ],
   },
   {
     id: 2,
-    name: 'Nguyễn Văn Kiên',
-    phone: '0923456789',
+    name: "Nguyễn Văn Kiên",
+    phone: "0923456789",
     zalo: null,
-    petCount: '1 bé',
+    petCount: "1 bé",
     totalSpent: 2800000,
-    joinDate: '2024-10-15',
-    status: 'active'
+    joinDate: "2024-10-15",
+    status: "active",
+    avatar:
+      "https://www.figma.com/api/mcp/asset/69ab4ed0-d5a9-4482-8a8e-baeaf0347487",
+    email: "kien.nguyen@email.com",
+    rank: "Silver",
+    rankIcon: "🥈",
+    address: "456 Nguyễn Trãi, Quận 5, TP.HCM",
+    pets: ["Lu"],
+    recentVisits: [
+      {
+        service: "Tiêm phòng",
+        date: "10/10/2024",
+        doctor: "BS. Phạm Minh D",
+        cost: 300000,
+      },
+    ],
   },
   {
     id: 3,
-    name: 'Lê Thị Mai',
-    phone: '0934567890',
-    zalo: '0934567890',
-    petCount: '3 bé',
+    name: "Lê Thị Mai",
+    phone: "0934567890",
+    zalo: "0934567890",
+    petCount: "3 bé",
     totalSpent: 8900000,
-    joinDate: '2024-09-01',
-    status: 'active'
+    joinDate: "2024-09-01",
+    status: "active",
+    avatar:
+      "https://www.figma.com/api/mcp/asset/69ab4ed0-d5a9-4482-8a8e-baeaf0347487",
+    email: "mai.le@email.com",
+    rank: "Gold",
+    rankIcon: "🥇",
+    address: "789 Võ Văn Kiệt, Quận 1, TP.HCM",
+    pets: ["Mimi", "Nunu", "Kiki"],
+    recentVisits: [
+      {
+        service: "Spa trọn gói",
+        date: "01/11/2024",
+        doctor: "KTV. Trần Thị B",
+        cost: 800000,
+      },
+    ],
   },
   {
     id: 4,
-    name: 'Phạm Thanh Nam',
-    phone: '0945678901',
+    name: "Phạm Thanh Nam",
+    phone: "0945678901",
     zalo: null,
-    petCount: '1 bé',
+    petCount: "1 bé",
     totalSpent: 450000,
-    joinDate: '2024-11-10',
-    status: 'blocked'
-  }
-])
+    joinDate: "2024-11-10",
+    status: "blocked",
+    avatar:
+      "https://www.figma.com/api/mcp/asset/69ab4ed0-d5a9-4482-8a8e-baeaf0347487",
+    email: "nam.pham@email.com",
+    rank: "Bronze",
+    rankIcon: "🥉",
+    address: "321 Điện Biên Phủ, Bình Thạnh, TP.HCM",
+    pets: ["Rex"],
+    recentVisits: [
+      {
+        service: "Tư vấn dinh dưỡng",
+        date: "10/11/2024",
+        doctor: "BS. Nguyễn Văn A",
+        cost: 0,
+      },
+    ],
+  },
+]);
 
 // Methods
 const formatCurrency = (amount) => {
-  return amount.toLocaleString('vi-VN') + ' ₫'
-}
+  return amount.toLocaleString("vi-VN") + " ₫";
+};
 
 const handleAddStaff = (data) => {
-  console.log('New staff data:', data)
+  console.log("New staff data:", data);
   // Logic to add new staff goes here
-  isAddStaffModalOpen.value = false
-}
+  isAddStaffModalOpen.value = false;
+};
 
 const handleViewStaff = (staff) => {
-  selectedStaffForView.value = staff
-  isViewStaffModalOpen.value = true
-}
+  selectedStaffForView.value = staff;
+  isViewStaffModalOpen.value = true;
+};
 
 const handleOpenResetPassword = (staff) => {
-  selectedStaffForReset.value = staff
-  isResetPasswordModalOpen.value = true
-}
+  selectedStaffForReset.value = staff;
+  isResetPasswordModalOpen.value = true;
+};
 
-const handleResetPasswordSubmit = (data) => {
-  console.log('Reset password for', selectedStaffForReset.value?.name, data)
-  // Logic to reset password goes here
-  isResetPasswordModalOpen.value = false
-}
+const isResetSubmitting = ref(false);
+
+const handleResetPasswordSubmit = async (data) => {
+  // data is expected to contain { password, password_confirmation }
+  const staff = selectedStaffForReset.value;
+  if (!staff || !staff.id) {
+    showErrorToast("Lỗi", "Không có nhân viên để đặt lại mật khẩu.");
+    return;
+  }
+
+  try {
+    isResetSubmitting.value = true;
+    const payload = {
+      password: data.password,
+      password_confirmation:
+        data.password_confirmation || data.password_confirmation,
+    };
+    await api.patch(`/nhan-vien/${staff.id}/mat-khau`, payload);
+    showSuccessToast(
+      "Thành công",
+      `Đã đổi mật khẩu cho ${staff.name || staff.full_name || "nhân viên"}`
+    );
+    isResetPasswordModalOpen.value = false;
+  } catch (e) {
+    console.error("Reset password failed", e);
+    const msg = e?.response?.data?.message || "Không thể đặt lại mật khẩu.";
+    showErrorToast("Lỗi", msg);
+  } finally {
+    isResetSubmitting.value = false;
+  }
+};
+
+// Toggle lock/unlock for a staff member by calling backend endpoints
+const toggleStaffStatus = async (staff) => {
+  if (!staff || !staff.id) return;
+  const isActive = staff.status === "active";
+  const action = isActive ? "khoa" : "mo-khoa";
+  try {
+    // set local loading flag
+    staff._loading = true;
+    await api.patch(`/nhan-vien/${staff.id}/${action}`);
+    // update local status according to action
+    staff.status = isActive ? "locked" : "active";
+    showSuccessToast(
+      "Thành công",
+      isActive ? "Tài khoản đã bị khóa." : "Tài khoản đã được mở khóa."
+    );
+  } catch (e) {
+    console.error("Toggle staff status failed", e);
+    const msg =
+      e?.response?.data?.message || "Không thể thay đổi trạng thái tài khoản.";
+    showErrorToast("Lỗi", msg);
+  } finally {
+    staff._loading = false;
+  }
+};
 
 const handleViewCustomer = (customer) => {
-  selectedCustomerForView.value = customer
-  isViewCustomerModalOpen.value = true
-}
+  selectedCustomerForView.value = customer;
+  isViewCustomerModalOpen.value = true;
+};
+
+// Toggle customer status locally (no backend endpoint provided in the repo attachments)
+const handleToggleCustomerStatus = (customer) => {
+  if (!customer) return;
+  // assume statuses: 'active' or 'blocked'
+  customer.status = customer.status === "active" ? "blocked" : "active";
+  showSuccessToast(
+    "Thành công",
+    customer.status === "active"
+      ? "Khách hàng đã được kích hoạt."
+      : "Khách hàng đã bị chặn."
+  );
+};
 </script>
 
 <style scoped>
