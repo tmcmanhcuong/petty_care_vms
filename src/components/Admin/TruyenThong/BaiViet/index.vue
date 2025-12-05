@@ -3,10 +3,14 @@
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div class="flex flex-col">
-        <h1 class="text-2xl font-medium text-[#101828] leading-9">Quản lý Bài viết</h1>
-        <p class="text-base text-[#4a5565] leading-6">Tạo và quản lý nội dung cho website</p>
+        <h1 class="text-2xl font-medium text-[#101828] leading-9">
+          Quản lý Bài viết
+        </h1>
+        <p class="text-base text-[#4a5565] leading-6">
+          Tạo và quản lý nội dung cho website
+        </p>
       </div>
-      <button 
+      <button
         @click="router.push('/admin/bai-viet/them-moi')"
         class="bg-[#00a63e] text-white rounded-lg px-4 py-2 h-9 flex items-center gap-2 text-sm font-medium hover:bg-[#008c35] transition-colors"
       >
@@ -32,13 +36,17 @@
         <!-- Filters -->
         <div class="grid grid-cols-2 gap-4">
           <!-- Category Filter -->
-          <button class="bg-[#f3f3f5] border-0 rounded-lg px-3 py-1 flex items-center justify-between h-9 hover:bg-gray-200 transition-colors">
+          <button
+            class="bg-[#f3f3f5] border-0 rounded-lg px-3 py-1 flex items-center justify-between h-9 hover:bg-gray-200 transition-colors"
+          >
             <span class="text-sm text-neutral-950">Tất cả danh mục</span>
             <img :src="iconChevronDown" alt="" class="w-4 h-4" />
           </button>
 
           <!-- Status Filter -->
-          <button class="bg-[#f3f3f5] border-0 rounded-lg px-3 py-1 flex items-center justify-between h-9 hover:bg-gray-200 transition-colors">
+          <button
+            class="bg-[#f3f3f5] border-0 rounded-lg px-3 py-1 flex items-center justify-between h-9 hover:bg-gray-200 transition-colors"
+          >
             <span class="text-sm text-neutral-950">Tất cả</span>
             <img :src="iconChevronDown" alt="" class="w-4 h-4" />
           </button>
@@ -48,28 +56,58 @@
 
     <!-- Posts Table -->
     <div class="bg-white border border-black/10 rounded-[14px] p-[25px]">
-      <div class="overflow-x-auto">
+      <div v-if="isLoading" class="text-center py-8">
+        <p class="text-gray-500">Đang tải dữ liệu...</p>
+      </div>
+      <div v-else-if="filteredPosts.length === 0" class="text-center py-8">
+        <p class="text-gray-500">Không có bài viết nào</p>
+      </div>
+      <div v-else class="overflow-x-auto">
         <table class="w-full">
           <thead>
             <tr class="border-b border-black/10">
-              <th class="text-left text-sm font-medium text-neutral-950 py-2.5 px-2">Tiêu đề & Tóm tắt</th>
-              <th class="text-left text-sm font-medium text-neutral-950 py-2.5 px-2">Danh mục</th>
-              <th class="text-left text-sm font-medium text-neutral-950 py-2.5 px-2">Ngày đăng</th>
-              <th class="text-left text-sm font-medium text-neutral-950 py-2.5 px-2">Trạng thái</th>
-              <th class="text-right text-sm font-medium text-neutral-950 py-2.5 px-2">Thao tác</th>
+              <th
+                class="text-left text-sm font-medium text-neutral-950 py-2.5 px-2"
+              >
+                Tiêu đề & Tóm tắt
+              </th>
+              <th
+                class="text-left text-sm font-medium text-neutral-950 py-2.5 px-2"
+              >
+                Danh mục
+              </th>
+              <th
+                class="text-left text-sm font-medium text-neutral-950 py-2.5 px-2"
+              >
+                Ngày đăng
+              </th>
+              <th
+                class="text-left text-sm font-medium text-neutral-950 py-2.5 px-2"
+              >
+                Trạng thái
+              </th>
+              <th
+                class="text-right text-sm font-medium text-neutral-950 py-2.5 px-2"
+              >
+                Thao tác
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr 
-              v-for="post in posts" 
+            <tr
+              v-for="post in filteredPosts"
               :key="post.id"
               class="border-b border-black/10 hover:bg-gray-50 transition-colors"
             >
               <!-- Title & Summary -->
               <td class="py-4 px-2">
                 <div class="flex flex-col gap-1">
-                  <p class="text-sm text-[#101828] leading-5">{{ post.title }}</p>
-                  <p class="text-sm text-[#6a7282] leading-5 truncate max-w-[500px]">
+                  <p class="text-sm text-[#101828] leading-5">
+                    {{ post.title }}
+                  </p>
+                  <p
+                    class="text-sm text-[#6a7282] leading-5 truncate max-w-[500px]"
+                  >
                     {{ post.summary }}
                   </p>
                 </div>
@@ -77,7 +115,7 @@
 
               <!-- Category -->
               <td class="py-4 px-2">
-                <span 
+                <span
                   class="inline-block px-3 py-1 rounded-lg border text-xs font-medium"
                   :class="getCategoryClass(post.category)"
                 >
@@ -88,15 +126,21 @@
               <!-- Date -->
               <td class="py-4 px-2">
                 <div v-if="post.publishedAt" class="flex flex-col gap-1">
-                  <p class="text-sm text-[#101828] leading-5">{{ post.publishedDate }}</p>
-                  <p class="text-xs text-[#6a7282] leading-4">{{ post.publishedTime }}</p>
+                  <p class="text-sm text-[#101828] leading-5">
+                    {{ post.publishedDate }}
+                  </p>
+                  <p class="text-xs text-[#6a7282] leading-4">
+                    {{ post.publishedTime }}
+                  </p>
                 </div>
-                <p v-else class="text-sm text-[#99a1af] leading-5">Chưa xuất bản</p>
+                <p v-else class="text-sm text-[#99a1af] leading-5">
+                  Chưa xuất bản
+                </p>
               </td>
 
               <!-- Status -->
               <td class="py-4 px-2">
-                <button 
+                <button
                   class="inline-block px-3 py-1 rounded-lg border-0 text-xs font-medium transition-opacity hover:opacity-80"
                   :class="getStatusClass(post.status)"
                   @click="toggleStatus(post)"
@@ -108,14 +152,14 @@
               <!-- Actions -->
               <td class="py-4 px-2">
                 <div class="flex items-center justify-end gap-2">
-                  <button 
+                  <button
                     @click="router.push(`/admin/bai-viet/chinh-sua/${post.id}`)"
                     class="w-9 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
                     title="Chỉnh sửa"
                   >
                     <img :src="iconEdit" alt="" class="w-4 h-4" />
                   </button>
-                  <button 
+                  <button
                     @click="handleDeletePost(post)"
                     class="w-9 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
                     title="Xóa"
@@ -128,7 +172,6 @@
           </tbody>
         </table>
       </div>
-
     </div>
 
     <!-- Modals -->
@@ -142,115 +185,180 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import XoaBaiViet from './XoaBaiViet/index.vue';
+import { ref, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
+import XoaBaiViet from "./XoaBaiViet/index.vue";
+import client from "../../../../utils/api.js";
 
 // Icons
-const iconPlus = 'https://www.figma.com/api/mcp/asset/bd491dc9-ee5e-4b10-88a8-62b03bef9093';
-const iconSearch = 'https://www.figma.com/api/mcp/asset/8df55cc2-682a-4eaf-baa1-55b3c1c1c558';
-const iconChevronDown = 'https://www.figma.com/api/mcp/asset/8d066934-07ff-48dd-abfa-6acf31386f7a';
-const iconEdit = 'https://www.figma.com/api/mcp/asset/ded66c3e-db3c-4c02-965a-702a4c0fdca8';
-const iconDelete = 'https://www.figma.com/api/mcp/asset/9c38866f-8dd6-447a-84f8-060c94dd483b';
-
-// Define emits
-const emit = defineEmits(['create-post', 'edit-post', 'delete-post']);
+const iconPlus =
+  "https://www.figma.com/api/mcp/asset/bd491dc9-ee5e-4b10-88a8-62b03bef9093";
+const iconSearch =
+  "https://www.figma.com/api/mcp/asset/8df55cc2-682a-4eaf-baa1-55b3c1c1c558";
+const iconChevronDown =
+  "https://www.figma.com/api/mcp/asset/8d066934-07ff-48dd-abfa-6acf31386f7a";
+const iconEdit =
+  "https://www.figma.com/api/mcp/asset/ded66c3e-db3c-4c02-965a-702a4c0fdca8";
+const iconDelete =
+  "https://www.figma.com/api/mcp/asset/9c38866f-8dd6-447a-84f8-060c94dd483b";
 
 // Router
 const router = useRouter();
 
 // Search query
-const searchQuery = ref('');
+const searchQuery = ref("");
 const isDeletePostModalOpen = ref(false);
 const selectedPostForDelete = ref(null);
 
-// Sample posts data
-const posts = ref([
-  {
-    id: 1,
-    title: 'Cách chăm sóc chó Poodle: Hướng dẫn từ A đến Z',
-    summary: 'Poodle là giống chó thông minh, năng động và đáng yêu....',
-    category: 'knowledge',
-    categoryLabel: 'Kiến thức Thú y',
-    publishedAt: '2025-11-20T09:30:00',
-    publishedDate: '20/11/2025',
-    publishedTime: '09:30',
-    status: 'published',
-    statusLabel: 'Đã xuất bản',
-    views: 1300
-  },
-  {
-    id: 2,
-    title: 'Top 5 loại thức ăn tốt nhất cho mèo Ba Tư',
-    summary: 'Mèo Ba Tư có nhu cầu dinh dưỡng đặc biệt. Cùng khám phá.....',
-    category: 'knowledge',
-    categoryLabel: 'Kiến thức Thú y',
-    publishedAt: '2025-11-19T14:20:00',
-    publishedDate: '19/11/2025',
-    publishedTime: '14:20',
-    status: 'published',
-    statusLabel: 'Đã xuất bản',
-    views: 890
-  },
-  {
-    id: 3,
-    title: 'Khuyến mãi 20% dịch vụ tiêm phòng cho thú cưng',
-    summary: 'Chương trình khuyến mãi đặc biệt nhân dịp khai trương....',
-    category: 'promotion',
-    categoryLabel: 'Khuyến mãi',
-    publishedAt: '2025-11-20T10:00:00',
-    publishedDate: '20/11/2025',
-    publishedTime: '10:00',
-    status: 'published',
-    statusLabel: 'Đã xuất bản',
-    views: 2300
-  },
-  {
-    id: 4,
-    title: 'Sự kiện Workshop: Chăm sóc thú cưng mùa mưa',
-    summary: 'Tham gia workshop miễn phí để học cách chăm sóc......',
-    category: 'news',
-    categoryLabel: 'Tin tức & Sự kiện',
-    publishedAt: null,
-    publishedDate: null,
-    publishedTime: null,
-    status: 'draft',
-    statusLabel: 'Bản nháp',
-    views: 456
-  },
-  {
-    id: 5,
-    title: 'Lịch tiêm phòng cho chó con từ 2-6 tháng tuổi',
-    summary: 'Hướng dẫn lịch tiêm phòng chi tiết cho chó con........',
-    category: 'knowledge',
-    categoryLabel: 'Kiến thức Thú y',
-    publishedAt: null,
-    publishedDate: null,
-    publishedTime: null,
-    status: 'hidden',
-    statusLabel: 'Đã ẩn',
-    views: 0
+// State
+const posts = ref([]);
+const categories = ref([]);
+const isLoading = ref(false);
+const selectedCategoryFilter = ref(null);
+const selectedStatusFilter = ref(null);
+
+// Fetch articles from API
+const fetchPosts = async () => {
+  isLoading.value = true;
+  try {
+    const response = await client.get("/bai-viet");
+    console.log("🔍 API Response:", response.data);
+
+    if (response.data.status) {
+      // Transform API data to match UI format
+      posts.value = (response.data.data || []).map((post) => {
+        console.log("📝 Processing post:", {
+          id: post.id,
+          title: post.ten_bai_viet,
+          phan_loai: post.phan_loai,
+          phan_loai_bai_viet_id: post.phan_loai_bai_viet_id,
+        });
+
+        const transformedPost = {
+          id: post.id,
+          title: post.ten_bai_viet,
+          summary: post.mo_ta || "Không có mô tả",
+          category:
+            post.phan_loai_bai_viet_id || post.phan_loai?.id || "unknown",
+          categoryLabel: post.phan_loai?.ten_phan_loai || "Không xác định",
+          publishedAt: post.created_at,
+          publishedDate: formatDate(post.created_at),
+          publishedTime: formatTime(post.created_at),
+          status: post.trang_thai || "published",
+          statusLabel: getStatusLabel(post.trang_thai),
+          views: 0,
+          author: post.nhan_vien?.ho_va_ten || "Không xác định",
+        };
+
+        console.log(`✅ Post ${post.id} transformed:`, transformedPost);
+        return transformedPost;
+      });
+      console.log("✅ Total posts loaded:", posts.value.length);
+      console.log("📊 All posts:", posts.value);
+    } else {
+      console.error("❌ Failed to fetch posts:", response.data.message);
+    }
+  } catch (error) {
+    console.error("❌ Error fetching posts:", error);
+    console.error("❌ Error details:", error.response?.data);
+  } finally {
+    isLoading.value = false;
   }
-]);
+};
+
+// Fetch categories
+const fetchCategories = async () => {
+  try {
+    const response = await client.get("/phan-loai-bai-viet");
+    if (response.data.status) {
+      categories.value = response.data.data || [];
+      console.log("✅ Categories loaded:", categories.value);
+    } else {
+      console.error("❌ Failed to fetch categories:", response.data.message);
+    }
+  } catch (error) {
+    console.error("❌ Error fetching categories:", error);
+  }
+};
+
+// Format date
+const formatDate = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("vi-VN");
+};
+
+// Format time
+const formatTime = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleTimeString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+// Get status label
+const getStatusLabel = (status) => {
+  const labels = {
+    published: "Đã xuất bản",
+    draft: "Bản nháp",
+    hidden: "Đã ẩn",
+  };
+  return labels[status] || "Không xác định";
+};
+
+// Filtered posts (search + filter)
+const filteredPosts = computed(() => {
+  let result = posts.value;
+
+  // Filter by search query
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    result = result.filter(
+      (post) =>
+        post.title.toLowerCase().includes(query) ||
+        post.summary.toLowerCase().includes(query) ||
+        post.author.toLowerCase().includes(query)
+    );
+  }
+
+  // Filter by category
+  if (selectedCategoryFilter.value) {
+    result = result.filter(
+      (post) => post.category === selectedCategoryFilter.value
+    );
+  }
+
+  // Filter by status
+  if (selectedStatusFilter.value) {
+    result = result.filter(
+      (post) => post.status === selectedStatusFilter.value
+    );
+  }
+
+  return result;
+});
 
 // Get category badge class
-const getCategoryClass = (category) => {
-  const classes = {
-    knowledge: 'bg-blue-100 border-black/10 text-[#1447e6]',
-    promotion: 'bg-[#ffe2e2] border-black/10 text-[#c10007]',
-    news: 'bg-gray-100 border-black/10 text-[#364153]'
+const getCategoryClass = (categoryId) => {
+  const colors = {
+    1: "bg-blue-100 border-black/10 text-[#1447e6]",
+    2: "bg-[#ffe2e2] border-black/10 text-[#c10007]",
+    3: "bg-gray-100 border-black/10 text-[#364153]",
   };
-  return classes[category] || 'bg-gray-100 border-black/10 text-gray-700';
+  // Default color if categoryId not found
+  return colors[categoryId] || "bg-gray-100 border-black/10 text-gray-700";
 };
 
 // Get status badge class
 const getStatusClass = (status) => {
   const classes = {
-    published: 'bg-green-100 text-[#008236]',
-    draft: 'bg-gray-100 text-[#364153]',
-    hidden: 'bg-[#ffe2e2] text-[#c10007]'
+    published: "bg-green-100 text-[#008236]",
+    draft: "bg-gray-100 text-[#364153]",
+    hidden: "bg-[#ffe2e2] text-[#c10007]",
   };
-  return classes[status] || 'bg-gray-100 text-gray-700';
+  return classes[status] || "bg-gray-100 text-gray-700";
 };
 
 const handleDeletePost = (post) => {
@@ -258,27 +366,51 @@ const handleDeletePost = (post) => {
   isDeletePostModalOpen.value = true;
 };
 
-const handleDeleteConfirm = () => {
-  console.log('Deleting post:', selectedPostForDelete.value?.id);
-  // Logic to delete post goes here
-  isDeletePostModalOpen.value = false;
-  selectedPostForDelete.value = null;
-};
-
-const toggleStatus = (post) => {
-  if (post.status === 'published') {
-    post.status = 'draft';
-    post.statusLabel = 'Bản nháp';
-  } else {
-    post.status = 'published';
-    post.statusLabel = 'Đã xuất bản';
+const handleDeleteConfirm = async () => {
+  try {
+    const response = await client.delete(
+      `/bai-viet/${selectedPostForDelete.value?.id}`
+    );
+    if (response.data.status) {
+      console.log("✅ Post deleted");
+      await fetchPosts();
+    } else {
+      console.error("❌ Failed to delete post");
+    }
+  } catch (error) {
+    console.error("❌ Error deleting post:", error);
+  } finally {
+    isDeletePostModalOpen.value = false;
+    selectedPostForDelete.value = null;
   }
 };
+
+const toggleStatus = async (post) => {
+  const newStatus = post.status === "published" ? "hidden" : "published";
+  try {
+    const response = await client.patch(`/bai-viet/${post.id}`, {
+      trang_thai: newStatus,
+    });
+    if (response.data.status) {
+      post.status = newStatus;
+      post.statusLabel = getStatusLabel(newStatus);
+      console.log("✅ Status updated");
+    }
+  } catch (error) {
+    console.error("❌ Error updating status:", error);
+  }
+};
+
+// Lifecycle
+onMounted(() => {
+  fetchPosts();
+  fetchCategories();
+});
 </script>
 
 <style scoped>
 /* Ensure Nunito Sans font is applied */
 .font-nunito {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
 }
 </style>

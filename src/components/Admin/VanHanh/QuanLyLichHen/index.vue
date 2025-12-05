@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full min-h-screen  p-6">
+  <div class="w-full min-h-screen p-6">
     <!-- Page Header -->
     <div class="mb-6">
       <h1 class="font-nunito font-medium text-2xl leading-9 text-[#101828]">
@@ -36,21 +36,27 @@
               @click="viewMode = 'list'"
               :class="[
                 'flex items-center gap-2 px-2 py-[5px] rounded-[14px] transition-colors',
-                viewMode === 'list' ? 'bg-white' : ''
+                viewMode === 'list' ? 'bg-white' : '',
               ]"
             >
               <img :src="iconList" alt="List" class="w-4 h-4" />
-              <span class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
+              <span
+                class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+              >
                 Danh sách
               </span>
             </button>
           </div>
 
           <!-- Appointment Count Badge -->
-          <div class="bg-blue-100 border border-transparent rounded-lg px-2 py-[3px] flex items-center gap-2 h-[22px]">
+          <div
+            class="bg-blue-100 border border-transparent rounded-lg px-2 py-[3px] flex items-center gap-2 h-[22px]"
+          >
             <img :src="iconInfo" alt="Info" class="w-3 h-3" />
-            <span class="font-nunito font-medium text-xs leading-4 text-[#1447e6]">
-              {{ appointments.length }} lịch hẹn
+            <span
+              class="font-nunito font-medium text-xs leading-4 text-[#1447e6]"
+            >
+              {{ filteredAppointments.length }} lịch hẹn
             </span>
           </div>
 
@@ -77,28 +83,44 @@
             placeholder="Tìm kiếm..."
             class="bg-[#f3f3f5] border border-transparent rounded-lg h-9 pl-10 pr-3 w-full font-nunito text-sm text-neutral-950 placeholder:text-[#717182] focus:outline-none focus:ring-2 focus:ring-[#009689]"
           />
-          <img :src="iconSearch" alt="Search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
+          <img
+            :src="iconSearch"
+            alt="Search"
+            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
+          />
         </div>
 
         <!-- Date Filter -->
-        <button class="bg-[#f3f3f5] rounded-lg h-9 px-3 flex items-center justify-between gap-2 w-[204px] hover:bg-gray-200 transition-colors">
-          <span class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight">
+        <button
+          class="bg-[#f3f3f5] rounded-lg h-9 px-3 flex items-center justify-between gap-2 w-[204px] hover:bg-gray-200 transition-colors"
+        >
+          <span
+            class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight"
+          >
             Tất cả ngày
           </span>
           <img :src="iconChevronDown" alt="Dropdown" class="w-4 h-4" />
         </button>
 
         <!-- Doctor Filter -->
-        <button class="bg-white border border-gray-200/60 rounded-lg h-9 px-3 flex items-center justify-between gap-2 w-[204px] hover:bg-gray-50 transition-colors">
-          <span class="font-nunito font-medium text-sm leading-5 text-[#6a7282] tracking-tight">
+        <button
+          class="bg-white border border-gray-200/60 rounded-lg h-9 px-3 flex items-center justify-between gap-2 w-[204px] hover:bg-gray-50 transition-colors"
+        >
+          <span
+            class="font-nunito font-medium text-sm leading-5 text-[#6a7282] tracking-tight"
+          >
             Tất cả Bác sĩ
           </span>
           <img :src="iconChevronDownGray" alt="Dropdown" class="w-4 h-4" />
         </button>
 
         <!-- Status Filter -->
-        <button class="bg-[#f3f3f5] rounded-lg h-9 px-3 flex items-center justify-between gap-2 w-[204px] hover:bg-gray-200 transition-colors">
-          <span class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight">
+        <button
+          class="bg-[#f3f3f5] rounded-lg h-9 px-3 flex items-center justify-between gap-2 w-[204px] hover:bg-gray-200 transition-colors"
+        >
+          <span
+            class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight"
+          >
             Tất cả trạng thái
           </span>
           <img :src="iconChevronDown" alt="Dropdown" class="w-4 h-4" />
@@ -110,41 +132,59 @@
         <table class="w-full">
           <thead>
             <tr class="border-b border-gray-200/60">
-              <th class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
+              <th
+                class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+              >
                 Mã lịch
               </th>
-              <th class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
+              <th
+                class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+              >
                 Thời gian
               </th>
-              <th class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
+              <th
+                class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+              >
                 Khách hàng
               </th>
-              <th class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
+              <th
+                class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+              >
                 Dịch vụ
               </th>
-              <th class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
+              <th
+                class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+              >
                 Phụ trách
               </th>
-              <th class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
+              <th
+                class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+              >
                 Trạng thái
               </th>
-              <th class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
+              <th
+                class="text-left px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+              >
                 Trạng Thái Thanh Toán
               </th>
-              <th class="text-right px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight">
+              <th
+                class="text-right px-2 py-[10px] font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+              >
                 Thao tác
               </th>
             </tr>
           </thead>
           <tbody>
             <tr
-              v-for="(appointment, index) in appointments"
+              v-for="(appointment, index) in filteredAppointments"
               :key="index"
               class="border-b border-gray-200/60 hover:bg-gray-50 transition-colors"
             >
               <!-- Appointment ID -->
               <td class="px-2 py-[14px]">
-                <p class="font-nunito font-medium text-base leading-6 text-[#009689] tracking-tight">
+                <p
+                  class="font-nunito font-medium text-base leading-6 text-[#009689] tracking-tight"
+                >
                   {{ appointment.id }}
                 </p>
               </td>
@@ -152,7 +192,9 @@
               <!-- Time & Date -->
               <td class="px-2 py-[8px]">
                 <div class="flex flex-col">
-                  <span class="font-nunito text-sm leading-5 text-[#101828] tracking-tight">
+                  <span
+                    class="font-nunito text-sm leading-5 text-[#101828] tracking-tight"
+                  >
                     {{ appointment.time }}
                   </span>
                   <span class="font-nunito text-xs leading-4 text-[#6a7282]">
@@ -164,7 +206,9 @@
               <!-- Customer -->
               <td class="px-2 py-[8px]">
                 <div class="flex flex-col">
-                  <span class="font-nunito text-sm leading-5 text-[#101828] tracking-tight">
+                  <span
+                    class="font-nunito text-sm leading-5 text-[#101828] tracking-tight"
+                  >
                     {{ appointment.customer }}
                   </span>
                   <span class="font-nunito text-xs leading-4 text-[#6a7282]">
@@ -175,28 +219,39 @@
 
               <!-- Service -->
               <td class="px-2 py-[17px]">
-                <p class="font-nunito text-sm leading-5 text-[#101828] tracking-tight">
+                <p
+                  class="font-nunito text-sm leading-5 text-[#101828] tracking-tight"
+                >
                   {{ appointment.service }}
                 </p>
               </td>
 
               <!-- Assigned Staff -->
               <td class="px-2 py-[8px]">
-                <div v-if="appointment.assignedStaff" class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-full bg-[#cbfbf1] flex items-center justify-center">
+                <div
+                  v-if="appointment.assignedStaff"
+                  class="flex items-center gap-3"
+                >
+                  <div
+                    class="w-8 h-8 rounded-full bg-[#cbfbf1] flex items-center justify-center"
+                  >
                     <span class="font-nunito text-xs leading-4 text-[#00786f]">
                       {{ appointment.assignedStaff.initial }}
                     </span>
                   </div>
                   <div class="flex flex-col">
-                    <span class="font-nunito text-sm leading-5 text-[#101828] tracking-tight">
+                    <span
+                      class="font-nunito text-sm leading-5 text-[#101828] tracking-tight"
+                    >
                       {{ appointment.assignedStaff.name }}
                     </span>
                     <span class="font-nunito text-xs leading-4 text-[#6a7282]">
                       {{ appointment.assignedStaff.department }}
                     </span>
                   </div>
-                  <button class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
+                  <button
+                    class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"
+                  >
                     <img :src="iconEdit" alt="Edit" class="w-4 h-4" />
                   </button>
                 </div>
@@ -206,7 +261,9 @@
                   @click="handleAssignDoctor(appointment.id)"
                 >
                   <img :src="iconWarning" alt="Warning" class="w-4 h-4" />
-                  <span class="font-nunito font-medium text-sm leading-5 text-[#f54900] tracking-tight">
+                  <span
+                    class="font-nunito font-medium text-sm leading-5 text-[#f54900] tracking-tight"
+                  >
                     Chưa gán
                   </span>
                 </button>
@@ -217,11 +274,15 @@
                 <span
                   :class="[
                     'inline-flex items-center px-2 py-[3px] rounded-lg font-nunito font-medium text-xs leading-4',
-                    appointment.status === 'confirmed' ? 'bg-green-100 text-[#008236]' :
-                    appointment.status === 'in-progress' ? 'bg-purple-100 text-[#8200db]' :
-                    appointment.status === 'pending' ? 'bg-blue-100 text-[#1447e6]' :
-                    appointment.status === 'completed' ? 'bg-gray-100 text-[#364153]' :
-                    'bg-[#ffe2e2] text-[#c10007]'
+                    appointment.status === 'confirmed'
+                      ? 'bg-green-100 text-[#008236]'
+                      : appointment.status === 'in-progress'
+                      ? 'bg-purple-100 text-[#8200db]'
+                      : appointment.status === 'pending'
+                      ? 'bg-blue-100 text-[#1447e6]'
+                      : appointment.status === 'completed'
+                      ? 'bg-gray-100 text-[#364153]'
+                      : 'bg-[#ffe2e2] text-[#c10007]',
                   ]"
                 >
                   {{ getStatusLabel(appointment.status) }}
@@ -233,9 +294,11 @@
                 <span
                   :class="[
                     'inline-flex items-center px-2 py-[3px] rounded-lg font-nunito font-medium text-xs leading-4',
-                    appointment.paymentStatus === 'paid' ? 'bg-green-100 text-[#008236]' :
-                    appointment.paymentStatus === 'refunded' ? 'bg-purple-100 text-[#7e22ce]' :
-                    'bg-gray-100 text-[#4a5565]'
+                    appointment.paymentStatus === 'paid'
+                      ? 'bg-green-100 text-[#008236]'
+                      : appointment.paymentStatus === 'refunded'
+                      ? 'bg-purple-100 text-[#7e22ce]'
+                      : 'bg-gray-100 text-[#4a5565]',
                   ]"
                 >
                   {{ getPaymentStatusLabel(appointment.paymentStatus) }}
@@ -260,7 +323,10 @@
                     <img :src="iconEye" alt="View" class="w-4 h-4" />
                   </button>
                   <button
-                    v-if="appointment.status !== 'completed' && appointment.status !== 'cancelled'"
+                    v-if="
+                      appointment.status !== 'completed' &&
+                      appointment.status !== 'cancelled'
+                    "
                     class="bg-white border border-gray-200/60 rounded-lg w-[38px] h-8 flex items-center justify-center hover:bg-gray-50 transition-colors"
                     title="Hủy lịch"
                     @click="handleCancelAppointment(appointment.id)"
@@ -291,6 +357,7 @@
     <PhanCongBacSi
       v-if="isAssignDoctorModalOpen"
       :appointment-id="selectedAppointmentForAssign"
+      :appointment="selectedAppointmentData"
       @close="isAssignDoctorModalOpen = false"
       @assign="handleAssignDoctorSubmit"
     />
@@ -305,175 +372,361 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import TaoLichHen from './TaoLichHen/index.vue'
-import ChiTietLichHen from './ChiTietLichHen/index.vue'
-import PhanCongBacSi from './PhanCongBacSi/index.vue'
-import XoaLichHen from './XoaLichHen/index.vue'
+import { ref, onMounted, computed } from "vue";
+import client from "../../../../utils/api.js";
+import TaoLichHen from "./TaoLichHen/index.vue";
+import ChiTietLichHen from "./ChiTietLichHen/index.vue";
+import PhanCongBacSi from "./PhanCongBacSi/index.vue";
+import XoaLichHen from "./XoaLichHen/index.vue";
 
 // Icons (from Figma - expire in 7 days)
-const iconCalendar = "https://www.figma.com/api/mcp/asset/52bb5c39-6cad-469b-b6f1-ae9080630816"
-const iconList = "https://www.figma.com/api/mcp/asset/193b6dd7-26f4-4255-97b9-1dab13480445"
-const iconInfo = "https://www.figma.com/api/mcp/asset/d8d78cd2-466d-4e46-91e6-d15ad70ae240"
-const iconPlus = "https://www.figma.com/api/mcp/asset/01f06bef-7043-4ea0-9813-1421715a59a0"
-const iconChevronDown = "https://www.figma.com/api/mcp/asset/18e0738b-2077-416d-a0ab-1e77c1876e0b"
-const iconChevronDownGray = "https://www.figma.com/api/mcp/asset/aa0795ae-fecf-415c-9d22-0a72282b83c5"
-const iconSearch = "https://www.figma.com/api/mcp/asset/956514f4-380b-499f-a317-43e4198ab26d"
-const iconEdit = "https://www.figma.com/api/mcp/asset/839ffb1e-c31c-4487-bd0a-e7ba3c83ea3a"
-const iconCheck = "https://www.figma.com/api/mcp/asset/c35385b8-6c69-4da1-947a-4c825d65703c"
-const iconEye = "https://www.figma.com/api/mcp/asset/021018ef-b553-495c-8a16-2f82b9b47bcf"
-const iconCancel = "https://www.figma.com/api/mcp/asset/4ef6be71-a70f-4d58-975c-332795e2f34a"
-const iconWarning = "https://www.figma.com/api/mcp/asset/7e99d627-ecff-43f8-b928-e9d727f824d0"
+const iconCalendar =
+  "https://www.figma.com/api/mcp/asset/52bb5c39-6cad-469b-b6f1-ae9080630816";
+const iconList =
+  "https://www.figma.com/api/mcp/asset/193b6dd7-26f4-4255-97b9-1dab13480445";
+const iconInfo =
+  "https://www.figma.com/api/mcp/asset/d8d78cd2-466d-4e46-91e6-d15ad70ae240";
+const iconPlus =
+  "https://www.figma.com/api/mcp/asset/01f06bef-7043-4ea0-9813-1421715a59a0";
+const iconChevronDown =
+  "https://www.figma.com/api/mcp/asset/18e0738b-2077-416d-a0ab-1e77c1876e0b";
+const iconChevronDownGray =
+  "https://www.figma.com/api/mcp/asset/aa0795ae-fecf-415c-9d22-0a72282b83c5";
+const iconSearch =
+  "https://www.figma.com/api/mcp/asset/956514f4-380b-499f-a317-43e4198ab26d";
+const iconEdit =
+  "https://www.figma.com/api/mcp/asset/839ffb1e-c31c-4487-bd0a-e7ba3c83ea3a";
+const iconCheck =
+  "https://www.figma.com/api/mcp/asset/c35385b8-6c69-4da1-947a-4c825d65703c";
+const iconEye =
+  "https://www.figma.com/api/mcp/asset/021018ef-b553-495c-8a16-2f82b9b47bcf";
+const iconCancel =
+  "https://www.figma.com/api/mcp/asset/4ef6be71-a70f-4d58-975c-332795e2f34a";
+const iconWarning =
+  "https://www.figma.com/api/mcp/asset/7e99d627-ecff-43f8-b928-e9d727f824d0";
 
 // Emits
-const emit = defineEmits(['create-appointment'])
+const emit = defineEmits(["create-appointment"]);
 
 // Reactive state
-const viewMode = ref('list')
-const searchQuery = ref('')
-const isCreateAppointmentModalOpen = ref(false)
-const isViewAppointmentModalOpen = ref(false)
-const selectedAppointmentId = ref('')
-const isAssignDoctorModalOpen = ref(false)
-const selectedAppointmentForAssign = ref('')
-const isCancelAppointmentModalOpen = ref(false)
-const selectedAppointmentForCancel = ref('')
+const viewMode = ref("list");
+const searchQuery = ref("");
+const isCreateAppointmentModalOpen = ref(false);
+const isViewAppointmentModalOpen = ref(false);
+const selectedAppointmentId = ref("");
+const isAssignDoctorModalOpen = ref(false);
+const selectedAppointmentForAssign = ref("");
+const selectedAppointmentData = ref(null);
+const isCancelAppointmentModalOpen = ref(false);
+const selectedAppointmentForCancel = ref("");
+const isLoading = ref(false);
+const error = ref(null);
 
-// Sample Data
-const appointments = ref([
-  {
-    id: 'LH001234',
-    time: '09:00',
-    date: '20/11/2025',
-    customer: 'Nguyễn Văn A',
-    pet: 'Milo',
-    service: 'Khám tổng quát',
-    assignedStaff: {
-      initial: 'B',
-      name: 'BS. Nguyễn Văn B',
-    },
-    status: 'confirmed',
-    paymentStatus: 'unpaid'
-  },
-  {
-    id: 'LH001235',
-    time: '10:30',
-    date: '20/11/2025',
-    customer: 'Trần Thị C',
-    pet: 'Luna',
-    service: 'Tiêm phòng',
-    assignedStaff: {
-      initial: 'D',
-      name: 'NV. Lê Thị D',
-    },
-    status: 'in-progress',
-    paymentStatus: 'unpaid'
-  },
-  {
-    id: 'LH001236',
-    time: '14:00',
-    date: '20/11/2025',
-    customer: 'Lê Văn E',
-    pet: 'Bella',
-    service: 'Phẫu thuật xương',
-    assignedStaff: null,
-    status: 'pending',
-    paymentStatus: 'unpaid'
-  },
-  {
-    id: 'LH001237',
-    time: '15:00',
-    date: '19/11/2025',
-    customer: 'Phạm Thị G',
-    pet: 'Max',
-    service: 'Khám bệnh',
-    assignedStaff: {
-      initial: 'B',
-      name: 'BS. Nguyễn Văn B',
-    },
-    status: 'completed',
-    paymentStatus: 'paid'
-  },
-  {
-    id: 'LH001238',
-    time: '16:00',
-    date: '19/11/2025',
-    customer: 'Hoàng Văn H',
-    pet: 'Coco',
-    service: 'Tư vấn dinh dưỡng',
-    assignedStaff: {
-      initial: 'D',
-      name: 'NV. Lê Thị D',
-    },
-    status: 'cancelled',
-    paymentStatus: 'refunded'
-  },
-  {
-    id: 'LH001239',
-    time: '11:00',
-    date: '20/11/2025',
-    customer: 'Đỗ Thị I',
-    pet: 'Rocky',
-    service: 'Siêu âm',
-    assignedStaff: null,
-    status: 'confirmed',
-    paymentStatus: 'paid'
+// Data from API
+const appointments = ref([]);
+
+// Cache for doctors to avoid repeated API calls
+const doctorsCache = ref({});
+
+// Helper function to get doctor info by ID from cache or API
+const getDoctorInfo = async (doctorId) => {
+  // Return from cache if available
+  if (doctorsCache.value[doctorId]) {
+    return doctorsCache.value[doctorId];
   }
-])
+
+  // If not in cache, try to fetch from API
+  try {
+    const response = await client.get(`/nhan-vien/${doctorId}`);
+    if (response.data.status && response.data.data) {
+      const doctorData = response.data.data;
+      doctorsCache.value[doctorId] = doctorData;
+      return doctorData;
+    }
+  } catch (err) {
+    console.error(`Error fetching doctor ${doctorId}:`, err);
+  }
+
+  return null;
+};
+
+// Format date and time from ngay_gio (e.g., "2025-11-20 09:00:00")
+const formatDateTime = (ngayGio) => {
+  if (!ngayGio) return { date: "", time: "" };
+  try {
+    const date = new Date(ngayGio);
+    const time = date.toLocaleTimeString("vi-VN", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const dateStr = date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    return { date: dateStr, time };
+  } catch (e) {
+    return { date: "", time: "" };
+  }
+};
+
+// Transform API data to UI format
+const transformAppointment = (data) => {
+  const { date, time } = formatDateTime(data.ngay_gio);
+
+  // Debug: Log the raw appointment data
+  console.log("📌 Raw appointment data:", data);
+  console.log("📌 nhan_vien:", data.nhan_vien);
+  console.log("📌 nhan_vien_id:", data.nhan_vien_id);
+  console.log("📌 All keys in data:", Object.keys(data));
+
+  let assignedStaff = null;
+  // Check if doctor is assigned (either has nhan_vien object or nhan_vien_id)
+  if (data.nhan_vien || data.nhan_vien_id) {
+    console.log("🔍 Has nhan_vien_id or nhan_vien object");
+    if (data.nhan_vien) {
+      console.log("🔍 nhan_vien object keys:", Object.keys(data.nhan_vien));
+    }
+
+    // If nhan_vien_id exists but nhan_vien object is empty, log warning
+    if (data.nhan_vien_id && !data.nhan_vien) {
+      console.warn(
+        "⚠️ Backend returned nhan_vien_id but not nhan_vien object. Relationships not loaded!"
+      );
+    }
+
+    // Get doctor name with multiple fallbacks
+    const doctorName =
+      data.nhan_vien?.ho_ten ||
+      data.nhan_vien?.name ||
+      data.nhan_vien?.ten ||
+      data.nhan_vien?.full_name ||
+      "Bác Sĩ";
+
+    // If still no name found, scan all fields dynamically
+    let finalName = doctorName;
+    if (finalName === "Bác Sĩ" && data.nhan_vien) {
+      for (let key in data.nhan_vien) {
+        const value = data.nhan_vien[key];
+        if (
+          typeof value === "string" &&
+          value.length > 2 &&
+          value.length < 100 &&
+          (key.includes("name") ||
+            key.includes("ten") ||
+            key.includes("ho") ||
+            key.includes("Name"))
+        ) {
+          finalName = value;
+          console.log(`🔍 Found dynamic name field '${key}': ${value}`);
+          break;
+        }
+      }
+    }
+
+    assignedStaff = {
+      initial:
+        finalName && finalName !== "Chưa xác định" ? finalName.charAt(0) : "B",
+      name: finalName,
+      department: data.nhan_vien?.chuc_vu || "Bác Sĩ",
+    };
+    console.log("✅ Assigned Staff created:", assignedStaff);
+  } else {
+    console.log(
+      "❌ No doctor assigned - nhan_vien and nhan_vien_id are both empty"
+    );
+  }
+
+  // Get customer name - Backend transforms khach_hang to string (full_name)
+  // The backend transformData() converts khach_hang object to full_name string
+  let customerName = "Chưa xác định";
+  if (typeof data.khach_hang === "string" && data.khach_hang) {
+    // Backend returns khach_hang as string (full_name)
+    customerName = data.khach_hang;
+  } else if (data.khach_hang?.ho_ten) {
+    // Fallback: if still object with ho_ten
+    customerName = data.khach_hang.ho_ten;
+  } else if (data.khach_hang?.full_name) {
+    // Fallback: if still object with full_name
+    customerName = data.khach_hang.full_name;
+  } else if (data.khach_hang?.name) {
+    // Fallback: if still object with name
+    customerName = data.khach_hang.name;
+  }
+
+  return {
+    id: data.id,
+    time,
+    date,
+    customer: customerName,
+    pet: data.thu_cung?.ten_thu_cung || data.thu_cung?.name || "Chưa xác định",
+    service: data.dich_vu?.ten || data.dich_vu?.name || "Dịch vụ không rõ",
+    assignedStaff,
+    status: data.trang_thai || "pending",
+    paymentStatus: data.thanh_toan?.trang_thai || "unpaid",
+    originalData: data, // Keep original data for reference
+  };
+};
+
+// Fetch appointments from API
+const fetchAppointments = async () => {
+  isLoading.value = true;
+  error.value = null;
+  try {
+    // Add query param to fetch all appointments (for admin)
+    const response = await client.get("/lich-hen?all=1");
+
+    if (response.data.status && Array.isArray(response.data.data)) {
+      console.log("📋 Appointments from API:", response.data.data);
+      appointments.value = response.data.data.map(transformAppointment);
+
+      // Fetch missing doctor info for appointments without nhan_vien object
+      const appointmentsNeedingDoctorInfo = response.data.data.filter(
+        (apt) => apt.nhan_vien_id && !apt.nhan_vien
+      );
+
+      if (appointmentsNeedingDoctorInfo.length > 0) {
+        console.log(
+          `⚠️ Fetching ${appointmentsNeedingDoctorInfo.length} missing doctor infos...`
+        );
+        for (const apt of appointmentsNeedingDoctorInfo) {
+          const doctorInfo = await getDoctorInfo(apt.nhan_vien_id);
+          if (doctorInfo) {
+            // Create nhan_vien object from fetched data
+            apt.nhan_vien = doctorInfo;
+            // Re-transform this appointment to get updated doctor name
+            const transformedApt = transformAppointment(apt);
+            // Find and update in appointments array
+            const index = appointments.value.findIndex((a) => a.id === apt.id);
+            if (index !== -1) {
+              appointments.value[index] = transformedApt;
+            }
+          }
+        }
+      }
+
+      console.log("✅ Transformed appointments:", appointments.value);
+    } else if (response.data.data && response.data.data.data) {
+      // Handle paginated response
+      console.log("📋 Paginated appointments:", response.data.data.data);
+      appointments.value = response.data.data.data.map(transformAppointment);
+      console.log("✅ Transformed appointments:", appointments.value);
+    }
+  } catch (err) {
+    error.value = err.message;
+    console.error("Error fetching appointments:", err);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Filtered appointments based on search
+const filteredAppointments = computed(() => {
+  if (!searchQuery.value) return appointments.value;
+
+  const query = searchQuery.value.toLowerCase();
+  return appointments.value.filter(
+    (apt) =>
+      apt.id.toLowerCase().includes(query) ||
+      apt.customer.toLowerCase().includes(query) ||
+      apt.pet.toLowerCase().includes(query) ||
+      apt.service.toLowerCase().includes(query)
+  );
+});
+
+// Load appointments on mount
+onMounted(() => {
+  fetchAppointments();
+});
 
 // Methods
 const getStatusLabel = (status) => {
   const labels = {
-    'confirmed': 'Đã xác nhận',
-    'in-progress': 'Đang khám',
-    'pending': 'Chờ xác nhận',
-    'completed': 'Hoàn thành',
-    'cancelled': 'Đã hủy'
-  }
-  return labels[status] || status
-}
+    confirmed: "Đã xác nhận",
+    "in-progress": "Đang khám",
+    pending: "Chờ xác nhận",
+    completed: "Hoàn thành",
+    cancelled: "Đã hủy",
+  };
+  return labels[status] || status;
+};
 
 const getPaymentStatusLabel = (status) => {
   const labels = {
-    'paid': 'Đã thanh toán',
-    'unpaid': 'Chưa thanh toán',
-    'refunded': 'Đã hoàn tiền'
-  }
-  return labels[status] || status
-}
+    paid: "Đã thanh toán",
+    unpaid: "Chưa thanh toán",
+    refunded: "Đã hoàn tiền",
+  };
+  return labels[status] || status;
+};
 
 const handleCreateAppointment = (data) => {
-  console.log('New appointment data:', data)
+  console.log("New appointment data:", data);
   // Logic to create appointment goes here
-  isCreateAppointmentModalOpen.value = false
-}
+  isCreateAppointmentModalOpen.value = false;
+  // Refresh the list
+  fetchAppointments();
+};
 
 const handleViewAppointment = (id) => {
-  selectedAppointmentId.value = id
-  isViewAppointmentModalOpen.value = true
-}
+  selectedAppointmentId.value = id;
+  isViewAppointmentModalOpen.value = true;
+};
 
 const handleAssignDoctor = (id) => {
-  selectedAppointmentForAssign.value = id
-  isAssignDoctorModalOpen.value = true
-}
+  // Tìm appointment data từ danh sách
+  const appointmentData = appointments.value.find((apt) => apt.id === id);
+  selectedAppointmentData.value = appointmentData || null;
+  selectedAppointmentForAssign.value = id;
+  isAssignDoctorModalOpen.value = true;
+};
 
 const handleAssignDoctorSubmit = (data) => {
-  console.log('Assigned doctor:', data)
-  // Logic to assign doctor goes here
-  isAssignDoctorModalOpen.value = false
-}
+  console.log("Assigned doctor:", data);
+
+  // Find the appointment in the list and update it with assigned doctor info
+  const appointmentIndex = appointments.value.findIndex(
+    (apt) => apt.id === data.appointmentId
+  );
+
+  if (appointmentIndex !== -1) {
+    // Update the appointment with doctor info and status
+    appointments.value[appointmentIndex].assignedStaff = {
+      initial: data.staffName ? data.staffName.charAt(0) : "?",
+      name: data.staffName,
+      department: "Bác sĩ",
+    };
+
+    // Update status to confirmed/da_xac_nhan
+    if (data.status) {
+      appointments.value[appointmentIndex].status = data.status;
+    }
+  }
+
+  isAssignDoctorModalOpen.value = false;
+
+  // Refresh the list to get latest data from server
+  setTimeout(() => {
+    fetchAppointments();
+  }, 500);
+};
 
 const handleCancelAppointment = (id) => {
-  selectedAppointmentForCancel.value = id
-  isCancelAppointmentModalOpen.value = true
-}
+  selectedAppointmentForCancel.value = id;
+  isCancelAppointmentModalOpen.value = true;
+};
 
-const handleCancelAppointmentConfirm = (id) => {
-  console.log('Cancelled appointment:', id)
-  // Logic to cancel appointment goes here
-  isCancelAppointmentModalOpen.value = false
-}
+const handleCancelAppointmentConfirm = async (id) => {
+  try {
+    await client.delete(`/lich-hen/${id}`);
+    console.log("Cancelled appointment:", id);
+    isCancelAppointmentModalOpen.value = false;
+    // Refresh the list
+    fetchAppointments();
+  } catch (err) {
+    console.error("Error cancelling appointment:", err);
+  }
+};
 </script>
 
 <style scoped>

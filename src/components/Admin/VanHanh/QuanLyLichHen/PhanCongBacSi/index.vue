@@ -1,8 +1,12 @@
 <template>
   <!-- Modal Overlay -->
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
     <!-- Modal Card -->
-    <div class="bg-white border border-black/10 rounded-[10px] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] w-[510px] relative">
+    <div
+      class="bg-white border border-black/10 rounded-[10px] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] w-[510px] relative"
+    >
       <!-- Close Button -->
       <button
         @click="$emit('close')"
@@ -13,7 +17,9 @@
 
       <!-- Dialog Header -->
       <div class="px-6 pt-6 pb-0">
-        <h2 class="font-nunito font-semibold text-lg leading-[18px] text-neutral-950 tracking-tight mb-2">
+        <h2
+          class="font-nunito font-semibold text-lg leading-[18px] text-neutral-950 tracking-tight mb-2"
+        >
           Phân công Bác sĩ
         </h2>
         <p class="font-nunito text-sm leading-5 text-[#717182] tracking-tight">
@@ -23,28 +29,48 @@
 
       <!-- Content -->
       <div class="px-6 pt-[22px] pb-0">
-        <div class="flex flex-col gap-4">
+        <!-- Loading State -->
+        <div v-if="isLoading" class="flex items-center justify-center py-8">
+          <div
+            class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#009689]"
+          ></div>
+        </div>
+
+        <!-- Error State -->
+        <div
+          v-else-if="error"
+          class="bg-red-50 border border-red-200 rounded-[10px] px-4 py-3 mb-4"
+        >
+          <p class="font-nunito text-sm text-red-700">{{ error }}</p>
+        </div>
+
+        <!-- Content -->
+        <div v-else class="flex flex-col gap-4">
           <!-- Appointment Info Alert -->
-          <div class="bg-teal-50 border border-[#96f7e4] rounded-[10px] px-[17px] py-[13px] relative">
+          <div
+            class="bg-teal-50 border border-[#96f7e4] rounded-[10px] px-[17px] py-[13px] relative"
+          >
             <div class="absolute left-[17px] top-[15px] w-4 h-4">
               <img :src="iconInfo" alt="Info" class="w-full h-full" />
             </div>
             <div class="ml-7 flex flex-col gap-1">
               <div class="flex items-start">
-                <p class="font-nunito font-bold text-sm text-[#717182] tracking-tight">
+                <p
+                  class="font-nunito font-bold text-sm text-[#717182] tracking-tight"
+                >
                   Lịch hẹn:
                 </p>
-                <p class="font-nunito text-sm text-[#717182] tracking-tight ml-1">
+                <p
+                  class="font-nunito text-sm text-[#717182] tracking-tight ml-1"
+                >
                   {{ appointmentInfo.id }} - {{ appointmentInfo.service }}
-                </p>
-                <p class="font-nunito text-sm text-[#6a7282] tracking-tight ml-1">
-                  ({{ appointmentInfo.duration }} phút)
                 </p>
               </div>
               <div class="flex items-center gap-1">
                 <img :src="iconClock" alt="Time" class="w-3 h-3" />
                 <p class="font-nunito text-sm text-[#717182] tracking-tight">
-                  {{ appointmentInfo.time }} - {{ appointmentInfo.date }} | 🐾 {{ appointmentInfo.pet }}
+                  {{ appointmentInfo.time }} - {{ appointmentInfo.date }} | 🐾
+                  {{ appointmentInfo.pet }}
                 </p>
               </div>
             </div>
@@ -56,7 +82,9 @@
             <div class="flex flex-col gap-3">
               <div class="flex items-center gap-2 h-5">
                 <div class="w-2 h-2 rounded-full bg-[#00c950]"></div>
-                <h4 class="font-nunito font-medium text-sm leading-5 text-[#364153] tracking-tight">
+                <h4
+                  class="font-nunito font-medium text-sm leading-5 text-[#364153] tracking-tight"
+                >
                   Bác sĩ khả dụng ({{ availableStaff.length }})
                 </h4>
               </div>
@@ -69,15 +97,21 @@
                 >
                   <div class="flex items-center gap-3">
                     <!-- Avatar -->
-                    <div class="w-10 h-10 rounded-full bg-[#009689] flex items-center justify-center">
-                      <span class="font-nunito text-base leading-6 text-white tracking-tight">
+                    <div
+                      class="w-10 h-10 rounded-full bg-[#009689] flex items-center justify-center"
+                    >
+                      <span
+                        class="font-nunito text-base leading-6 text-white tracking-tight"
+                      >
                         {{ staff.initial }}
                       </span>
                     </div>
 
                     <!-- Info -->
                     <div class="flex flex-col gap-1">
-                      <p class="font-nunito font-medium text-base leading-6 text-[#101828] tracking-tight">
+                      <p
+                        class="font-nunito font-medium text-base leading-6 text-[#101828] tracking-tight"
+                      >
                         {{ staff.name }}
                       </p>
                       <div class="flex items-center gap-2">
@@ -85,8 +119,12 @@
                           {{ staff.department }}
                         </span> -->
                         <div class="flex items-center gap-1">
-                          <div class="w-[6px] h-[6px] rounded-full bg-[#00c950]"></div>
-                          <span class="font-nunito text-xs leading-4 text-[#00a63e]">
+                          <div
+                            class="w-[6px] h-[6px] rounded-full bg-[#00c950]"
+                          ></div>
+                          <span
+                            class="font-nunito text-xs leading-4 text-[#00a63e]"
+                          >
                             Đang trực
                           </span>
                         </div>
@@ -97,11 +135,14 @@
                   <!-- Select Button -->
                   <button
                     @click="handleSelectStaff(staff)"
-                    class="bg-[#00a63e] rounded-lg h-8 px-[10px] flex items-center gap-1 hover:bg-[#008c35] transition-colors"
+                    :disabled="isAssigning"
+                    class="bg-[#00a63e] rounded-lg h-8 px-[10px] flex items-center gap-1 hover:bg-[#008c35] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <img :src="iconCheck" alt="Check" class="w-4 h-4" />
-                    <span class="font-nunito font-medium text-sm leading-5 text-white tracking-tight">
-                      Chọn
+                    <span
+                      class="font-nunito font-medium text-sm leading-5 text-white tracking-tight"
+                    >
+                      {{ isAssigning ? "Đang..." : "Chọn" }}
                     </span>
                   </button>
                 </div>
@@ -112,7 +153,9 @@
             <div class="flex flex-col gap-3">
               <div class="flex items-center gap-2 h-5">
                 <div class="w-2 h-2 rounded-full bg-[#99a1af]"></div>
-                <h4 class="font-nunito font-medium text-sm leading-5 text-[#99a1af] tracking-tight">
+                <h4
+                  class="font-nunito font-medium text-sm leading-5 text-[#99a1af] tracking-tight"
+                >
                   Không trực ({{ unavailableStaff.length }})
                 </h4>
               </div>
@@ -125,22 +168,30 @@
                 >
                   <div class="flex items-center gap-3">
                     <!-- Avatar -->
-                    <div class="w-10 h-10 rounded-full bg-[#d1d5dc] flex items-center justify-center">
-                      <span class="font-nunito text-base leading-6 text-[#4a5565] tracking-tight">
+                    <div
+                      class="w-10 h-10 rounded-full bg-[#d1d5dc] flex items-center justify-center"
+                    >
+                      <span
+                        class="font-nunito text-base leading-6 text-[#4a5565] tracking-tight"
+                      >
                         {{ staff.initial }}
                       </span>
                     </div>
 
                     <!-- Info -->
                     <div class="flex flex-col gap-1">
-                      <p class="font-nunito font-medium text-base leading-6 text-[#4a5565] tracking-tight">
+                      <p
+                        class="font-nunito font-medium text-base leading-6 text-[#4a5565] tracking-tight"
+                      >
                         {{ staff.name }}
                       </p>
                       <div class="flex items-center gap-2">
                         <!-- <span class="bg-white border border-black/10 rounded-lg px-[9px] py-[3px] font-nunito font-medium text-xs leading-4 text-neutral-950">
                           {{ staff.department }}
                         </span> -->
-                        <span class="font-nunito text-xs leading-4 text-[#6a7282]">
+                        <span
+                          class="font-nunito text-xs leading-4 text-[#6a7282]"
+                        >
                           Không có ca trực
                         </span>
                       </div>
@@ -167,68 +218,185 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from "vue";
+import client from "../../../../../utils/api.js";
 
 // Icons (from Figma - expire in 7 days)
-const iconInfo = "https://www.figma.com/api/mcp/asset/e0c17bea-ec11-4dc3-b389-ae1f90d8cc45"
-const iconClock = "https://www.figma.com/api/mcp/asset/65653d7b-7617-45e9-bbdd-dda45e426845"
-const iconCheck = "https://www.figma.com/api/mcp/asset/a7a71d83-f7b3-46f8-8431-aa9d01394c2a"
-const iconClose = "https://www.figma.com/api/mcp/asset/2c1ab02b-5882-483d-8198-c600112252fd"
+const iconInfo =
+  "https://www.figma.com/api/mcp/asset/e0c17bea-ec11-4dc3-b389-ae1f90d8cc45";
+const iconClock =
+  "https://www.figma.com/api/mcp/asset/65653d7b-7617-45e9-bbdd-dda45e426845";
+const iconCheck =
+  "https://www.figma.com/api/mcp/asset/a7a71d83-f7b3-46f8-8431-aa9d01394c2a";
+const iconClose =
+  "https://www.figma.com/api/mcp/asset/2c1ab02b-5882-483d-8198-c600112252fd";
 
 // Props
 const props = defineProps({
   appointmentId: {
     type: String,
-    default: 'LH001236'
-  }
-})
+    default: "LH001236",
+  },
+  appointment: {
+    type: Object,
+    default: null,
+  },
+});
 
 // Emits
-const emit = defineEmits(['close', 'assign'])
+const emit = defineEmits(["close", "assign"]);
 
-// Sample Appointment Info (in real app, this would be fetched based on appointmentId)
-const appointmentInfo = ref({
-  id: props.appointmentId,
-  service: 'Phẫu thuật xương',
-  duration: 120,
-  time: '14:00',
-  date: '20/11/2025',
-  pet: 'Bella'
-})
-
-// Sample Staff Data
-const availableStaff = ref([
-  {
-    id: 'staff1',
-    name: 'BS. Nguyễn Văn B',
-    initial: 'B',
-    available: true
-  },
-  {
-    id: 'staff2',
-    name: 'BS. Phạm Thị H',
-    initial: 'H',
-    available: true
+// Reactive state
+const isLoading = ref(false);
+const error = ref(null);
+const appointmentInfo = computed(() => {
+  if (props.appointment) {
+    return {
+      id: props.appointment.id || "LH001236",
+      service: props.appointment.service || "Phẫu thuật xương",
+      duration: props.appointment.duration || 120,
+      time: props.appointment.time || "14:00",
+      date: props.appointment.date || "20/11/2025",
+      pet: props.appointment.pet || "Bella",
+    };
   }
-])
+  // Fallback data nếu appointment không được truyền
+  return {
+    id: "LH001236",
+    service: "Phẫu thuật xương",
+    duration: 120,
+    time: "14:00",
+    date: "20/11/2025",
+    pet: "Bella",
+  };
+});
 
-const unavailableStaff = ref([
-  {
-    id: 'staff3',
-    name: 'NV. Lê Thị D',
-    initial: 'D',
-    available: false
+const allDoctors = ref([]);
+const isAssigning = ref(false);
+
+// Get available and unavailable doctors
+const availableStaff = computed(() => {
+  // Tất cả bác sĩ đã được lọc là hoạt động trong fetchDoctors()
+  return allDoctors.value.filter((doctor) => doctor.trang_thai === "hoat_dong");
+});
+
+const unavailableStaff = computed(() => {
+  // Không có bác sĩ không hoạt động vì đã lọc trong fetchDoctors()
+  return allDoctors.value.filter((doctor) => doctor.trang_thai !== "hoat_dong");
+});
+
+// Fetch doctors from API
+const fetchDoctors = async () => {
+  isLoading.value = true;
+  error.value = null;
+  try {
+    const response = await client.get("/nhan-vien");
+
+    if (response.data.status && Array.isArray(response.data.data)) {
+      // Filter only doctors (vai_tro = 'bac_si' or similar)
+      console.log("All employees from API:", response.data.data);
+      console.log("First employee structure:", response.data.data[0]); // Debug: check field names
+
+      const doctors = response.data.data
+        .filter((nhanvien) => {
+          // Kiểm tra vai trò là bác sĩ
+          const isBacSi =
+            nhanvien.vai_tro === "bac_si" ||
+            nhanvien.vai_tro === "doctor" ||
+            nhanvien.vai_tro === "bacsi" ||
+            nhanvien.chuc_vu === "Bác sĩ" ||
+            nhanvien.chuc_vu === "bac_si";
+
+          // Kiểm tra trạng thái là hoạt động
+          const isActive = nhanvien.trang_thai === "hoat_dong";
+
+          if (isBacSi && isActive) {
+            console.log(
+              `✓ Found active doctor: ${
+                nhanvien.ho_ten ||
+                nhanvien.name ||
+                nhanvien.ten ||
+                nhanvien.full_name
+              }`
+            );
+          }
+
+          // Chỉ trả về những bác sĩ có trạng thái hoạt động
+          return isBacSi && isActive;
+        })
+        .map((doctor) => {
+          const doctorName =
+            doctor.ho_ten ||
+            doctor.name ||
+            doctor.ten ||
+            doctor.full_name ||
+            "Không xác định";
+          console.log(
+            `Mapped doctor: ID=${doctor.id}, Name=${doctorName}, Fields:`,
+            Object.keys(doctor)
+          );
+          return {
+            id: doctor.id,
+            name: doctorName,
+            initial:
+              doctorName && doctorName !== "Không xác định"
+                ? doctorName.charAt(0)
+                : "?",
+            trang_thai: doctor.trang_thai || "hoat_dong",
+            department: doctor.chuc_vu || "Bác sĩ",
+          };
+        });
+
+      console.log("Filtered doctors:", doctors);
+      allDoctors.value = doctors;
+
+      if (doctors.length === 0) {
+        error.value = `Không tìm thấy bác sĩ hoạt động. Tổng nhân viên: ${response.data.data.length}. Vui lòng kiểm tra cơ sở dữ liệu.`;
+      }
+    }
+  } catch (err) {
+    error.value = err.message;
+    console.error("Error fetching doctors:", err);
+  } finally {
+    isLoading.value = false;
   }
-])
+};
 
-// Methods
-const handleSelectStaff = (staff) => {
-  emit('assign', {
-    appointmentId: props.appointmentId,
-    staffId: staff.id,
-    staffName: staff.name
-  })
-}
+// Assign doctor to appointment
+const handleSelectStaff = async (staff) => {
+  isAssigning.value = true;
+  try {
+    // Update appointment with nhan_vien_id using PUT instead of PATCH
+    const response = await client.put(`/lich-hen/${props.appointmentId}`, {
+      nhan_vien_id: staff.id,
+      trang_thai: "confirmed", // Use backend-accepted value
+    });
+
+    if (response.data.status) {
+      emit("assign", {
+        appointmentId: props.appointmentId,
+        staffId: staff.id,
+        staffName: staff.name,
+        status: "confirmed", // Emit confirmed status
+      });
+
+      // Close modal after successful assignment
+      setTimeout(() => {
+        emit("close");
+      }, 500);
+    }
+  } catch (err) {
+    console.error("Error assigning doctor:", err);
+    error.value = err.response?.data?.message || "Lỗi khi phân công bác sĩ";
+  } finally {
+    isAssigning.value = false;
+  }
+};
+
+// Load doctors on mount
+onMounted(() => {
+  fetchDoctors();
+});
 </script>
 
 <style scoped>

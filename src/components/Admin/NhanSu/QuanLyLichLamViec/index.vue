@@ -1,172 +1,193 @@
 <template>
-  <div class="w-full min-h-screen bg-gray-50 p-6">
-    <!-- Header -->
-    <div class="mb-6">
-      <h1 class="text-2xl font-medium text-[#101828] font-nunito">
+  <div
+    class="w-full min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8"
+  >
+    <!-- Header Section -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 font-nunito mb-2">
         Phân ca làm việc
       </h1>
-      <p class="text-base text-[#4a5565] font-nunito mt-1">
-        Quản lý lịch làm việc cho nhân viên
+      <p class="text-gray-600 font-nunito">
+        Quản lý lịch làm việc và lịch hẹn cho nhân viên
       </p>
     </div>
 
     <!-- Control Panel -->
     <div
-      class="bg-white rounded-2xl border border-gray-200/60 p-5 mb-6 shadow-sm"
+      class="bg-white rounded-xl border border-gray-200 p-6 mb-6 shadow-sm hover:shadow-md transition-shadow"
     >
-      <div class="flex items-center justify-between">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
         <!-- Left: Navigation -->
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
           <button
             @click="previousWeek"
-            class="p-2.5 rounded-lg border border-gray-300 hover:bg-gray-50 transition"
+            class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition"
+            title="Tuần trước"
           >
             <img :src="iconChevronLeft" class="w-5 h-5" />
           </button>
 
-          <div class="bg-gray-50 px-5 py-3 rounded-xl font-medium text-sm">
-            Tuần này: {{ currentWeekRange }}
+          <div
+            class="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-2 rounded-lg font-medium text-sm text-gray-800 border border-teal-200 min-w-max"
+          >
+            {{ currentWeekRange }}
           </div>
 
           <button
             @click="nextWeek"
-            class="p-2.5 rounded-lg border border-gray-300 hover:bg-gray-50 transition"
+            class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition"
+            title="Tuần sau"
           >
             <img :src="iconChevronRight" class="w-5 h-5" />
           </button>
 
           <button
             @click="goToToday"
-            class="flex items-center gap-2 px-4 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition font-medium text-sm"
+            class="flex items-center gap-2 px-4 py-2 rounded-lg border border-teal-200 bg-teal-50 hover:bg-teal-100 transition text-teal-700 font-medium text-sm"
           >
-            <img :src="iconCalendar" class="w-5 h-5" />
+            <img :src="iconCalendar" class="w-4 h-4" />
             Hôm nay
           </button>
         </div>
 
         <!-- Right: Actions -->
-        <div class="flex items-center gap-3">
-          <button
-            class="px-4 py-3 bg-[#f3f3f5] rounded-lg flex items-center gap-2 hover:bg-gray-200 text-sm font-medium"
-          >
-            Tất cả Vai trò
-            <img :src="iconChevronDown" class="w-4 h-4" />
-          </button>
-
-          <div class="relative">
+        <div class="flex items-center gap-3 w-full lg:w-auto">
+          <div class="relative flex-1 lg:flex-none">
             <input
               type="text"
               placeholder="Tìm nhân viên..."
-              class="w-64 pl-11 pr-4 py-3 bg-[#f3f3f5] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#009689]"
+              class="w-full lg:w-48 pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition"
             />
             <img
               :src="iconSearch"
-              class="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
+              class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
             />
           </div>
 
           <button
             @click="handleAddShift"
-            class="bg-[#00a63e] text-white px-5 py-3 rounded-lg flex items-center gap-2 hover:bg-[#008c35] font-medium text-sm transition"
+            class="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-5 py-2 rounded-lg flex items-center gap-2 font-medium text-sm transition shadow-sm hover:shadow-md"
           >
-            <img :src="iconPlus" class="w-5 h-5" />
-            Thêm ca làm
+            <img :src="iconPlus" class="w-4 h-4" />
+            Thêm ca
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Summary (week totals) -->
-    <div class="mb-6 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-4">
-        <div class="bg-white border rounded-lg px-4 py-3 shadow-sm">
-          <div class="text-sm text-gray-500">Tổng giờ tuần</div>
-          <div class="text-2xl font-bold text-[#0f766e]">
-            {{ overallTotal }}h
-          </div>
-        </div>
-
-        <div class="hidden sm:flex items-center gap-2">
-          <template v-for="day in weekDays" :key="day.dateStr">
-            <div
-              class="bg-white border rounded-md px-3 py-2 text-center shadow-sm"
-            >
-              <div class="text-xs text-gray-500">{{ day.dayName }}</div>
-              <div class="text-sm font-semibold">
-                {{ totalsPerDay[day.dateStr] || 0 }}h
-              </div>
-            </div>
-          </template>
-        </div>
+    <!-- Summary Section -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <!-- Overall Total -->
+      <div
+        class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition"
+      >
+        <p class="text-gray-600 text-sm font-medium mb-2">Tổng giờ tuần</p>
+        <p class="text-3xl font-bold text-teal-600">
+          {{ overallTotal }}<span class="text-lg text-gray-400">h</span>
+        </p>
       </div>
 
-      <div>
-        <button
-          @click="goToToday"
-          class="px-4 py-2 bg-[#009689] text-white rounded-lg text-sm font-medium"
+      <!-- Day Totals -->
+      <template v-for="day in weekDays" :key="day.dateStr">
+        <div
+          :class="[
+            'bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition text-center',
+            day.isToday
+              ? 'border-teal-300 bg-gradient-to-br from-teal-50 to-cyan-50'
+              : 'border-gray-200',
+          ]"
         >
-          Hiện tuần hiện tại
-        </button>
-      </div>
+          <p
+            :class="[
+              'text-xs font-bold mb-1',
+              day.isToday ? 'text-teal-700' : 'text-gray-600',
+            ]"
+          >
+            {{ day.dayName }}
+          </p>
+          <p
+            :class="[
+              'text-lg font-bold mb-2',
+              day.isToday ? 'text-teal-600' : 'text-gray-900',
+            ]"
+          >
+            {{ day.date }}
+          </p>
+          <p class="text-sm font-semibold text-gray-600">
+            {{ totalsPerDay[day.dateStr] || 0
+            }}<span class="text-xs text-gray-400">h</span>
+          </p>
+        </div>
+      </template>
     </div>
 
-    <div v-if="!isLoading && !hasAnyShift" class="mb-4">
+    <!-- Empty State -->
+    <div v-if="!isLoading && !hasAnyShift" class="mb-6">
       <div
-        class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md"
+        class="bg-amber-50 border border-amber-200 text-amber-800 px-5 py-4 rounded-lg flex items-start gap-3"
       >
-        Không có ca làm việc nào trong tuần này.
+        <svg
+          class="w-5 h-5 mt-0.5 flex-shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v2m0 4v2m0 4v2M7.08 6.47A9.968 9.968 0 0112 1c4.97 0 9 4.03 9 9s-4.03 9-9 9S3 17 3 12c0-2.395.904-4.577 2.391-6.22"
+          />
+        </svg>
+        <div>
+          <p class="font-semibold">Không có dữ liệu</p>
+          <p class="text-sm mt-1">
+            Chưa có ca làm việc hoặc lịch hẹn trong tuần này
+          </p>
+        </div>
       </div>
     </div>
 
     <!-- Schedule Table -->
     <div
-      class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm"
+      class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
     >
       <div class="overflow-x-auto">
-        <table class="w-full min-w-max">
+        <table class="w-full">
           <thead>
-            <tr class="bg-gray-50 border-b border-gray-200">
+            <tr
+              class="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200"
+            >
               <th
-                class="text-left px-6 py-5 sticky left-0 bg-gray-50 z-10 border-r border-gray-200 w-72"
+                class="text-left px-6 py-4 sticky left-0 bg-gradient-to-r from-gray-50 to-gray-100 z-10 border-r border-gray-200 font-semibold text-sm text-gray-900"
               >
-                <span class="font-bold text-base text-neutral-950"
-                  >Nhân viên</span
-                >
+                Nhân viên
               </th>
               <th
                 v-for="day in weekDays"
                 :key="day.dateStr"
                 :class="[
-                  'px-4 py-5 text-center border-r border-gray-200 w-48',
-                  day.isToday ? 'bg-teal-50' : '',
+                  'px-5 py-4 text-center border-r border-gray-200 font-semibold text-sm',
+                  day.isToday ? 'bg-teal-50 text-teal-900' : 'text-gray-900',
                 ]"
               >
                 <div class="flex flex-col items-center">
-                  <span class="text-sm font-bold text-[#4a5565]">{{
+                  <span class="text-xs font-bold text-gray-600">{{
                     day.dayName
                   }}</span>
+                  <span class="text-lg font-bold mt-1">{{ day.date }}</span>
                   <span
-                    :class="[
-                      'text-xl font-bold mt-1',
-                      day.isToday ? 'text-[#009689]' : 'text-[#101828]',
-                    ]"
+                    class="text-xs mt-2 font-semibold"
+                    :class="day.isToday ? 'text-teal-600' : 'text-gray-500'"
                   >
-                    {{ day.date }}
-                  </span>
-                  <span class="text-xs text-gray-500 mt-2 font-medium">
                     {{ totalsPerDay[day.dateStr] || 0 }}h
                   </span>
                 </div>
               </th>
-              <th class="px-6 py-5 bg-gray-50 text-center w-36">
-                <div class="flex flex-col items-center">
-                  <span class="font-bold text-base text-neutral-950"
-                    >Tổng giờ</span
-                  >
-                  <span class="text-sm text-gray-600 font-bold mt-2"
-                    >{{ overallTotal }}h</span
-                  >
-                </div>
+              <th
+                class="px-6 py-4 text-center font-semibold text-sm text-gray-900 bg-gradient-to-l from-gray-50 to-gray-100"
+              >
+                Tổng giờ
               </th>
             </tr>
           </thead>
@@ -175,23 +196,23 @@
             <tr
               v-for="staff in staffList"
               :key="staff.id"
-              class="border-b border-gray-200 hover:bg-gray-50 transition"
+              class="border-b border-gray-100 hover:bg-gray-50 transition group"
             >
               <!-- Staff Info -->
               <td
-                class="px-6 py-6 border-r border-gray-200 sticky left-0 bg-white z-10"
+                class="px-6 py-5 border-r border-gray-100 sticky left-0 bg-white group-hover:bg-gray-50 z-10"
               >
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
                   <img
                     :src="staff.avatar"
                     :alt="staff.name"
-                    class="w-12 h-12 rounded-full object-cover border-2 border-gray-300"
+                    class="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
                   />
                   <div>
-                    <p class="font-medium text-sm text-[#101828]">
+                    <p class="font-semibold text-sm text-gray-900">
                       {{ staff.name }}
                     </p>
-                    <p class="text-xs text-[#6a7282] mt-1">{{ staff.role }}</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ staff.role }}</p>
                   </div>
                 </div>
               </td>
@@ -201,95 +222,85 @@
                 v-for="day in weekDays"
                 :key="day.dateStr"
                 :class="[
-                  'border-r border-gray-200 text-center align-top',
-                  day.isToday ? 'bg-teal-50' : '',
+                  'border-r border-gray-100 px-3 py-4',
+                  day.isToday ? 'bg-teal-50/50' : '',
                 ]"
               >
-                <div class="py-4 px-3 min-h-36">
+                <div class="min-h-32">
                   <div
                     @click="addShiftForStaff(staff, day)"
-                    class="h-full rounded-xl border-2 border-dashed border-transparent hover:border-gray-300 hover:bg-gray-100 transition-all cursor-pointer relative group"
+                    class="h-full space-y-2 rounded-lg border-2 border-dashed border-gray-200 hover:border-teal-300 hover:bg-teal-50/30 transition-all cursor-pointer p-2"
                     :class="{
-                      'bg-emerald-50 border-emerald-300': hasShift(
-                        staff,
-                        day.dateStr
-                      ),
+                      'border-teal-300 bg-teal-50':
+                        hasShift(staff, day.dateStr) ||
+                        getAppointmentsForCell(staff, day.dateStr).length > 0,
                     }"
                   >
                     <!-- Shifts -->
-                    <div
+                    <template
                       v-if="getShiftsForCell(staff, day.dateStr).length"
-                      class="space-y-2 p-3"
                     >
                       <div
                         v-for="shift in getShiftsForCell(staff, day.dateStr)"
                         :key="shift.id"
-                        class="bg-white rounded-xl shadow-sm border-2 p-3 flex flex-col"
+                        class="bg-white rounded-md border-l-4 p-2 text-xs hover:shadow-sm transition"
                         :class="shiftBorderClass(shift)"
                       >
-                        <div class="flex items-center justify-between">
-                          <div
-                            class="flex items-center gap-2 text-sm font-medium text-gray-700"
-                          >
-                            <svg
-                              class="w-4 h-4 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h-4m-8 0H5"
-                              />
-                            </svg>
-                            <span class="truncate max-w-24">{{
-                              shift.phong_truc || "Chưa chọn phòng"
-                            }}</span>
-                          </div>
-                          <span
-                            :class="[
-                              'text-xs px-2.5 py-1 rounded-full text-white font-bold',
-                              shift.thoi_gian_truc === 'ca_sang'
-                                ? 'bg-emerald-600'
-                                : shift.thoi_gian_truc === 'ca_chieu'
-                                ? 'bg-amber-500'
-                                : 'bg-slate-700',
-                            ]"
-                          >
-                            {{
-                              shift.thoi_gian_truc === "ca_sang"
-                                ? "Sáng"
-                                : shift.thoi_gian_truc === "ca_chieu"
-                                ? "Chiều"
-                                : "Tối"
-                            }}
-                          </span>
+                        <div class="font-semibold text-gray-800 truncate">
+                          {{ shift.phong_truc || "Phòng" }}
+                        </div>
+                        <span
+                          :class="[
+                            'inline-block mt-1 px-2 py-0.5 rounded text-white text-xs font-bold',
+                            shift.thoi_gian_truc === 'ca_sang'
+                              ? 'bg-emerald-500'
+                              : shift.thoi_gian_truc === 'ca_chieu'
+                              ? 'bg-amber-500'
+                              : 'bg-slate-600',
+                          ]"
+                        >
+                          {{
+                            shift.thoi_gian_truc === "ca_sang"
+                              ? "Sáng"
+                              : shift.thoi_gian_truc === "ca_chieu"
+                              ? "Chiều"
+                              : "Tối"
+                          }}
+                        </span>
+                      </div>
+                    </template>
+
+                    <!-- Appointments -->
+                    <template
+                      v-if="getAppointmentsForCell(staff, day.dateStr).length"
+                    >
+                      <div
+                        v-for="appointment in getAppointmentsForCell(
+                          staff,
+                          day.dateStr
+                        )"
+                        :key="appointment.id"
+                        class="bg-blue-50 rounded-md border-l-4 border-blue-400 p-2 text-xs hover:shadow-sm transition"
+                      >
+                        <div class="font-semibold text-blue-900 truncate">
+                          {{ appointment.customer }}
+                        </div>
+                        <div class="text-blue-700 truncate mt-1 text-xs">
+                          {{ appointment.service }}
                         </div>
                       </div>
-                    </div>
-
-                    <!-- Add Button -->
-                    <div
-                      class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <button
-                        class="w-10 h-10 rounded-full bg-white border-2 border-gray-300 shadow-lg flex items-center justify-center hover:bg-gray-50"
-                      >
-                        <img :src="iconPlus" class="w-5 h-5" />
-                      </button>
-                    </div>
+                    </template>
                   </div>
                 </div>
               </td>
 
               <!-- Total Hours -->
-              <td class="px-6 py-6 bg-gray-50 text-center font-bold">
+              <td class="px-6 py-5 text-center">
                 <span
-                  class="inline-block px-5 py-3 bg-white border-2 border-[#d1d5dc] rounded-xl text-lg text-[#101828]"
+                  class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-lg text-lg font-bold text-gray-900"
                 >
-                  {{ staff.totalHours }}h
+                  {{ staff.totalHours
+                  }}<span class="text-sm text-gray-500 ml-1">h</span>
                 </span>
               </td>
             </tr>
@@ -334,7 +345,8 @@ const iconPlus =
 // State
 const staffList = ref([]);
 const currentWeekStart = ref(new Date());
-const shifts = ref({});
+const shifts = ref({}); // lich_lam_viec (ca làm việc)
+const appointments = ref({}); // lich_hen (lịch hẹn khách hàng)
 const totalsPerDay = ref({});
 const overallTotal = ref(0);
 const isLoading = ref(false);
@@ -400,8 +412,9 @@ const weekDays = computed(() => {
 });
 
 const hasAnyShift = computed(() => {
-  // any staff has totalHours > 0 or totalsPerDay has keys
+  // Check if any staff has totalHours > 0 OR if there are any appointments
   if (Object.keys(totalsPerDay.value).length) return true;
+  if (Object.keys(appointments.value).length) return true; // Check appointments too
   return staffList.value.some((s) => (s.totalHours || 0) > 0);
 });
 
@@ -409,6 +422,9 @@ const hasShift = (staff, dateStr) =>
   getShiftsForCell(staff, dateStr).length > 0;
 const getShiftsForCell = (staff, dateStr) =>
   (shifts.value[staff.id] || {})[dateStr] || [];
+
+const getAppointmentsForCell = (staff, dateStr) =>
+  (appointments.value[staff.id] || {})[dateStr] || [];
 
 const shiftBorderClass = (shift) => {
   if (shift.thoi_gian_truc === "ca_sang") return "border-emerald-400";
@@ -481,10 +497,85 @@ const fetchShiftsForWeek = async () => {
       });
       staff.totalHours = h;
     });
+
+    // Also fetch appointments
+    await fetchAppointmentsForWeek();
+
+    // Calculate totals INCLUDING appointments (mỗi lịch hẹn = 1 giờ)
+    let updatedDayTotals = { ...dayTotals };
+    let updatedOverallTotal = totalAll;
+
+    Object.keys(appointments.value).forEach((staffId) => {
+      Object.keys(appointments.value[staffId]).forEach((dateStr) => {
+        const appointmentCount = appointments.value[staffId][dateStr].length;
+        updatedDayTotals[dateStr] =
+          (updatedDayTotals[dateStr] || 0) + appointmentCount;
+        updatedOverallTotal += appointmentCount;
+      });
+    });
+
+    totalsPerDay.value = updatedDayTotals;
+    overallTotal.value = updatedOverallTotal;
   } catch (e) {
     console.error("Lỗi tải lịch làm việc", e);
   } finally {
     isLoading.value = false;
+  }
+};
+
+// Fetch appointments for the week
+const fetchAppointmentsForWeek = async () => {
+  try {
+    const startDate = weekDays.value[0].dateStr;
+    const endDate = weekDays.value[6].dateStr;
+
+    const res = await api.get("/lich-hen", {
+      params: { per_page: 500 },
+    });
+
+    const allAppointments = res.data?.data?.data || res.data?.data || [];
+    const newAppointments = {};
+
+    allAppointments.forEach((item) => {
+      const sid = item.nhan_vien_id; // Bác sĩ được phân công
+      const rawDate = item.ngay_gio || "";
+      const date = normalizeDateKey(rawDate);
+
+      if (!sid || !date) return;
+
+      const itemDate = date.substring(0, 10); // Lấy phần ngày (YYYY-MM-DD)
+      if (itemDate < startDate || itemDate > endDate) return;
+
+      if (!newAppointments[sid]) newAppointments[sid] = {};
+      if (!newAppointments[sid][itemDate]) newAppointments[sid][itemDate] = [];
+
+      // Transform appointment data to get customer name and service name
+      const transformedAppointment = {
+        id: item.id,
+        customer:
+          typeof item.khach_hang === "string"
+            ? item.khach_hang
+            : item.khach_hang?.ho_ten ||
+              item.khach_hang?.full_name ||
+              item.khach_hang?.name ||
+              "Khách hàng",
+        service: item.dich_vu?.ten || item.dich_vu?.name || "Dịch vụ",
+        pet: item.thu_cung?.ten_thu_cung || item.thu_cung?.name || "Thú cưng",
+        time: item.ngay_gio
+          ? new Date(item.ngay_gio).toLocaleTimeString("vi-VN", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "",
+        status: item.trang_thai,
+      };
+
+      newAppointments[sid][itemDate].push(transformedAppointment);
+    });
+
+    appointments.value = newAppointments;
+  } catch (e) {
+    console.error("Lỗi tải lịch hẹn", e);
   }
 };
 
@@ -556,17 +647,34 @@ watch(currentWeekStart, fetchShiftsForWeek);
 
 <style scoped>
 ::-webkit-scrollbar {
+  width: 8px;
   height: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f3f4f6;
   border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: linear-gradient(180deg, #14b8a6 0%, #0d9488 100%);
   border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: linear-gradient(180deg, #0d9488 0%, #0a7c66 100%);
+}
+
+/* Table responsiveness */
+@media (max-width: 1024px) {
+  table {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 768px) {
+  table {
+    font-size: 0.75rem;
+  }
 }
 </style>
