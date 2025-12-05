@@ -448,7 +448,7 @@
                   <td class="py-[15px] px-2">
                     <span
                       class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight"
-                      >{{ record.date }}</span
+                      >{{ formatDate(record.date) }}</span
                     >
                   </td>
                   <td class="py-[15px] px-2">
@@ -704,7 +704,18 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="supplier in suppliers"
+                  v-if="suppliers.length === 0"
+                  class="border-b border-gray-200/60"
+                >
+                  <td colspan="7" class="py-8 text-center">
+                    <p class="font-nunito text-sm text-[#717182]">
+                      Chưa có nhà cung cấp nào. Nhấn "Thêm Nhà cung cấp" để thêm
+                      mới.
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  v-for="supplier in paginatedSuppliers"
                   :key="supplier.id"
                   class="border-b border-gray-200/60"
                 >
@@ -748,16 +759,22 @@
                     </span>
                   </td>
                   <td class="py-[17px] px-2">
-                    <span
-                      class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium leading-4"
+                    <button
+                      @click="handleChangeSupplierStatus(supplier)"
+                      class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium leading-4 cursor-pointer hover:opacity-80 transition-opacity"
                       :class="
                         supplier.status === 'active'
                           ? 'bg-green-100 text-[#008236]'
                           : 'bg-gray-100 text-[#364153]'
                       "
+                      :title="`Kích để ${
+                        supplier.status === 'active'
+                          ? 'ngừng hoạt động'
+                          : 'kích hoạt'
+                      }`"
                     >
-                      {{ supplier.status === "active" ? " Hợp tác" : " Ngừng" }}
-                    </span>
+                      {{ supplier.status === "active" ? "Hợp tác" : "Ngừng" }}
+                    </button>
                   </td>
                   <td class="py-[17px] px-2">
                     <div class="flex items-center gap-2 justify-end">
@@ -790,12 +807,19 @@
             <p
               class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight"
             >
-              Hiển thị 1 - 5 của 5 nhà cung cấp
+              Hiển thị {{ displayStart }} - {{ displayEnd }} của
+              {{ suppliers.length }} nhà cung cấp
             </p>
             <div class="flex items-center gap-1">
               <button
-                class="flex items-center gap-2 px-3 py-2 rounded-lg opacity-50"
-                disabled
+                @click="goToPreviousPage"
+                :disabled="!canGoPrevious"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all"
+                :class="
+                  canGoPrevious
+                    ? 'hover:bg-gray-100 cursor-pointer'
+                    : 'opacity-50 cursor-not-allowed'
+                "
               >
                 <img :src="iconChevronLeft" alt="" class="w-4 h-4" />
                 <span
@@ -804,16 +828,33 @@
                 >
               </button>
               <button
-                class="bg-white border border-gray-200/60 rounded-lg w-9 h-9 flex items-center justify-center"
+                v-for="page in totalPages"
+                :key="page"
+                @click="goToPage(page)"
+                class="rounded-lg w-9 h-9 flex items-center justify-center transition-all"
+                :class="
+                  page === currentPage
+                    ? 'bg-white border border-gray-200/60'
+                    : 'hover:bg-gray-100'
+                "
               >
                 <span
-                  class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
-                  >1</span
+                  class="font-nunito font-medium text-sm leading-5 tracking-tight"
+                  :class="
+                    page === currentPage ? 'text-neutral-950' : 'text-[#4a5565]'
+                  "
+                  >{{ page }}</span
                 >
               </button>
               <button
-                class="flex items-center gap-2 px-3 py-2 rounded-lg opacity-50"
-                disabled
+                @click="goToNextPage"
+                :disabled="!canGoNext"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all"
+                :class="
+                  canGoNext
+                    ? 'hover:bg-gray-100 cursor-pointer'
+                    : 'opacity-50 cursor-not-allowed'
+                "
               >
                 <span
                   class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
@@ -887,7 +928,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import ThemThuocVatTu from "./ThemThuocVatTu/index.vue";
 import TheKho from "./TheKho/index.vue";
 import TaoPhieuNhap from "./TaoPhieuNhap/index.vue";
@@ -897,6 +938,12 @@ import SuaNhaCungCap from "./SuaNhaCungCap/index.vue";
 import XoaNhaCungCap from "./XoaNhaCungCap/index.vue";
 import DanhMucHangHoa from "./DanhMucHangHoa/index.vue";
 import { listHangHoa, changeHangHoaStatus } from "@/utils/hangHoa";
+import {
+  getNhaCungCaps,
+  changeNhaCungCapStatus,
+  deleteNhaCungCap,
+} from "@/utils/nhaCungCap";
+import { getPhieuNhapKhos } from "@/utils/phieuNhapKho";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 
 // State
@@ -915,6 +962,10 @@ const selectedReceiptForDetail = ref(null);
 const isThemDoiTacModalOpen = ref(false);
 const isSuaNhaCungCapModalOpen = ref(false);
 const selectedSupplierForEdit = ref(null);
+
+// Pagination state for suppliers
+const currentPage = ref(1);
+const itemsPerPage = ref(5);
 const isXoaNhaCungCapModalOpen = ref(false);
 const selectedSupplierForDelete = ref(null);
 const relatedReceiptsForDelete = ref([]);
@@ -928,40 +979,57 @@ const tabs = [
 ];
 
 // Sample Data - Danh sách & Tồn kho
-const inventoryStats = [
-  {
-    id: 1,
-    label: "Hết hàng",
-    count: "1 mặt hàng",
-    bgColor: "bg-[#ffe2e2]",
-    textColor: "text-[#e7000b]",
-    icon: iconStockOut,
-  },
-  {
-    id: 2,
-    label: "Sắp hết hàng",
-    count: "1 mặt hàng",
-    bgColor: "bg-[#ffedd4]",
-    textColor: "text-[#f54900]",
-    icon: iconLowStock,
-  },
-  {
-    id: 3,
-    label: "Sắp hết hạn",
-    count: "1 mặt hàng",
-    bgColor: "bg-[#fef9c2]",
-    textColor: "text-[#d08700]",
-    icon: iconExpiring,
-  },
-  {
-    id: 4,
-    label: "Tổng giá trị kho",
-    count: "11.125.000 ₫",
-    bgColor: "bg-[#cbfbf1]",
-    textColor: "text-[#009689]",
-    icon: iconTotalValue,
-  },
-];
+// Computed properties for inventory statistics
+const inventoryStats = computed(() => {
+  const outOfStock = inventoryList.filter(
+    (item) => item.stockStatus === "out"
+  ).length;
+  const lowStock = inventoryList.filter(
+    (item) => item.stockStatus === "low"
+  ).length;
+  const expiringSoon = inventoryList.filter(
+    (item) => item.expiryStatus === "warning" || item.expiryStatus === "expired"
+  ).length;
+  const totalValue = inventoryList.reduce(
+    (sum, item) => sum + item.stock * item.costPrice,
+    0
+  );
+
+  return [
+    {
+      id: 1,
+      label: "Hết hàng",
+      count: `${outOfStock} mặt hàng`,
+      bgColor: "bg-[#ffe2e2]",
+      textColor: "text-[#e7000b]",
+      icon: iconStockOut,
+    },
+    {
+      id: 2,
+      label: "Sắp hết hàng",
+      count: `${lowStock} mặt hàng`,
+      bgColor: "bg-[#ffedd4]",
+      textColor: "text-[#f54900]",
+      icon: iconLowStock,
+    },
+    {
+      id: 3,
+      label: "Sắp hết hạn",
+      count: `${expiringSoon} mặt hàng`,
+      bgColor: "bg-[#fef9c2]",
+      textColor: "text-[#d08700]",
+      icon: iconExpiring,
+    },
+    {
+      id: 4,
+      label: "Tổng giá trị kho",
+      count: formatCurrency(totalValue),
+      bgColor: "bg-[#cbfbf1]",
+      textColor: "text-[#009689]",
+      icon: iconTotalValue,
+    },
+  ];
+});
 
 const inventoryList = reactive([
   {
@@ -1027,24 +1095,7 @@ const inventoryList = reactive([
 ]);
 
 // Sample Data - Nhập kho
-const importRecords = [
-  {
-    id: 1,
-    code: "PN001",
-    supplier: "Công ty TNHH Dược phẩm ABC",
-    date: "2024-11-01",
-    user: "Nguyễn Văn A",
-    total: 5500000,
-  },
-  {
-    id: 2,
-    code: "PN002",
-    supplier: "Công ty Vắc-xin Việt Nam",
-    date: "2024-11-05",
-    user: "Trần Văn B",
-    total: 9600000,
-  },
-];
+const importRecords = ref([]);
 
 // Sample Data - Kiểm kê
 const inventoryItems = reactive([
@@ -1072,58 +1123,7 @@ const inventoryItems = reactive([
 ]);
 
 // Sample Data - Nhà cung cấp
-const suppliers = [
-  {
-    id: 1,
-    code: "SUP001",
-    name: "Công ty TNHH Dược phẩm ABC",
-    phone: "0909123456",
-    contact: "Nguyễn Văn An",
-    address: "123 Đường A, Quận 1, TP.HCM",
-    debt: 15000000,
-    status: "active",
-  },
-  {
-    id: 2,
-    code: "SUP002",
-    name: "Công ty Vắc-xin Việt Nam",
-    phone: "0912345678",
-    contact: "Trần Thị Bình",
-    address: "456 Đường B, Quận 3, TP.HCM",
-    debt: 0,
-    status: "active",
-  },
-  {
-    id: 3,
-    code: "SUP003",
-    name: "Công ty Vật tư Y tế Đông Nam",
-    phone: "0923456789",
-    contact: "Lê Văn Cường",
-    address: "789 Đường C, Quận 5, TP.HCM",
-    debt: 5000000,
-    status: "active",
-  },
-  {
-    id: 4,
-    code: "SUP004",
-    name: "Công ty Thiết bị Y tế Minh Khang",
-    phone: "0934567890",
-    contact: "Phạm Thị Dung",
-    address: "321 Đường D, Quận 10, TP.HCM",
-    debt: 0,
-    status: "inactive",
-  },
-  {
-    id: 5,
-    code: "SUP005",
-    name: "Công ty Thú Y Sài Gòn",
-    phone: "0945678901",
-    contact: "Hoàng Văn Em",
-    address: "654 Đường E, Quận 7, TP.HCM",
-    debt: 2500000,
-    status: "active",
-  },
-];
+const suppliers = reactive([]);
 
 // Icon URLs from Figma (expire in 7 days)
 const iconStockOut =
@@ -1175,12 +1175,56 @@ const iconChevronRight =
 const iconFolder =
   "https://www.figma.com/api/mcp/asset/d6fa9f58-18e9-46fb-a4c7-d6d5ac16c30b";
 
+// Computed properties for pagination
+const totalPages = computed(() => {
+  return Math.ceil(suppliers.length / itemsPerPage.value);
+});
+
+const paginatedSuppliers = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return suppliers.slice(start, end);
+});
+
+const displayStart = computed(() => {
+  return suppliers.length > 0
+    ? (currentPage.value - 1) * itemsPerPage.value + 1
+    : 0;
+});
+
+const displayEnd = computed(() => {
+  const end = currentPage.value * itemsPerPage.value;
+  return end > suppliers.length ? suppliers.length : end;
+});
+
+const canGoPrevious = computed(() => {
+  return currentPage.value > 1;
+});
+
+const canGoNext = computed(() => {
+  return currentPage.value < totalPages.value;
+});
+
 // Methods
 const formatCurrency = (amount) => {
   if (amount === null || amount === undefined || isNaN(amount)) {
     return "0 ₫";
   }
   return `${parseInt(amount).toLocaleString("vi-VN")} ₫`;
+};
+
+// Hàm format ngày sang định dạng dd/mm/yyyy
+const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString; // Nếu không parse được, trả về string gốc
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
 };
 
 // Hàm tính toán trạng thái hạn sử dụng
@@ -1205,7 +1249,39 @@ const getExpiryStatus = (tinhTrang) => {
     date: "-",
     badgeClass: "bg-green-100 text-[#008236]",
   };
-}; // Load hàng hóa từ API
+};
+
+// Hàm tính tổng số lượng tồn kho từ phiếu nhập
+const calculateStockQuantity = (hangHoaId) => {
+  let totalStock = 0;
+
+  // Duyệt qua tất cả phiếu nhập kho
+  importRecords.value.forEach((record) => {
+    // Chỉ tính các phiếu đã được duyệt hoặc đã nhập kho
+    if (record.status === "da_duyet" || record.status === "da_nhap_kho") {
+      // Lấy chi tiết phiếu nhập từ dữ liệu gốc
+      const chiTiet = record._original?.chi_tiet_phieu_nhap_kho || [];
+
+      // Tìm hàng hóa trong chi tiết phiếu nhập
+      chiTiet.forEach((item) => {
+        if (item.hang_hoa_id === hangHoaId) {
+          totalStock += parseInt(item.so_luong) || 0;
+        }
+      });
+    }
+  });
+
+  return totalStock;
+};
+
+// Hàm xác định trạng thái tồn kho
+const getStockStatus = (quantity) => {
+  if (quantity === 0) return "out";
+  if (quantity <= 10) return "low";
+  return "good";
+};
+
+// Load hàng hóa từ API
 const loadHangHoa = async () => {
   try {
     const data = await listHangHoa();
@@ -1224,6 +1300,10 @@ const loadHangHoa = async () => {
         // Lấy trạng thái từ tinh_trang Backend
         const expiryStatus = getExpiryStatus(item.tinh_trang);
 
+        // Tính số lượng tồn kho từ phiếu nhập
+        const stockQuantity = calculateStockQuantity(item.id);
+        const stockStatus = getStockStatus(stockQuantity);
+
         inventoryList.push({
           id: item.id,
           name: item.ten_mat_hang,
@@ -1233,10 +1313,12 @@ const loadHangHoa = async () => {
           unit: item.don_vi_tinh,
           costPrice: item.gia_von,
           salePrice: item.gia_ban,
-          stock: 0, // Dữ liệu tồn kho cần từ API khác hoặc table khác
-          stockStatus: "good",
+          stock: stockQuantity, // Tính từ phiếu nhập kho
+          stockStatus: stockStatus, // 'out', 'low', hoặc 'good'
           tinh_trang: item.tinh_trang, // Lưu giữ giá trị tinh_trang từ Backend
           expiryDate: expiryStatus.date,
+          expiryStatus:
+            item.tinh_trang === "ngung_kinh_doanh" ? "expired" : "good", // Thêm expiryStatus cho thống kê
           expiryBadgeClass: expiryStatus.badgeClass,
         });
       });
@@ -1247,9 +1329,85 @@ const loadHangHoa = async () => {
   }
 };
 
+// Load nhà cung cấp từ API
+const loadNhaCungCaps = async () => {
+  try {
+    const response = await getNhaCungCaps();
+    if (response && response.status && Array.isArray(response.data)) {
+      // Clear array
+      suppliers.splice(0, suppliers.length);
+
+      // Map dữ liệu từ API
+      response.data.forEach((item) => {
+        suppliers.push({
+          id: item.id,
+          code: item.ma_nha_cung_cap || "N/A",
+          name: item.ten_nha_cung_cap,
+          phone: item.so_dien_thoai,
+          contact: item.ten_nguoi_lien_he || "N/A",
+          address: item.dia_chi || "N/A",
+          debt: 0, // Công nợ cần tính từ phiếu nhập kho
+          status: item.trang_thai === "hoat_dong" ? "active" : "inactive",
+          // Lưu giữ dữ liệu gốc để sử dụng khi cần
+          _original: item,
+        });
+      });
+
+      // Reset về trang 1 sau khi load dữ liệu mới
+      currentPage.value = 1;
+    }
+  } catch (error) {
+    console.error("Lỗi tải dữ liệu nhà cung cấp:", error);
+    showErrorToast("Không thể tải danh sách nhà cung cấp");
+  }
+};
+
+// Load phiếu nhập kho từ API
+const loadPhieuNhapKhos = async () => {
+  try {
+    const response = await getPhieuNhapKhos();
+    if (response && response.status && Array.isArray(response.data)) {
+      importRecords.value = response.data.map((item) => {
+        // Lấy tên người nhập - ưu tiên nhanVien, nếu không có thì lấy admin
+        let userName = "N/A";
+        if (item.nhan_vien && item.nhan_vien.full_name) {
+          userName = item.nhan_vien.full_name;
+        } else if (item.admin && item.admin.ho_ten) {
+          userName = item.admin.ho_ten;
+        }
+
+        return {
+          id: item.id,
+          code: item.ma_phieu_nhap,
+          supplier: item.nha_cung_cap?.ten_nha_cung_cap || "N/A",
+          date: item.ngay_nhap,
+          user: userName,
+          total: item.tong_tien || 0,
+          status: item.trang_thai,
+          // Lưu dữ liệu gốc để sử dụng khi xem chi tiết
+          _original: item,
+        };
+      });
+    }
+  } catch (error) {
+    console.error("Lỗi tải dữ liệu phiếu nhập kho:", error);
+    // Không hiển thị toast error nếu là lỗi network (có thể backend chưa chạy)
+    if (error.code !== "ERR_NETWORK") {
+      showErrorToast("Không thể tải danh sách phiếu nhập kho");
+    }
+    // Khởi tạo mảng rỗng nếu lỗi
+    importRecords.value = [];
+  }
+};
+
 // Load dữ liệu khi component mount
 onMounted(() => {
-  loadHangHoa();
+  // Load phiếu nhập kho trước để có dữ liệu tính tồn kho
+  loadPhieuNhapKhos().then(() => {
+    // Sau khi có dữ liệu phiếu nhập, load hàng hóa để tính tồn kho
+    loadHangHoa();
+  });
+  loadNhaCungCaps();
 });
 
 const handleSaveInventory = (data) => {
@@ -1274,10 +1432,11 @@ const handleSaveInventory = (data) => {
       unit: data.don_vi_tinh,
       costPrice: data.gia_von,
       salePrice: data.gia_ban,
-      stock: 0,
-      stockStatus: "normal",
+      stock: 0, // Hàng mới chưa có tồn kho
+      stockStatus: "out", // Hàng mới = hết hàng
       tinh_trang: data.tinh_trang, // Lưu giữ giá trị tinh_trang từ Backend
       expiryDate: expiryStatus.date,
+      expiryStatus: data.tinh_trang === "ngung_kinh_doanh" ? "expired" : "good",
       expiryBadgeClass: expiryStatus.badgeClass,
       image: data.anh_san_pham,
     };
@@ -1303,6 +1462,10 @@ const handleChangeStatus = async (item) => {
       const expiryStatus = getExpiryStatus(result.tinh_trang || nextStatus);
       item.tinh_trang = result.tinh_trang || nextStatus; // Lưu giá trị tinh_trang mới
       item.expiryDate = expiryStatus.date;
+      item.expiryStatus =
+        (result.tinh_trang || nextStatus) === "ngung_kinh_doanh"
+          ? "expired"
+          : "good";
       item.expiryBadgeClass = expiryStatus.badgeClass;
 
       showSuccessToast("Thành công", "Đổi trạng thái sản phẩm thành công");
@@ -1317,10 +1480,14 @@ const handleOpenTheKho = (item) => {
   isTheKhoModalOpen.value = true;
 };
 
-const handleSavePhieuNhap = (data) => {
+const handleSavePhieuNhap = async (data) => {
   console.log("New import record:", data);
-  // Logic to save new import record goes here
+  // Đóng modal
   isTaoPhieuNhapModalOpen.value = false;
+  // Reload danh sách phiếu nhập để lấy dữ liệu mới nhất
+  await loadPhieuNhapKhos();
+  // Sau khi reload phiếu nhập, cập nhật lại số lượng tồn kho
+  await loadHangHoa();
 };
 
 const handleOpenChiTietPhieuNhap = (record) => {
@@ -1330,7 +1497,8 @@ const handleOpenChiTietPhieuNhap = (record) => {
 
 const handleSaveDoiTac = (data) => {
   console.log("New supplier:", data);
-  // Logic to save new supplier goes here
+  // Reload danh sách nhà cung cấp sau khi thêm thành công
+  loadNhaCungCaps();
   isThemDoiTacModalOpen.value = false;
 };
 
@@ -1339,10 +1507,12 @@ const handleEditSupplier = (supplier) => {
   isSuaNhaCungCapModalOpen.value = true;
 };
 
-const handleSaveEditedSupplier = (data) => {
+const handleSaveEditedSupplier = async (data) => {
   console.log("Updated supplier:", data);
-  // Logic to update supplier goes here
+  // Đóng modal
   isSuaNhaCungCapModalOpen.value = false;
+  // Reload danh sách để lấy dữ liệu mới nhất từ backend
+  await loadNhaCungCaps();
 };
 
 const handleDeleteSupplier = (supplier) => {
@@ -1361,10 +1531,33 @@ const handleDeleteSupplier = (supplier) => {
   isXoaNhaCungCapModalOpen.value = true;
 };
 
-const handleConfirmDeleteSupplier = () => {
-  console.log("Deleted supplier:", selectedSupplierForDelete.value);
-  // Logic to delete supplier goes here
-  isXoaNhaCungCapModalOpen.value = false;
+const handleConfirmDeleteSupplier = async () => {
+  try {
+    const response = await deleteNhaCungCap(selectedSupplierForDelete.value.id);
+
+    if (response.status) {
+      showSuccessToast(response.message || "Xóa nhà cung cấp thành công");
+      isXoaNhaCungCapModalOpen.value = false;
+      // Reload danh sách
+      await loadNhaCungCaps();
+    } else {
+      showErrorToast(response.message || "Có lỗi xảy ra khi xóa nhà cung cấp");
+    }
+  } catch (error) {
+    console.error("Error deleting supplier:", error);
+
+    // Xử lý lỗi 400 khi nhà cung cấp có phiếu nhập liên quan
+    if (error.response?.status === 400) {
+      showErrorToast(
+        error.response.data.message ||
+          "Không thể xóa nhà cung cấp do có phiếu nhập liên quan"
+      );
+    } else {
+      showErrorToast(
+        error.response?.data?.message || "Có lỗi xảy ra khi xóa nhà cung cấp"
+      );
+    }
+  }
 };
 
 const handleDeactivateSupplier = () => {
@@ -1379,6 +1572,51 @@ const handleManageCategories = () => {
 
 const handleAddInventory = () => {
   isAddModalOpen.value = true;
+};
+
+// Đổi trạng thái nhà cung cấp
+const handleChangeSupplierStatus = async (supplier) => {
+  try {
+    const response = await changeNhaCungCapStatus(supplier.id);
+
+    if (response && response.status) {
+      // Cập nhật trạng thái trong danh sách
+      const newStatus =
+        response.data.trang_thai === "hoat_dong" ? "active" : "inactive";
+      supplier.status = newStatus;
+      supplier._original = response.data;
+
+      showSuccessToast(
+        response.message || "Đổi trạng thái nhà cung cấp thành công"
+      );
+    } else {
+      showErrorToast(response.message || "Có lỗi xảy ra khi đổi trạng thái");
+    }
+  } catch (error) {
+    console.error("Lỗi đổi trạng thái nhà cung cấp:", error);
+    showErrorToast(
+      error.response?.data?.message || "Không thể đổi trạng thái nhà cung cấp"
+    );
+  }
+};
+
+// Pagination methods
+const goToPreviousPage = () => {
+  if (canGoPrevious.value) {
+    currentPage.value--;
+  }
+};
+
+const goToNextPage = () => {
+  if (canGoNext.value) {
+    currentPage.value++;
+  }
+};
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
 };
 </script>
 
