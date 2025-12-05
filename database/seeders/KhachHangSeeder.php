@@ -17,8 +17,15 @@ class KhachHangSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('khach_hangs')->delete();
+        // Tắt kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Xóa dữ liệu cũ và reset auto increment
         DB::table('khach_hangs')->truncate();
+
+        // Bật lại kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         DB::table('khach_hangs')->insert(
             [
                 [

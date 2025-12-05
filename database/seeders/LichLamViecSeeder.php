@@ -15,9 +15,14 @@ class LichLamViecSeeder extends Seeder
      */
     public function run(): void
     {
-        // Remove existing rows (careful in production)
-        DB::table('lich_lam_viecs')->delete();
+        // Tắt kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Xóa dữ liệu cũ và reset auto increment
         DB::table('lich_lam_viecs')->truncate();
+
+        // Bật lại kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Ensure we have nhan_vien ids to reference. If none exist, create sample employees.
         $nhanVienIds = DB::table('nhan_viens')->pluck('id')->toArray();

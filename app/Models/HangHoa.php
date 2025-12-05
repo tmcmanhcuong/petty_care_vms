@@ -57,6 +57,14 @@ class HangHoa extends Model
     }
 
     /**
+     * Quan hệ với bảng ChiTietPhieuNhapKho
+     */
+    public function chiTietPhieuNhapKhos()
+    {
+        return $this->hasMany(\App\Models\ChiTietPhieuNhapKho::class, 'hang_hoa_id');
+    }
+
+    /**
      * Get the category name.
      */
     public function getTenDanhMucHangHoaAttribute()

@@ -14,11 +14,13 @@ class NhanVienSeeder extends Seeder
      */
     public function run(): void
     {
-        // Disable foreign key checks, then truncate/delete as requested.
-        // WARNING: truncating while disabling FK checks can orphan related rows in other tables.
+        // Tắt kiểm tra khóa ngoại
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Xóa dữ liệu cũ và reset auto increment
         DB::table('nhan_viens')->truncate();
-        DB::table('nhan_viens')->delete();
+
+        // Bật lại kiểm tra khóa ngoại
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $samples = [

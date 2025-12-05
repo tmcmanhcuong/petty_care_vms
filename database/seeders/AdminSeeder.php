@@ -15,8 +15,15 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('admins')->delete();
+        // Tắt kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Xóa dữ liệu cũ và reset auto increment
         DB::table('admins')->truncate();
+
+        // Bật lại kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         DB::table('admins')->insert([
             [
                 'ho_ten' => 'Nguyen Van A',

@@ -13,6 +13,16 @@ class HangHoaSeeder extends Seeder
      */
     public function run(): void
     {
+        // Tắt kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Xóa dữ liệu cũ và reset auto increment
+        DB::table('hang_hoas')->truncate();
+        DB::table('danh_muc_hang_hoas')->truncate();
+
+        // Bật lại kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         // Tạo danh mục hàng hóa trước
         $danhMuc1 = DB::table('danh_muc_hang_hoas')->insertGetId([
             'ten_danh_muc_hang_hoa' => 'Thuốc',
@@ -27,9 +37,6 @@ class HangHoaSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
-        DB::table('hang_hoas')->delete();
-        DB::table('hang_hoas')->truncate();
 
         DB::table('hang_hoas')->insert([
             [

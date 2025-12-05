@@ -17,6 +17,8 @@ use App\Http\Controllers\DanhMucHangHoaController;
 use App\Http\Controllers\HangHoaController;
 use App\Http\Controllers\PhanLoaiBaiVietController;
 use App\Http\Controllers\BaiVietController;
+use App\Http\Controllers\NhaCungCapController;
+use App\Http\Controllers\PhieuNhapKhoController;
 
 
 Route::post('/khach-hang/dang-ki', [KhachHangController::class, 'dangKi']);
@@ -142,4 +144,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/bai-viet', [BaiVietController::class, 'store'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
     Route::match(['put', 'patch'], '/bai-viet/{baiViet}', [BaiVietController::class, 'update'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
     Route::delete('/bai-viet/{baiViet}', [BaiVietController::class, 'destroy'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+
+    // Nhà cung cấp: CRUD (chỉ admin)
+    Route::get('/nha-cung-cap', [NhaCungCapController::class, 'index'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+    Route::get('/nha-cung-cap/{nhaCungCap}', [NhaCungCapController::class, 'show'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+    Route::post('/nha-cung-cap', [NhaCungCapController::class, 'store'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+    Route::match(['put', 'patch'], '/nha-cung-cap/{nhaCungCap}', [NhaCungCapController::class, 'update'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+    Route::patch('/nha-cung-cap/{nhaCungCap}/trang-thai', [NhaCungCapController::class, 'changeStatus'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+    Route::delete('/nha-cung-cap/{nhaCungCap}', [NhaCungCapController::class, 'destroy'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+
+    // Phiếu nhập kho: CRUD (chỉ admin)
+    Route::get('/phieu-nhap-kho', [PhieuNhapKhoController::class, 'index'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+    Route::get('/phieu-nhap-kho/{phieuNhapKho}', [PhieuNhapKhoController::class, 'show'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+    Route::post('/phieu-nhap-kho', [PhieuNhapKhoController::class, 'store'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+    Route::patch('/phieu-nhap-kho/{phieuNhapKho}/trang-thai', [PhieuNhapKhoController::class, 'changeStatus'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+    Route::get('/phieu-nhap-kho/{phieuNhapKho}/pdf', [PhieuNhapKhoController::class, 'exportPdf'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
+    Route::delete('/phieu-nhap-kho/{phieuNhapKho}', [PhieuNhapKhoController::class, 'destroy'])->middleware(\App\Http\Middleware\EnsureAdmin::class);
 });

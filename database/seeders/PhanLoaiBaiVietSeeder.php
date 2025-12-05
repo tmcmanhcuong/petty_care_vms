@@ -14,8 +14,14 @@ class PhanLoaiBaiVietSeeder extends Seeder
      */
     public function run(): void
     {
-        // Xóa dữ liệu cũ
-        DB::table('phan_loai_bai_viets')->delete();
+        // Tắt kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Xóa dữ liệu cũ và reset auto increment
+        DB::table('phan_loai_bai_viets')->truncate();
+
+        // Bật lại kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $categories = [
             [

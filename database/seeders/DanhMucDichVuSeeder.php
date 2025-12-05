@@ -13,8 +13,15 @@ class DanhMucDichVuSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('danh_muc_dich_vus')->delete();
-      
+        // Tắt kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Xóa dữ liệu cũ và reset auto increment
+        DB::table('danh_muc_dich_vus')->truncate();
+
+        // Bật lại kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         $now = now();
         DB::table('danh_muc_dich_vus')->insert([
             [

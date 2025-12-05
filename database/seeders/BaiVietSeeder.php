@@ -15,8 +15,14 @@ class BaiVietSeeder extends Seeder
      */
     public function run(): void
     {
-        // Xóa dữ liệu cũ
-        DB::table('bai_viets')->delete();
+        // Tắt kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Xóa dữ liệu cũ và reset auto increment
+        DB::table('bai_viets')->truncate();
+
+        // Bật lại kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $articles = [
             [
