@@ -48,3 +48,18 @@ export default {
 @import "../../assets/css/header-colors.css";
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
 </style>
+
+<style scoped>
+/* Reset paddings for full-width layout, overriding app.css defaults */
+.page-wrapper {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-top: 60px !important;
+}
+
+.page-content {
+    padding: 0 !important;
+    width: 100%;
+}
+</style>

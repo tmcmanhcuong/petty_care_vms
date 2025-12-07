@@ -1,12 +1,13 @@
 <template>
+  <div class="w-full overflow-x-hidden">
   <section class="flex gap-16 items-center justify-center px-[120px] py-[100px] w-full">
-    <div class="flex flex-col gap-[22px] items-start w-[480px] shrink-0">
+    <div class="flex flex-col gap-[24px] items-start w-[480px] shrink-0">
       <div class="inline-grid relative shrink-0">
         <h1 class="font-extrabold text-[64px] text-[#432323] leading-[72px] tracking-[0px] text-left">
           Đặt lịch dễ<br>Chăm sóc mê!
         </h1>
         <p class="font-medium text-[#393e46] w-[480px] text-left mt-6">
-          <span class="text-[18px] leading-[24px]">Cùng bạn chăm sóc thú cưng tốt hơn – khám phá, đặt lịch và đồng hành cùng bác sĩ tại </span>
+          <span class="text-base md:text-lg]">Cùng bạn chăm sóc thú cưng tốt hơn – khám phá, đặt lịch và đồng hành cùng bác sĩ tại </span>
           <span class="font-black text-[#2f5755] text-[20px] leading-[24px]">Petty </span>
           <span class="text-[18px] leading-[24px]"> </span>
           <span class="font-medium text-[18px] leading-[24px]">nhé</span>
@@ -63,8 +64,8 @@
       <img :src="heroImage" alt="PETTY VCMS Hero" class="absolute inset-0 w-full h-[150%] top-[-5.86%] object-cover transition-transform duration-700 group-hover:scale-110">
     </div>
   </section>
-
-  <section id="services" class="bg-[#5a9690] py-16 full-width-section">
+<!--Services -->
+  <section id="services" class="bg-[#5a9690] py-16">
     <div class="flex flex-col gap-[60px] items-center mx-auto">
       <!-- Trust By -->
       <div class="flex flex-col gap-6 items-center w-full">
@@ -82,7 +83,7 @@
 
       <!-- Services Header -->
       <div class="flex flex-col gap-[38px] items-center w-full max-w-[544px]">
-        <div class="inline-flex items-center gap-4 px-[6px] py-[6px] border-2 border-white rounded-full">
+        <div class="inline-flex items-center gap-4 px-[6px] py-[6px] border-2 border-white bg-white/10 rounded-full">
           <div class="w-[34px] h-[34px] bg-white rounded-full relative shadow-lg">
             <div class="w-32 h-32 flex items-center justify-center">
               <SunIcon class="w-full h-full text-[#2f5755]" />
@@ -91,7 +92,7 @@
           <span class="text-2xl font-bold text-white pr-2">Dịch Vụ</span>
         </div>
         <div class="flex flex-col gap-5 items-center text-center w-full">
-          <h2 class="text-7xl font-semibold text-white leading-[60px]"> 
+          <h2 class="text-6xl md:text-7xl lg:text-8xl font-semibold text-white whitespace-nowrap"> 
             <span>Dịch Vụ </span>
             <span class="italic">Chính</span>
           </h2>
@@ -211,42 +212,42 @@
       </div>
 
       <!-- Thống kê -->
-      <div class="flex gap-20 justify-center items-center w-full">
+      <div ref="statsSection" class="flex gap-20 justify-center items-center w-full">
         <div class="flex gap-9 items-center">
           <div class="flex flex-col gap-6 w-[184px]">
-            <p class="text-5xl font-black text-[#eeeeee] leading-[48px]">30+</p>
+            <p class="text-5xl font-black text-[#eeeeee] leading-[48px]">{{ stats.partners }}+</p>
             <div class="flex flex-col gap-0">
-              <p class="text-xl font-bold text-[#e0d9d9] leading-5">Phòng khám đối tác</p>
-              <p class="text-sm font-normal text-white leading-4">Kết nối trong hệ thống VCMS trên toàn quốc</p>
+              <p class="text-xl font-bold text-[#e0d9d9] leading-5 whitespace-nowrap">Phòng khám đối tác</p>
+              <p class="text-sm font-normal text-white leading-4 mt-3">Kết nối trong hệ thống VCMS trên toàn quốc</p>
             </div>
           </div>
           <div class="w-px h-[152px] bg-white"></div>
         </div>
         <div class="flex gap-9 items-center">
           <div class="flex flex-col gap-6 w-[184px]">
-            <p class="text-5xl font-black text-[#eeeeee] leading-[48px]">100+</p>
+            <p class="text-5xl font-black text-[#eeeeee] leading-[48px]">{{ stats.doctors }}+</p>
             <div class="flex flex-col gap-0">
-              <p class="text-xl font-bold text-[#e0d9d9] leading-5">Bác sĩ & chuyên viên</p>
-              <p class="text-sm font-normal text-white leading-4">Đồng hành mang đến giải pháp thú y chuẩn y khoa</p>
+              <p class="text-xl font-bold text-[#e0d9d9] leading-5 whitespace-nowrap">Bác sĩ & chuyên viên</p>
+              <p class="text-sm font-normal text-white leading-4 mt-3">Đồng hành mang đến giải pháp thú y chuẩn y khoa</p>
             </div>
           </div>
           <div class="w-px h-[152px] bg-white"></div>
         </div>
         <div class="flex gap-9 items-center">
           <div class="flex flex-col gap-6 w-[184px]">
-            <p class="text-5xl font-black text-[#eeeeee] leading-[48px]">4.9★</p>
+            <p class="text-5xl font-black text-[#eeeeee] leading-[48px]">{{ stats.rating }}★</p>
             <div class="flex flex-col gap-0">
-              <p class="text-xl font-bold text-[#e0d9d9] leading-5">Mức độ hài lòng</p>
-              <p class="text-sm font-normal text-white leading-4">Hàng nghìn chủ nuôi tin tưởng và quay lại</p>
+              <p class="text-xl font-bold text-[#e0d9d9] leading-5 whitespace-nowrap">Mức độ hài lòng</p>
+              <p class="text-sm font-normal text-white leading-4 mt-3">Hàng nghìn chủ nuôi tin tưởng và quay lại</p>
             </div>
           </div>
           <div class="w-px h-[152px] bg-white"></div>
         </div>
         <div class="flex flex-col gap-6 w-[228px]">
-          <p class="text-5xl font-black text-[#eeeeee] leading-[48px]">10.000+</p>
+          <p class="text-5xl font-black text-[#eeeeee] leading-[48px]">{{ Number(stats.pets).toLocaleString('vi-VN') }}+</p>
           <div class="flex flex-col gap-0">
-            <p class="text-xl font-bold text-[#e0d9d9] leading-5">Thú cưng được chăm sóc</p>
-            <p class="text-sm font-normal text-white leading-4">Mỗi ca khám là một hành trình tận tâm</p>
+            <p class="text-xl font-bold text-[#e0d9d9] leading-5 whitespace-nowrap">Thú cưng được chăm sóc</p>
+            <p class="text-sm font-normal text-white leading-4 mt-3">Mỗi ca khám là một hành trình tận tâm</p>
           </div>
         </div>
       </div>
@@ -254,28 +255,33 @@
   </section>
 
   <section class="bg-[#eeeeee] py-24 px-6 md:px-16 lg:px-32">
-    <div class="text-center mb-16">
-      <div class="inline-flex items-center gap-2 px-4 py-2 border-2 border-[#5a9690] rounded-full mb-10">
-        <div class="w-9 h-9 bg-[#2f5755] rounded-full flex items-center justify-center shadow-lg">
-          <img class="ml-3 w-30" src="/src/assets/img_import/1 (5).png" alt="">
-
+    <div class="text-center max-w-2xl mx-auto space-y-10 mb-16">
+      <div class="flex justify-center">
+        <div class="inline-flex items-center gap-3 px-2 py-[6px] border-2 border-[#5a9690] rounded-full shadow-sm hover:shadow-md transition-shadow">
+          <div class="w-[34px] h-[34px] bg-[#2f5755] rounded-full relative shadow-lg">
+            <div class="w-32 h-32 flex items-center justify-center">
+              <SunIcon class="w-full h-full text-white" />
+            </div>
+          </div>
+          <span class="text-[#2f5755] text-xl md:text-2xl font-bold">Chọn chúng tôi</span>
         </div>
-        <span class="text-2xl font-bold text-[#2f5755]">Chọn chúng tôi ?</span>
       </div>
-      <h2 class="text-6xl md:text-7xl font-semibold text-[#5a9690] mb-6">
-        Nên là <span class="font-black">Petty</span>
-      </h2>
-      <p class="text-base md:text-lg text-[#393e46] max-w-2xl mx-auto">
-        Không chỉ là phòng khám, chúng tôi là người bạn đồng hành tận tâm – mang đến dịch vụ thú y chuẩn y khoa, trải
-        nghiệm tiện lợi và sự an tâm tuyệt đối cho chủ nuôi
-      </p>
+      <div class="space-y-5">
+        <h2 class="text-6xl md:text-7xl lg:text-8xl font-semibold text-[#5a9690]">
+          Nên là <span class="font-black">Petty</span>
+        </h2>
+        <p class="text-base md:text-lg text-[#393e46]">
+          Không chỉ là phòng khám, chúng tôi là người bạn đồng hành tận tâm – mang đến dịch vụ thú y chuẩn y khoa, trải
+          nghiệm tiện lợi và sự an tâm tuyệt đối cho chủ nuôi
+        </p>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
       <div
         class="bg-[#5a9690] p-6 rounded-2xl shadow-lg flex flex-col gap-16 min-h-56 transition-all hover:-translate-y-2 hover:shadow-xl">
-        <div class="w-10 h-10 bg-white rounded flex items-center justify-center">
-          <img src="/src/assets/img_import/goal.png" alt="" class="w-6 h-6">
+        <div class="w-10 h-10 flex items-center justify-center">
+          <GoalIcon class="w-full h-full" />
         </div>
         <div>
           <h3 class="text-xl font-black text-white mb-2">Chuyên môn vững vàng</h3>
@@ -290,8 +296,8 @@
 
       <div
         class="bg-[#5a9690] p-6 rounded-2xl shadow-lg flex flex-col gap-16 min-h-56 transition-all hover:-translate-y-2 hover:shadow-xl">
-        <div class="w-10 h-10 bg-white rounded flex items-center justify-center">
-          <img src="/src/assets/img_import/certificate-2.png" alt="" class="w-6 h-6">
+        <div class="w-10 h-10 rounded flex items-center justify-center">
+          <CertificateIcon class="w-full h-full" />
         </div>
         <div>
           <h3 class="text-xl font-black text-white mb-2">Quy trình minh bạch</h3>
@@ -302,8 +308,8 @@
 
       <div
         class="bg-[#5a9690] p-6 rounded-2xl shadow-lg flex flex-col gap-16 min-h-56 transition-all hover:-translate-y-2 hover:shadow-xl">
-        <div class="w-10 h-10 bg-white rounded flex items-center justify-center">
-          <img src="/src/assets/img_import/hand-heart.png" alt="" class="w-6 h-6">
+        <div class="w-10 h-10 rounded flex items-center justify-center">
+          <HandHeartIcon class="w-full h-full" />
         </div>
         <div>
           <h3 class="text-xl font-black text-white mb-2">Chăm sóc kịp thời</h3>
@@ -313,8 +319,8 @@
 
       <div
         class="bg-[#5a9690] p-6 rounded-2xl shadow-lg flex flex-col gap-16 min-h-56 transition-all hover:-translate-y-2 hover:shadow-xl">
-        <div class="w-10 h-10 bg-white rounded flex items-center justify-center">
-          <img src="/src/assets/img_import/dog.png" alt="" class="w-6 h-6">
+        <div class="w-10 h-10 rounded flex items-center justify-center">
+          <DogIcon class="w-full h-full" />
         </div>
         <div>
           <h3 class="text-xl font-black text-white mb-2">Tận tâm với thú cưng</h3>
@@ -325,40 +331,38 @@
     </div>
   </section>
 
-  <section class="bg-[#5a9690] py-24 px-6 md:px-16 lg:px-32">
-    <div class="max-w-6xl mx-auto text-center space-y-16">
-      <div class="space-y-8">
-        <div
-          class="inline-flex items-center gap-3 px-4 py-2 border-2 border-white rounded-full bg-white/10 backdrop-blur-sm">
-          <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">
-            <svg class="w-6 h-6 text-[#5a9690]" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
+  <section class="bg-[#5a9690] py-20 px-6 md:px-12 lg:px-20">
+    <div class="max-w-[1400px] mx-auto text-center space-y-16">
+      <div class="text-center max-w-2xl mx-auto space-y-10">
+        <div class="flex justify-center">
+          <div
+            class="inline-flex items-center gap-3 px-2 py-[6px] border-2 border-white rounded-full bg-white/10 backdrop-blur-sm">
+            <div class="w-[34px] h-[34px] bg-white rounded-full relative shadow-lg">
+              <div class="w-32 h-32 flex items-center justify-center">
+                <SunIcon class="w-full h-full text-[#2f5755]" />
+              </div>
+            </div>
+            <p class="text-white text-lg md:text-xl lg:text-2xl font-bold">Chuyên Nghiệp</p>
           </div>
-          <p class="text-white text-lg md:text-xl lg:text-2xl font-bold">Chuyên Nghiệp ?</p>
         </div>
-        <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-white">Chuyên Môn</h1>
-        <p class="text-base md:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto">
-          Chúng tôi kết hợp chuyên môn thú y với công nghệ hiện đại để mang đến quy trình chăm sóc minh bạch, an toàn và
-          hiệu quả cho cả phòng khám lẫn chủ nuôi
-        </p>
-      </div>
+        <div class="space-y-5">
+          <h1 class="text-6xl md:text-7xl lg:text-8xl font-semibold text-white">Chuyên Môn</h1>
+          <p class="text-base md:text-lg text-white max-w-2xl mx-auto">
+            Chúng tôi kết hợp chuyên môn thú y với công nghệ hiện đại để mang đến quy trình chăm sóc minh bạch, an toàn và
+            hiệu quả cho cả phòng khám lẫn chủ nuôi
+          </p>
+        </div>
+      </div>  
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-8">
         <div v-for="card in expertiseCards" :key="card.title"
-          class="bg-[#eeeeee] border border-[#e0d9d9] rounded-2xl p-6 flex flex-col gap-5 h-full relative group hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer">
+          class="bg-[#eeeeee] rounded-2xl px-6 py-12 flex flex-col gap-4 w-full h-full relative group hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer">
           <div class="w-8 h-8">
             <img :src="card.icon" alt="" class="w-full h-full object-contain">
           </div>
           <div class="flex-1">
             <h3 class="text-xl md:text-2xl font-bold text-[#432323] leading-tight">{{ card.title }}</h3>
             <p class="text-sm md:text-base text-[#393e46] leading-relaxed mt-2">{{ card.desc }}</p>
-          </div>
-          <div class="absolute top-3 right-3 w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity">
-            <svg class="w-full h-full text-[#432323]" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 0l8 8-8 8-1.5-1.5L13 9H0V7h13L6.5 4.5 8 3z" />
-            </svg>
           </div>
         </div>
       </div>
@@ -383,11 +387,12 @@
         <div class="text-center max-w-2xl mx-auto space-y-10">
           <div class="flex justify-center">
             <div
-              class="flex items-center gap-3 px-4 py-2 border-2 border-[#5a9690] rounded-full shadow-sm hover:shadow-md transition-shadow">
-              <div class="w-10 h-10 bg-[#2f5755] rounded-full flex items-center justify-center shadow-md">
-                <img src="https://www.figma.com/api/mcp/asset/42f81a47-e6a0-4625-a075-57e62b7c867d" alt=""
-                  class="w-8 h-8 object-contain">
-              </div>
+              class="flex items-center gap-3 px-2 py-[6px] border-2 border-[#5a9690] rounded-full shadow-sm hover:shadow-md transition-shadow">
+              <div class="w-[34px] h-[34px] bg-[#2f5755] rounded-full relative shadow-lg">
+            <div class="w-32 h-32 flex items-center justify-center">
+              <SunIcon class="w-full h-full text-white" />
+            </div>
+          </div>
               <p class="text-[#2f5755] text-xl md:text-2xl font-medium">Phản Hồi</p>
             </div>
           </div>
@@ -472,17 +477,18 @@
         <div class="text-center max-w-3xl mx-auto space-y-10">
           <div class="flex justify-center">
             <div
-              class="inline-flex items-center gap-3 px-5 py-2.5 border-2 border-[#5a9690] rounded-full shadow-sm hover:shadow-md transition-shadow">
-              <div class="w-10 h-10 bg-[#2f5755] rounded-full flex items-center justify-center shadow-md">
-                <img src="https://www.figma.com/api/mcp/asset/42f81a47-e6a0-4625-a075-57e62b7c867d" alt=""
-                  class="w-8 h-8 object-contain">
-              </div>
+              class="inline-flex items-center gap-3 px-2 py-[6px] border-2 border-[#5a9690] rounded-full shadow-sm hover:shadow-md transition-shadow">
+              <div class="w-[34px] h-[34px] bg-[#2f5755] rounded-full relative shadow-lg">
+            <div class="w-32 h-32 flex items-center justify-center">
+              <SunIcon class="w-full h-full text-white" />
+            </div>
+          </div>
               <p class="text-[#2f5755] text-xl md:text-2xl font-medium">Câu Chuyện</p>
             </div>
           </div>
           <div class="space-y-5">
             <h1 class="text-6xl md:text-7xl lg:text-8xl font-semibold text-[#5a9690]">Khởi Nguồn</h1>
-            <p class="text-lg md:text-xl text-[#393e46] max-w-2xl mx-auto">
+            <p class="text-base md:text-lg text-[#393e46] max-w-2xl mx-auto">
               Từ công nghệ quản lý đến trải nghiệm thực tế – cùng khám phá cách PETTY giúp phòng khám thú y vận hành
               hiệu quả và mang lại sự an tâm cho chủ nuôi
             </p>
@@ -516,6 +522,7 @@
       </div>
     </div>
   </section>
+  </div>
 </template>
 
 <script setup>
@@ -527,6 +534,11 @@ import axios from 'axios';
 import SunIcon from '@/assets/svg/sun-medium.svg'
 import VaccineIcon from '@/assets/svg/vaccine.svg'
 import BriefcaseIcon from '@/assets/svg/briefcase.svg'
+import GoalIcon from '@/assets/svg/goal.svg'
+import CertificateIcon from '@/assets/svg/certificate-2.svg'
+import HandHeartIcon from '@/assets/svg/hand-heart.svg'
+import DogIcon from '@/assets/svg/dog2.svg'
+
 
 const route = useRoute();
 const router = useRouter();
@@ -595,12 +607,12 @@ const trustItems = [
 ]
 
 const expertiseCards = [
-  { icon: '/src/assets/img_import/Vector.png', title: 'Kinh nghiệm chuyên sâu trong ngành thú y', desc: 'Hơn 10 năm kinh nghiệm vận hành và đồng hành cùng hàng chục phòng khám trên toàn quốc' },
-  { icon: '/src/assets/img_import/prong.png', title: 'Giải pháp quản lý tối ưu', desc: 'Tự động hóa quy trình khám, đặt lịch và hồ sơ bệnh án – giúp đội ngũ làm việc nhanh hơn, chính xác hơn' },
-  { icon: '/src/assets/img_import/database-cog.png', title: 'Dữ liệu và phân tích chuyên sâu', desc: 'Theo dõi, đánh giá và tối ưu hiệu quả điều trị dựa trên dữ liệu thực tế.' },
-  { icon: '/src/assets/img_import/user-up.png', title: 'Lấy khách hàng làm trung tâm', desc: 'Lắng nghe nhu cầu, tối ưu trải nghiệm – vì mỗi thú cưng đều xứng đáng được chăm sóc tốt nhất' },
-  { icon: '/src/assets/img_import/brand-apple-news.png', title: 'Đổi mới và phát triển liên tục', desc: 'Ứng dụng công nghệ mới, cập nhật quy trình khám và điều trị chuẩn quốc tế' },
-  { icon: '/src/assets/img_import/plug-connected.png', title: 'Kết nối toàn diện – từ phòng khám đến chủ nuôi', desc: 'Tạo nên hệ sinh thái thú y hiện đại, giúp mọi bên cùng đồng hành vì sức khỏe thú cưng' }
+  { icon: '/src/assets/svg/book-plus.svg', title: 'Kinh nghiệm chuyên sâu trong ngành thú y', desc: 'Hơn 10 năm kinh nghiệm vận hành và đồng hành cùng hàng chục phòng khám trên toàn quốc' },
+  { icon: '/src/assets/svg/prong.svg', title: 'Giải pháp quản lý tối ưu', desc: 'Tự động hóa quy trình khám, đặt lịch và hồ sơ bệnh án – giúp đội ngũ làm việc nhanh hơn, chính xác hơn' },
+  { icon: '/src/assets/svg/database-cog.svg', title: 'Dữ liệu và phân tích chuyên sâu', desc: 'Theo dõi, đánh giá và tối ưu hiệu quả điều trị dựa trên dữ liệu thực tế.' },
+  { icon: '/src/assets/svg/user-up.svg', title: 'Lấy khách hàng làm trung tâm', desc: 'Lắng nghe nhu cầu, tối ưu trải nghiệm – vì mỗi thú cưng đều xứng đáng được chăm sóc tốt nhất' },
+  { icon: '/src/assets/svg/brand-apple-news.svg', title: 'Đổi mới và phát triển liên tục', desc: 'Ứng dụng công nghệ mới, cập nhật quy trình khám và điều trị chuẩn quốc tế' },
+  { icon: '/src/assets/svg/plug-connected.svg', title: 'Kết nối toàn diện – từ phòng khám đến chủ nuôi', desc: 'Tạo nên hệ sinh thái thú y hiện đại, giúp mọi bên cùng đồng hành vì sức khỏe thú cưng' }
 ]
 
 const blogPosts = [
@@ -608,7 +620,80 @@ const blogPosts = [
   { id: 2, image: '/src/assets/img_import/002 (2).png', badge: 'Chuyển đổi số trong chăm sóc thú y', date: 'Ngày: 10/09/2025', title: 'Chuyển đổi số trong chăm sóc thú y: Hành trình từ giấy tờ đến nền tảng số' },
   { id: 3, image: 'https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?w=800&h=600&fit=crop', badge: 'Xây dựng niềm tin với chủ nuôi', date: 'Ngày: 02/09/2025', title: 'Xây dựng niềm tin với chủ nuôi qua trải nghiệm kỹ thuật số' }
 ]
+
+// Animation Logic
+import { ref, reactive } from 'vue';
+
+const statsSection = ref(null);
+const stats = reactive({
+  partners: 0,
+  doctors: 0,
+  rating: 0,
+  pets: 0
+});
+
+const animateStats = () => {
+  const duration = 2000; // 2 seconds
+  
+  const animate = (key, end, isDecimal = false) => {
+    let start = 0;
+    const startTime = performance.now();
+
+    const step = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function for smooth effect (easeOutQuad)
+      const easeProgress = 1 - (1 - progress) * (1 - progress);
+
+      let current = start + (end - start) * easeProgress;
+      
+      if (isDecimal) {
+        stats[key] = current.toFixed(1);
+      } else {
+        stats[key] = Math.floor(current);
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        stats[key] = isDecimal ? end : end; // Ensure final value is exact
+      }
+    };
+    
+    requestAnimationFrame(step);
+  };
+
+  animate('partners', 30);
+  animate('doctors', 100);
+  animate('rating', 4.9, true);
+  animate('pets', 10000);
+};
+
+// Add observer in existing onMounted or new one. 
+// Since onMounted is already imported and used, let's append the observer logic there or use a separate onMounted hook (Vue allows multiple).
+onMounted(() => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateStats(); // Start animation
+        observer.unobserve(entry.target); // Run only once
+      }
+    });
+  }, { threshold: 0.5 });
+
+  if (statsSection.value) {
+    observer.observe(statsSection.value);
+  }
+});
 </script>
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+</style>
 
 <style scoped>
 @keyframes float {
@@ -633,21 +718,5 @@ const blogPosts = [
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-/* Ghi đè full-width lên các parent cha */
-.full-width-section {
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-  width: 100vw;
-  max-width: 100vw;
-}
-
-body {
-  margin: 0;
-  padding: 0;
 }
 </style>
