@@ -206,12 +206,12 @@ const handleSearch = () => {
 };
 
 const handleProfileClick = () => {
-  if (route.path.startsWith('/doctor')) {
-    router.push('/doctor/trang-ca-nhan');
-  } else if (route.path.startsWith('/nurse')) {
-    router.push('/nurse/trang-ca-nhan');
+  if (route.path.startsWith("/doctor")) {
+    router.push("/doctor/trang-ca-nhan");
+  } else if (route.path.startsWith("/nurse")) {
+    router.push("/nurse/trang-ca-nhan");
   } else {
-    router.push('/admin/trang-ca-nhan');
+    router.push("/admin/trang-ca-nhan");
   }
 };
 
@@ -241,21 +241,39 @@ const handleLogout = async () => {
   showUserMenu.value = false;
 
   try {
-    // Call backend logout to revoke current token
-    await axios.post("http://127.0.0.1:8000/api/admin/dang-xuat");
+    // Get current user role to determine correct logout endpoint
+    const userRole =
+      localStorage.getItem("user_role") || sessionStorage.getItem("user_role");
+
+    // Determine logout endpoint based on role
+    if (
+      userRole === "bac_si" ||
+      userRole === "y_ta" ||
+      userRole === "le_tan" ||
+      userRole === "tro_ly"
+    ) {
+      // Employee logout
+      await axios.post("http://127.0.0.1:8000/api/nhan-vien/dang-xuat");
+    } else {
+      // Admin logout (default)
+      await axios.post("http://127.0.0.1:8000/api/admin/dang-xuat");
+    }
   } catch (err) {
     // If backend call fails (network or 401), we still proceed to clear client state.
     // No toast here: the login page will show the logout success message via query flag.
+    console.error("Logout error:", err);
   }
 
   // Clear stored auth token and user (both localStorage and sessionStorage)
   try {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_user");
+    localStorage.removeItem("user_role");
   } catch (e) {}
   try {
     sessionStorage.removeItem("auth_token");
     sessionStorage.removeItem("auth_user");
+    sessionStorage.removeItem("user_role");
   } catch (e) {}
 
   // Remove axios default header if set
@@ -275,7 +293,19 @@ const handleLogout = async () => {
   // Replace current location so browser back won't restore protected page.
   // Add a query flag so the login page can show a success toast after redirect.
   try {
-    window.location.replace("/admin/dang-nhap?logged_out=1");
+    // Determine which login page to redirect to
+    const userRole =
+      localStorage.getItem("user_role") || sessionStorage.getItem("user_role");
+    if (
+      userRole === "bac_si" ||
+      userRole === "y_ta" ||
+      userRole === "le_tan" ||
+      userRole === "tro_ly"
+    ) {
+      window.location.replace("/nhan-vien/dang-nhap?logged_out=1");
+    } else {
+      window.location.replace("/admin/dang-nhap?logged_out=1");
+    }
   } catch (e) {
     router.replace({ path: "/admin/dang-nhap", query: { logged_out: 1 } });
   }

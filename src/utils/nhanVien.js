@@ -67,6 +67,13 @@ export async function listNhanVien(params = {}) {
   return res.data && res.data.data ? res.data.data : [];
 }
 
+export async function dangXuat() {
+  const res = await client.post("/nhan-vien/dang-xuat");
+  return res.data || null;
+}
+
 export default {
   createNhanVien,
+  listNhanVien,
+  dangXuat,
 };

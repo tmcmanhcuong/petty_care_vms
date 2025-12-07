@@ -62,6 +62,14 @@ const routes = [
     component: () => import("../components/Admin/DangNhap/index.vue"),
     meta: { layout: "dangki_dangnhap" },
   },
+
+  //********************** Nhân Viên ************************* */
+  {
+    path: "/nhan-vien/dang-nhap",
+    component: () => import("../components/NhanVien/DangNhap/index.vue"),
+    meta: { layout: "dangki_dangnhap" },
+  },
+
   {
     path: "/admin",
     component: () => import("../layout/wrapper/AdminLayout.vue"),
@@ -190,6 +198,7 @@ const routes = [
   {
     path: "/doctor",
     component: () => import("../layout/wrapper/DoctorLayout.vue"),
+    meta: { requiresAuth: true },
     children: [
       {
         path: "dashboard",
@@ -237,6 +246,7 @@ const routes = [
   {
     path: "/nurse",
     component: () => import("../layout/wrapper/NurseLayout.vue"),
+    meta: { requiresAuth: true },
     children: [
       {
         path: "dashboard",
@@ -280,28 +290,34 @@ const router = createRouter({
 });
 
 // Global navigation guard: redirect to login when a route requires auth
-// router.beforeEach((to, from, next) => {
-//   const token = getToken();
-//   const requiresAuth = to.matched.some(
-//     (record) => record.meta && record.meta.requiresAuth
-//   );
+router.beforeEach((to, from, next) => {
+  const token = getToken();
+  const requiresAuth = to.matched.some(
+    (record) => record.meta && record.meta.requiresAuth
+  );
 
-//   if (requiresAuth && !token) {
-//     // If any matched record is admin-only, redirect to admin login first
-//     const isAdminRoute = to.matched.some(
-//       (record) => record.meta && record.meta.adminOnly
-//     );
+  if (requiresAuth && !token) {
+    // If any matched record is admin-only, redirect to admin login first
+    const isAdminRoute = to.matched.some(
+      (record) => record.meta && record.meta.adminOnly
+    );
 
-//     if (isAdminRoute) {
-//       next({ path: "/admin/dang-nhap", query: { redirect: to.fullPath } });
-//       return;
-//     }
+    if (isAdminRoute) {
+      next({ path: "/admin/dang-nhap", query: { redirect: to.fullPath } });
+      return;
+    }
 
-//     // Default: redirect to customer login
-//     next({ path: "/khach-hang/dang-nhap", query: { redirect: to.fullPath } });
-//     return;
-//   }
-//   next();
-// });
+    // If route is for employees (doctor, nurse), redirect to employee login
+    if (to.path.startsWith("/doctor") || to.path.startsWith("/nurse")) {
+      next({ path: "/nhan-vien/dang-nhap", query: { redirect: to.fullPath } });
+      return;
+    }
+
+    // Default: redirect to customer login
+    next({ path: "/khach-hang/dang-nhap", query: { redirect: to.fullPath } });
+    return;
+  }
+  next();
+});
 
 export default router;
