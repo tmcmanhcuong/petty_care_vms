@@ -503,6 +503,7 @@
               </p>
             </div>
             <button
+              @click="handleCanBangKho"
               class="bg-[#009689] rounded-lg h-9 px-4 py-2 hover:bg-[#007d72] transition-colors"
             >
               <span
@@ -518,6 +519,12 @@
             <table class="w-full">
               <thead>
                 <tr class="border-b border-gray-200/60">
+                  <th class="text-left py-[10px] px-2">
+                    <span
+                      class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
+                      >Mã hàng hóa</span
+                    >
+                  </th>
                   <th class="text-left py-[10px] px-2">
                     <span
                       class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
@@ -552,10 +559,26 @@
               </thead>
               <tbody>
                 <tr
+                  v-if="inventoryItems.length === 0"
+                  class="border-b border-gray-200/60"
+                >
+                  <td colspan="6" class="py-8 text-center">
+                    <p class="font-nunito text-sm text-[#717182]">
+                      Không có dữ liệu hàng hóa để kiểm kê
+                    </p>
+                  </td>
+                </tr>
+                <tr
                   v-for="item in inventoryItems"
                   :key="item.id"
                   class="border-b border-gray-200/60"
                 >
+                  <td class="py-[17px] px-2">
+                    <span
+                      class="font-nunito text-xs leading-4 text-[#6a7282] tracking-tight"
+                      >{{ item.code }}</span
+                    >
+                  </td>
                   <td class="py-[17px] px-2">
                     <span
                       class="font-nunito text-sm leading-5 text-[#101828] tracking-tight"
@@ -571,27 +594,87 @@
                   <td class="py-[17px] px-2">
                     <input
                       v-model.number="item.actualQty"
+                      @input="handleActualQtyChange(item)"
                       type="number"
+                      min="0"
                       class="bg-[#f3f3f5] border-none rounded-lg h-9 w-24 px-3 py-1 font-nunito text-sm text-neutral-950 tracking-tight outline-none"
                     />
                   </td>
                   <td class="py-[17px] px-2">
                     <span
-                      class="font-nunito text-sm leading-5 text-[#101828] tracking-tight"
-                      >{{ item.difference }}</span
+                      class="font-nunito text-sm leading-5 tracking-tight"
+                      :class="{
+                        'text-[#e7000b]': item.difference < 0,
+                        'text-[#009689]': item.difference > 0,
+                        'text-[#101828]': item.difference === 0,
+                      }"
                     >
+                      {{ item.difference > 0 ? "+" : "" }}{{ item.difference }}
+                    </span>
                   </td>
-                  <td class="py-[17px] px-2">
+                  <td class="py-[17px] px-2 relative reason-dropdown-container">
                     <button
-                      class="bg-[#f3f3f5] border-none rounded-lg h-9 w-40 px-[13px] py-0.5 flex items-center justify-between opacity-50"
+                      @click.stop="toggleReasonDropdown(item)"
+                      class="bg-[#f3f3f5] border-none rounded-lg h-9 w-40 px-[13px] py-0.5 flex items-center justify-between transition-all"
+                      :class="{
+                        'opacity-50 cursor-not-allowed': item.difference === 0,
+                        'hover:bg-gray-200 cursor-pointer':
+                          item.difference !== 0,
+                        'ring-2 ring-[#009689] ring-opacity-50':
+                          item.showReasonDropdown,
+                      }"
                       :disabled="item.difference === 0"
                     >
                       <span
-                        class="font-nunito text-sm leading-5 text-[#717182] tracking-tight"
-                        >Chọn lý do</span
+                        class="font-nunito text-sm leading-5 tracking-tight truncate"
+                        :class="
+                          item.selectedReason
+                            ? 'text-neutral-950 font-medium'
+                            : 'text-[#717182]'
+                        "
                       >
-                      <img :src="iconChevronDown" alt="" class="w-4 h-4" />
+                        {{ item.selectedReason || "Chọn lý do" }}
+                      </span>
+                      <img
+                        :src="iconChevronDown"
+                        alt=""
+                        class="w-4 h-4 transition-transform"
+                        :class="{ 'rotate-180': item.showReasonDropdown }"
+                      />
                     </button>
+
+                    <!-- Dropdown lý do -->
+                    <div
+                      v-if="item.showReasonDropdown"
+                      class="absolute z-50 mt-1 w-40 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+                    >
+                      <button
+                        v-for="reason in lyDoOptions"
+                        :key="reason"
+                        @click.stop="selectReason(item, reason)"
+                        class="w-full text-left px-3 py-2 hover:bg-gray-100 font-nunito text-sm text-neutral-950 tracking-tight transition-colors flex items-center justify-between"
+                        :class="{
+                          'bg-[#e6f7f5] hover:bg-[#d4f2ed] text-[#009689] font-medium':
+                            item.selectedReason === reason,
+                        }"
+                      >
+                        <span>{{ reason }}</span>
+                        <svg
+                          v-if="item.selectedReason === reason"
+                          class="w-4 h-4 text-[#009689]"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -928,7 +1011,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from "vue";
+import {
+  ref,
+  reactive,
+  onMounted,
+  computed,
+  onBeforeUnmount,
+  toRaw,
+} from "vue";
 import ThemThuocVatTu from "./ThemThuocVatTu/index.vue";
 import TheKho from "./TheKho/index.vue";
 import TaoPhieuNhap from "./TaoPhieuNhap/index.vue";
@@ -944,6 +1034,8 @@ import {
   deleteNhaCungCap,
 } from "@/utils/nhaCungCap";
 import { getPhieuNhapKhos } from "@/utils/phieuNhapKho";
+import { getKiemKes, createKiemKe } from "@/utils/kiemKe";
+import { getPhieuChis } from "@/utils/phieuChi";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 
 // State
@@ -1098,29 +1190,15 @@ const inventoryList = reactive([
 const importRecords = ref([]);
 
 // Sample Data - Kiểm kê
-const inventoryItems = reactive([
-  {
-    id: 1,
-    name: "Vắc-xin 7 bệnh",
-    systemQty: 120,
-    actualQty: 120,
-    difference: 0,
-  },
-  {
-    id: 2,
-    name: "Zoletil 50",
-    systemQty: 5,
-    actualQty: 5,
-    difference: 0,
-  },
-  {
-    id: 3,
-    name: "Bông băng y tế",
-    systemQty: 85,
-    actualQty: 85,
-    difference: 0,
-  },
-]);
+const inventoryItems = reactive([]);
+const kiemKeList = ref([]);
+const lyDoOptions = [
+  "Thất thoát",
+  "Hư hỏng",
+  "Hết hạn",
+  "Sai sót nhập liệu",
+  "Điều chỉnh khác",
+];
 
 // Sample Data - Nhà cung cấp
 const suppliers = reactive([]);
@@ -1257,18 +1335,15 @@ const calculateStockQuantity = (hangHoaId) => {
 
   // Duyệt qua tất cả phiếu nhập kho
   importRecords.value.forEach((record) => {
-    // Chỉ tính các phiếu đã được duyệt hoặc đã nhập kho
-    if (record.status === "da_duyet" || record.status === "da_nhap_kho") {
-      // Lấy chi tiết phiếu nhập từ dữ liệu gốc
-      const chiTiet = record._original?.chi_tiet_phieu_nhap_kho || [];
+    // Lấy chi tiết phiếu nhập từ dữ liệu gốc
+    const chiTiet = record._original?.chi_tiet_phieu_nhap_kho || [];
 
-      // Tìm hàng hóa trong chi tiết phiếu nhập
-      chiTiet.forEach((item) => {
-        if (item.hang_hoa_id === hangHoaId) {
-          totalStock += parseInt(item.so_luong) || 0;
-        }
-      });
-    }
+    // Tìm hàng hóa trong chi tiết phiếu nhập
+    chiTiet.forEach((item) => {
+      if (item.hang_hoa_id === hangHoaId) {
+        totalStock += parseInt(item.so_luong) || 0;
+      }
+    });
   });
 
   return totalStock;
@@ -1300,8 +1375,8 @@ const loadHangHoa = async () => {
         // Lấy trạng thái từ tinh_trang Backend
         const expiryStatus = getExpiryStatus(item.tinh_trang);
 
-        // Tính số lượng tồn kho từ phiếu nhập
-        const stockQuantity = calculateStockQuantity(item.id);
+        // Lấy số lượng tồn kho từ backend (tong_so_luong_nhap)
+        const stockQuantity = item.tong_so_luong_nhap || 0;
         const stockStatus = getStockStatus(stockQuantity);
 
         inventoryList.push({
@@ -1313,7 +1388,7 @@ const loadHangHoa = async () => {
           unit: item.don_vi_tinh,
           costPrice: item.gia_von,
           salePrice: item.gia_ban,
-          stock: stockQuantity, // Tính từ phiếu nhập kho
+          stock: stockQuantity, // Lấy từ backend (tong_so_luong_nhap)
           stockStatus: stockStatus, // 'out', 'low', hoặc 'good'
           tinh_trang: item.tinh_trang, // Lưu giữ giá trị tinh_trang từ Backend
           expiryDate: expiryStatus.date,
@@ -1337,8 +1412,56 @@ const loadNhaCungCaps = async () => {
       // Clear array
       suppliers.splice(0, suppliers.length);
 
+      // Load phiếu chi để tính công nợ
+      let phieuChiData = [];
+      try {
+        const phieuChiResponse = await getPhieuChis({ per_page: 9999 });
+        console.log("📦 Response phiếu chi:", phieuChiResponse);
+        if (phieuChiResponse && phieuChiResponse.status) {
+          // Xử lý cả trường hợp có pagination và không có pagination
+          if (Array.isArray(phieuChiResponse.data)) {
+            phieuChiData = phieuChiResponse.data;
+          } else if (
+            phieuChiResponse.data &&
+            Array.isArray(phieuChiResponse.data.data)
+          ) {
+            phieuChiData = phieuChiResponse.data.data;
+          }
+          console.log("✅ Phiếu chi data:", phieuChiData);
+          console.log("📊 Số lượng phiếu chi:", phieuChiData.length);
+        }
+      } catch (error) {
+        console.error("❌ Lỗi tải phiếu chi:", error);
+      }
+
       // Map dữ liệu từ API
       response.data.forEach((item) => {
+        // Tính tổng công nợ từ các phiếu chi của nhà cung cấp này
+        const phieuChiFiltered = phieuChiData.filter(
+          (phieu) =>
+            phieu.nha_cung_cap_id === item.id &&
+            phieu.loai_phieu_chi === "chi_nhap_hang"
+        );
+
+        console.log(
+          `💰 NCC [${item.ten_nha_cung_cap}] (ID: ${item.id}) có ${phieuChiFiltered.length} phiếu chi:`,
+          phieuChiFiltered
+        );
+
+        const totalDebt = phieuChiFiltered.reduce((sum, phieu) => {
+          const debt = parseFloat(phieu.so_tien_con_no) || 0;
+          console.log(
+            `  - Phiếu ${phieu.ma_phieu_chi}: ${phieu.so_tien_con_no} => ${debt}đ (nha_cung_cap_id: ${phieu.nha_cung_cap_id})`
+          );
+          return sum + debt;
+        }, 0);
+
+        console.log(
+          `  ➡️ Tổng công nợ: ${totalDebt}đ (làm tròn: ${Math.round(
+            totalDebt
+          )}đ)`
+        );
+
         suppliers.push({
           id: item.id,
           code: item.ma_nha_cung_cap || "N/A",
@@ -1346,12 +1469,17 @@ const loadNhaCungCaps = async () => {
           phone: item.so_dien_thoai,
           contact: item.ten_nguoi_lien_he || "N/A",
           address: item.dia_chi || "N/A",
-          debt: 0, // Công nợ cần tính từ phiếu nhập kho
+          debt: Math.round(totalDebt), // Tổng công nợ từ phiếu chi (làm tròn thành số nguyên)
           status: item.trang_thai === "hoat_dong" ? "active" : "inactive",
           // Lưu giữ dữ liệu gốc để sử dụng khi cần
           _original: item,
         });
       });
+
+      console.log(
+        "✅ Đã tải nhà cung cấp với công nợ từ phiếu chi:",
+        toRaw(suppliers)
+      );
 
       // Reset về trang 1 sau khi load dữ liệu mới
       currentPage.value = 1;
@@ -1402,13 +1530,37 @@ const loadPhieuNhapKhos = async () => {
 
 // Load dữ liệu khi component mount
 onMounted(() => {
-  // Load phiếu nhập kho trước để có dữ liệu tính tồn kho
-  loadPhieuNhapKhos().then(() => {
-    // Sau khi có dữ liệu phiếu nhập, load hàng hóa để tính tồn kho
-    loadHangHoa();
-  });
-  loadNhaCungCaps();
+  // Load tất cả dữ liệu song song
+  Promise.all([
+    loadPhieuNhapKhos(),
+    loadHangHoa(),
+    loadInventoryForKiemKe(),
+    loadNhaCungCaps(),
+  ]);
+
+  // Thêm event listener để đóng dropdown khi click bên ngoài
+  document.addEventListener("click", handleClickOutside);
 });
+
+// Cleanup event listener khi component unmount
+onBeforeUnmount(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
+
+// Hàm xử lý click bên ngoài để đóng dropdown
+const handleClickOutside = (event) => {
+  // Kiểm tra xem click có phải vào button hoặc dropdown không
+  const isClickInsideDropdown = event.target.closest(
+    ".reason-dropdown-container"
+  );
+
+  if (!isClickInsideDropdown) {
+    // Đóng tất cả dropdown
+    inventoryItems.forEach((item) => {
+      item.showReasonDropdown = false;
+    });
+  }
+};
 
 const handleSaveInventory = (data) => {
   console.log("New inventory item:", data);
@@ -1484,10 +1636,12 @@ const handleSavePhieuNhap = async (data) => {
   console.log("New import record:", data);
   // Đóng modal
   isTaoPhieuNhapModalOpen.value = false;
-  // Reload danh sách phiếu nhập để lấy dữ liệu mới nhất
-  await loadPhieuNhapKhos();
-  // Sau khi reload phiếu nhập, cập nhật lại số lượng tồn kho
-  await loadHangHoa();
+  // Reload danh sách phiếu nhập và hàng hóa để cập nhật số lượng tồn kho
+  await Promise.all([
+    loadPhieuNhapKhos(),
+    loadHangHoa(),
+    loadInventoryForKiemKe(),
+  ]);
 };
 
 const handleOpenChiTietPhieuNhap = (record) => {
@@ -1616,6 +1770,139 @@ const goToNextPage = () => {
 const goToPage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
+  }
+};
+
+// Load dữ liệu hàng hóa cho kiểm kê
+const loadInventoryForKiemKe = async () => {
+  try {
+    const data = await listHangHoa();
+    if (data && Array.isArray(data)) {
+      // Clear array
+      inventoryItems.splice(0, inventoryItems.length);
+
+      // Map dữ liệu từ API
+      data.forEach((item) => {
+        // Lấy số lượng tồn kho từ backend (tong_so_luong_nhap)
+        const stockQuantity = item.tong_so_luong_nhap || 0;
+
+        inventoryItems.push({
+          id: item.id,
+          hang_hoa_id: item.id,
+          name: item.ten_mat_hang,
+          code: item.ma_hang_hoa,
+          systemQty: stockQuantity, // Lấy từ backend
+          actualQty: stockQuantity, // Mặc định bằng số lượng hệ thống
+          difference: 0,
+          ly_do: null,
+          selectedReason: null,
+          showReasonDropdown: false,
+        });
+      });
+    }
+  } catch (error) {
+    console.error("Lỗi tải dữ liệu hàng hóa cho kiểm kê:", error);
+    showErrorToast("Không thể tải danh sách hàng hóa cho kiểm kê");
+  }
+};
+
+// Hàm xử lý khi thay đổi số lượng thực tế
+const handleActualQtyChange = (item) => {
+  const difference = (item.actualQty || 0) - (item.systemQty || 0);
+  item.difference = difference;
+};
+
+// Hàm chọn lý do
+const selectReason = (item, reason) => {
+  console.log("Select reason:", reason, "for item:", item.name);
+  item.selectedReason = reason;
+  item.ly_do = reason;
+  item.showReasonDropdown = false;
+  console.log("Reason selected successfully. Item ly_do:", item.ly_do);
+};
+
+// Hàm toggle dropdown lý do
+const toggleReasonDropdown = (item) => {
+  console.log(
+    "Toggle dropdown for item:",
+    item.name,
+    "difference:",
+    item.difference
+  );
+
+  if (item.difference !== 0) {
+    // Đóng tất cả dropdown khác
+    inventoryItems.forEach((i) => {
+      if (i.id !== item.id) {
+        i.showReasonDropdown = false;
+      }
+    });
+    // Toggle dropdown hiện tại
+    item.showReasonDropdown = !item.showReasonDropdown;
+  } else {
+    console.log("Cannot open dropdown: difference is 0");
+  }
+};
+
+// Hàm cân bằng kho - lưu tất cả các bản ghi kiểm kê có chênh lệch
+const handleCanBangKho = async () => {
+  try {
+    // Lọc các item có chênh lệch
+    const itemsToSave = inventoryItems.filter((item) => item.difference !== 0);
+
+    if (itemsToSave.length === 0) {
+      showErrorToast("Không có mục nào có chênh lệch để cân bằng");
+      return;
+    }
+
+    // Kiểm tra xem các item có chênh lệch đã chọn lý do chưa
+    const itemsWithoutReason = itemsToSave.filter((item) => !item.ly_do);
+    if (itemsWithoutReason.length > 0) {
+      showErrorToast("Vui lòng chọn lý do cho tất cả các mục có chênh lệch");
+      return;
+    }
+
+    // Tạo các bản ghi kiểm kê
+    const promises = itemsToSave.map((item) => {
+      return createKiemKe({
+        hang_hoa_id: item.hang_hoa_id,
+        chi_tiet_phieu_nhap_kho_id: null, // Có thể cập nhật nếu cần
+        so_luong_he_thong: item.systemQty,
+        so_luong_thuc_te: item.actualQty,
+        ly_do: item.ly_do,
+        ngay_kiem_ke: new Date().toISOString().split("T")[0],
+        ghi_chu: null,
+      });
+    });
+
+    await Promise.all(promises);
+
+    showSuccessToast("Cân bằng kho thành công");
+
+    // Reload dữ liệu
+    await loadInventoryForKiemKe();
+    await loadHangHoa();
+  } catch (error) {
+    console.error("Lỗi cân bằng kho:", error);
+    showErrorToast(
+      error.response?.data?.message || "Có lỗi xảy ra khi cân bằng kho"
+    );
+  }
+};
+
+// Load danh sách kiểm kê đã lưu
+const loadKiemKeList = async () => {
+  try {
+    const response = await getKiemKes();
+    if (response && response.status && response.data) {
+      kiemKeList.value = response.data;
+    }
+  } catch (error) {
+    console.error("Lỗi tải danh sách kiểm kê:", error);
+    // Không hiển thị toast error nếu là lỗi network
+    if (error.code !== "ERR_NETWORK") {
+      showErrorToast("Không thể tải danh sách kiểm kê");
+    }
   }
 };
 </script>

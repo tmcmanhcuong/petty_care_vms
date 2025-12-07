@@ -170,6 +170,11 @@ const routes = [
         component: () => import("../components/Admin/CauHinh/index.vue"),
       },
       {
+        path: "phan-quyen",
+        component: () =>
+          import("../components/Admin/CauHinh/PhanQuyen/index.vue"),
+      },
+      {
         path: "trang-ca-nhan",
         component: () => import("../components/Admin/TrangCaNhan/index.vue"),
       },
@@ -196,12 +201,12 @@ const routes = [
       },
       {
         path: "lich-kham/phieu-kham",
-        component: () => import("../components/Doctor/LichKham/PhieuKhamBenh/index.vue"),
+        component: () =>
+          import("../components/Doctor/LichKham/PhieuKhamBenh/index.vue"),
       },
       {
         path: "benh-an",
-        component: () =>
-          import("../components/Doctor/HoSoBenhAn/index.vue"),
+        component: () => import("../components/Doctor/HoSoBenhAn/index.vue"),
       },
       {
         path: "benh-an/chi-tiet",
@@ -247,8 +252,7 @@ const routes = [
       },
       {
         path: "hoa-don",
-        component: () =>
-          import("../components/Nurse/HoaDon/index.vue"),
+        component: () => import("../components/Nurse/HoaDon/index.vue"),
       },
       {
         path: "lich-lam-viec",
