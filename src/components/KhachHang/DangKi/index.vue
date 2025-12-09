@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center py-12 px-4">
+  <div class="fixed inset-0 z-0 flex items-center justify-center px-4 pt-16 bg-[#eeeeee]">
     <div
-      class="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden"
+      class="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden max-h-[calc(100vh-80px)] overflow-y-auto"
     >
-      <div class="grid grid-cols-1 lg:grid-cols-2">
+      <div class="grid grid-cols-1 lg:grid-cols-2 min-h-full">
         <!-- Left Side - Info -->
         <div
           class="bg-gradient-to-br from-[#5a9690] to-[#3d7671] p-12 text-white relative"
@@ -231,7 +231,7 @@
               <button
                 type="button"
                 @click="handleGoogleLogin"
-                class="flex items-center justify-center gap-2 px-4 py-2 shadow rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-100 transition"
+                class="flex items-center justify-center gap-2 px-4 py-2 shadow-md rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-100 transition"
               >
                 <svg class="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -256,7 +256,7 @@
               <button
                 type="button"
                 @click="handleFacebookLogin"
-                class="flex items-center justify-center gap-2 px-4 py-2 shadow rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-100 transition"
+                class="flex items-center justify-center gap-2 px-4 py-2 shadow-md rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-100 transition"
               >
                 <svg class="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
                   <path
@@ -291,6 +291,7 @@ import { ref, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useToast } from "vue-toastification";
+import Tick from '@/assets/svg/tick.svg'
 import UserIcon from '@/assets/svg/User.svg'
 import EmailAddressIcon from '@/assets/svg/emailaddress.svg'
 import PasswordIcon from '@/assets/svg/password.svg'

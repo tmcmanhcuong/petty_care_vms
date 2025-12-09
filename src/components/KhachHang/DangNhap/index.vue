@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center p-5">
+  <div class="fixed inset-0 z-0 flex items-center justify-center p-5 pt-20 bg-[#eeeeee]">
     <div
-      class="bg-white rounded-3xl shadow-2xl p-14 w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-10"
+      class="bg-white rounded-3xl shadow-2xl p-14 w-full max-w-7xl flex flex-col lg:flex-row items-center justify-center gap-16 overflow-hidden max-h-[calc(100vh-80px)] overflow-y-auto"
     >
       <div
         class="relative w-full max-w-lg h-96 lg:h-auto flex-shrink-0 rounded-2xl overflow-hidden group cursor-pointer"
@@ -13,14 +13,14 @@
         />
 
         <div
-          class="absolute inset-x-4 bottom-6 lg:inset-x-6 lg:bottom-8 max-w-xs mx-auto"
+          class="absolute inset-x-4 bottom-6 lg:inset-x-6 lg:bottom-8 max-w-[400px] mx-auto text-white"
         >
           <div
-            class="bg-white/50 backdrop-blur-sm border border-white/20 rounded-lg p-3 shadow-md transition-all duration-300 ease-out group-hover:bg-white/80 group-hover:backdrop-blur-md group-hover:shadow-xl group-hover:scale-105 group-hover:border-white/40 group-hover:-translate-y-1"
+            class="bg-white/30 backdrop-blur-sm border rounded-lg p-3 shadow-md transition-all duration-300 ease-out group-hover:bg-white/80 group-hover:backdrop-blur-md group-hover:shadow-xl group-hover:scale-105 group-hover:border-white/40 group-hover:-translate-y-1"
           >
             <div class="space-y-3">
               <p
-                class="text-gray-800 text-xs font-medium leading-tight italic group-hover:text-gray-900 transition-colors duration-300"
+                class="text-gray-900 text-xs font-medium leading-tight italic group-hover:text-gray-900 transition-colors duration-300"
               >
                 "Trước đây mỗi lần đưa Bún đi khám là phải chờ khá lâu, nhưng từ
                 khi có PETTY, tôi chỉ cần đặt lịch trước vài phút là có lịch
@@ -44,36 +44,34 @@
           </div>
         </div>
       </div>
-      <div class="w-full max-w-sm space-y-6">
-        <div class="text-center space-y-3">
+      <div class="w-full max-w-md space-y-8">
+        <div class="text-center space-y-4">
           <h1
-            class="text-4xl font-bold text-teal-800 font-['Montserrat_Alternates']"
+            class="text-5xl font-bold text-teal-800 font-['Montserrat_Alternates']"
           >
             PETTY Xin Chào
           </h1>
-          <p class="text-sm text-gray-700 font-medium">
+          <p class="text-base text-gray-700 font-medium">
             Bắt đầu trải nghiệm các dịch vụ tại PETTY ngay nào
           </p>
         </div>
 
-        <form @submit.prevent="handleLogin" class="space-y-5">
+        <form @submit.prevent="handleLogin" class="space-y-6">
           <div>
-            <label class="block text-sm font-medium text-gray-800">
+            <label class="block text-base font-medium text-gray-800">
               Email <span class="text-red-600">*</span>
             </label>
-            <div class="relative mt-1">
-              <img
-                src="https://www.figma.com/api/mcp/asset/9ce8dfae-0136-43d1-8f27-28fd8dd0b6bb"
-                alt="Email"
-                class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4"
-              />
+            <div class="relative mt-2 text-gray-300">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <MailIcon class="h-6 w-6 text-gray-500" aria-hidden="true" />
+              </div>
               <input
                 v-model="form.email"
                 ref="emailInput"
                 type="email"
                 placeholder="Nhập email"
                 autocomplete="email"
-                class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-600"
+                class="w-full pl-12 pr-4 py-3.5 border rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-teal-600"
                 :class="{ 'border-red-500': errors.email }"
                 aria-invalid="errors.email ? 'true' : 'false'"
                 aria-describedby="email-error"
@@ -82,11 +80,11 @@
               <!-- suggestion when stored user email matches typed email -->
               <div
                 v-if="showStoredSuggestion"
-                class="mt-2 text-xs text-gray-600 flex items-center gap-2"
+                class="mt-2 text-sm text-gray-600 flex items-center gap-2"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4 text-teal-600"
+                  class="h-5 w-5 text-teal-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -118,22 +116,20 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-800">
+            <label class="block text-base font-medium text-gray-800">
               Mật Khẩu <span class="text-red-600">*</span>
             </label>
-            <div class="relative mt-1">
-              <img
-                src="https://www.figma.com/api/mcp/asset/8fdef1a1-4093-4a2a-9e3b-9f7fbedfc358"
-                alt="Lock"
-                class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4"
-              />
+            <div class="relative mt-2 text-gray-300">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <LockIcon class="h-6 w-6 text-gray-500" aria-hidden="true" />
+              </div>
               <input
                 v-model="form.password"
                 ref="passwordInput"
                 type="password"
                 placeholder="Nhập mật khẩu"
                 autocomplete="current-password"
-                class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-600"
+                class="w-full pl-12 pr-4 py-3.5 border rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-teal-600"
                 :class="{ 'border-red-500': errors.password }"
                 aria-invalid="errors.password ? 'true' : 'false'"
                 aria-describedby="password-error"
@@ -149,71 +145,63 @@
             </div>
           </div>
 
-          <div class="flex justify-between items-center text-xs">
-            <a href="#" class="text-gray-500 hover:text-teal-700"
+          <div class="flex justify-between items-center text-sm">
+            <a href="#" class="text-gray-500 hover:text-teal-700 font-medium"
               >Quên Mật Khẩu?</a
             >
             <div class="flex items-center gap-2">
-              <span class="text-gray-500">Ghi nhớ đăng nhập</span>
+              <span class="text-gray-500 font-medium">Ghi nhớ đăng nhập</span>
               <button
                 type="button"
                 @click="toggleRemember"
                 :class="[
-                  'w-12 h-6 rounded-full p-1 transition flex items-center',
+                  'w-14 h-7 rounded-full p-1 transition flex items-center',
                   rememberMe
                     ? 'bg-gradient-to-r from-teal-500 to-teal-700 justify-end'
                     : 'bg-gray-300 justify-start',
                 ]"
               >
-                <div class="w-4 h-4 bg-white rounded-full shadow"></div>
+                <div class="w-5 h-5 bg-white rounded-full shadow"></div>
               </button>
             </div>
           </div>
 
           <button
             type="submit"
-            class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 rounded-2xl transition shadow-sm"
+            class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3.5 rounded-2xl transition shadow-md text-lg"
           >
             Đăng Nhập
           </button>
         </form>
 
-        <div class="relative text-center text-xs text-gray-500 my-4">
+        <div class="relative text-center text-sm text-gray-500 my-6">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-gray-300"></div>
           </div>
-          <span class="relative bg-gray-50 px-2">Hoặc</span>
+          <span class="relative bg-white px-3 font-medium">Hoặc</span>
         </div>
 
-        <div class="flex justify-center gap-4">
+        <div class="flex justify-center gap-5">
           <button
             @click="handleGoogleLogin"
-            class="p-2.5 bg-gray-200 rounded-xl hover:scale-105 transition"
+            class="p-3.5 bg-gray-200 rounded-xl hover:scale-110 transition shadow-sm"
           >
-            <img
-              src="https://www.figma.com/api/mcp/asset/958d2025-8fe1-4ea3-ad0e-929d8d91f90f"
-              alt="Gmail"
-              class="w-7 h-7"
-            />
+            <GoogleIcon class="w-8 h-8" />
           </button>
           <button
             @click="handleFacebookLogin"
-            class="p-2.5 bg-gray-200 rounded-xl hover:scale-105 transition"
+            class="p-3.5 bg-gray-200 rounded-xl hover:scale-110 transition shadow-sm"
           >
-            <img
-              src="https://www.figma.com/api/mcp/asset/8f334b9f-7acf-41e1-8499-5d83274f6f5e"
-              alt="Facebook"
-              class="w-7 h-7"
-            />
+            <FacebookIcon class="w-8 h-8" />
           </button>
         </div>
 
-        <p class="text-center text-sm">
+        <p class="text-center text-base mt-6">
           <span class="text-gray-600">Chưa có tài khoản?</span>
           <router-link to="/khach-hang/dang-ky">
             <a
               href="/khach-hang/dang-ky"
-              class="text-blue-600 font-medium hover:underline ml-1"
+              class="text-blue-600 font-bold hover:underline ml-1"
               >Đăng Ký</a
             >
           </router-link>
@@ -230,6 +218,10 @@ import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 import { useToast } from "vue-toastification";
 import { showInfoToast } from "@/utils/toast";
+import MailIcon from '@/assets/svg/mail.svg'
+import LockIcon from '@/assets/svg/password.svg'
+import GoogleIcon from "@/assets/svg/google.svg";
+import FacebookIcon from "@/assets/svg/facebook.svg";
 
 const router = useRouter();
 const route = useRoute();

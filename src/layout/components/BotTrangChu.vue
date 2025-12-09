@@ -2,142 +2,27 @@
   <footer class="relative w-full min-h-[1672px] overflow-hidden bg-[#5a9690]">
     <!-- Background Decorative Grid -->
     <div
-      class="absolute top-[-259px] left-[-459px] w-[2172px] h-[1236px] rotate-[10deg] opacity-30 pointer-events-none z-0 hidden lg:block">
-      <div class="grid grid-cols-7 grid-rows-5 gap-9">
-        <!-- Placeholder + Images (with smooth zoom) -->
-        <div class="bg-gray-300 rounded-[36px] overflow-hidden"></div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/1c9401dc-05ef-454c-80d0-e05d13761c39" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/f8a1e511-5a63-408b-96a4-d58192af9d9e" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/711d7108-65bd-4410-9efe-55855cb234d2" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/291fbab5-050e-4752-be63-db3c7905d7c7" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/2a8a3583-f1b9-4c5d-a4b7-282c3ce43916" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-		
-        <div class="bg-gray-300 rounded-[36px] overflow-hidden"></div>
-
-        <!-- Row 2 -->
-        <div class="bg-gray-300 rounded-[36px] overflow-hidden"></div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/b8059ef5-8577-476b-882d-99cf11543934" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/9e761eb2-f4a0-4409-8843-f0a3712b8887" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/4dec0440-80f9-4be8-bdbd-5266a9692974" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/64ca9236-4c76-438f-afe5-6262d199e967" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/1b92c7c0-adcd-4fa5-b4f8-6445d6c44ff5" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="bg-gray-300 rounded-[36px] overflow-hidden"></div>
-
-        <!-- Row 3 -->
-        <div class="bg-gray-300 rounded-[36px] overflow-hidden"></div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/8fbb13e6-c0cb-4193-8ca7-0760c7259cfb" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/1bf09e76-64f6-4e50-bac6-207b87aab54e" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/058bf254-56a0-433e-8f92-d9a81ac0ee40" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/fc3bb4dd-1598-4537-8adb-994c65dc5b3e" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/b3953be6-f352-4ac7-a164-d8abea44cc00" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="bg-gray-300 rounded-[36px] overflow-hidden"></div>
-
-        <!-- Row 4 -->
-        <div class="bg-gray-300 rounded-[36px] overflow-hidden"></div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/1d1fe683-ddbd-41b8-88de-982fc6cb2f7f" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/6451eae3-48d6-4c38-b3df-bce94070a5b5" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/06276ed0-6def-4fc7-a7a6-53388133ada5" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/e60d7292-c5b2-4cc6-b314-ded8cd342b79" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://www.figma.com/api/mcp/asset/49db04f9-5f95-45f0-8bb3-ed392547c09b" alt="Pet"
-            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="bg-gray-300 rounded-[36px] overflow-hidden"></div>
-
-        <!-- Row 5 -->
-        <div class="bg-gray-300 rounded-[36px] overflow-hidden"></div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=300&fit=crop"
-            alt="Chó Golden Retriever" class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=300&fit=crop"
-            alt="Mèo con ngủ" class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&h=300&fit=crop"
-            alt="Chó Pug" class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300&h=300&fit=crop"
-            alt="Hamster ăn hạt" class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="rounded-[36px] overflow-hidden group cursor-pointer">
-          <img src="https://images.unsplash.com/photo-1534361960057-1988672b3f2f?w=300&h=300&fit=crop"
-            alt="Mèo tam thể" class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
-        </div>
-        <div class="bg-gray-300 rounded-[36px] overflow-hidden"></div>
+      class="absolute top-[-259px] left-[-200px] w-[2172px] h-[1236px] rotate-[15deg]  opacity-30 pointer-events-none z-0 hidden lg:block ">
+      <div class="grid grid-cols-7 grid-rows-5 gap-12">
+        <template v-for="(item, index) in footerGridItems" :key="index">
+          <div v-if="item.type === 'placeholder'" class="bg-gray-300 rounded-[36px] overflow-hidden"></div>
+          <div v-else class="rounded-[36px] overflow-hidden group cursor-pointer">
+            <img :src="item.src" :alt="item.alt"
+              class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
+          </div>
+        </template>
       </div>
     </div>
 
     <!-- Main Content -->
     <div
-      class="relative z-10 flex flex-col items-center gap-[500px] px-6 py-24 md:px-16 md:py-20 lg:px-32 lg:py-24">
+      class="relative z-10 h-[1672px] flex flex-col items-center gap-[500px] px-6 py-24 md:px-16 md:py-20 lg:px-32 lg:py-24 bg-[linear-gradient(to_right,#5a9690_0%,rgba(90,150,144,1)_10%,rgba(90,150,144,0.1)_50%,rgba(90,150,144,1)_90%,#5a9690_100%)]">
       <!-- CTA Section -->
       <div class="flex w-full max-w-5xl flex-col items-center gap-24 px-6 py-32 md:gap-16 md:py-20">
         <div class="flex w-full flex-col items-center gap-6">
           <!-- Badge -->
-          <div class="flex items-center gap-1.5 rounded-full border border-gray-100 bg-white/30 px-3 py-1.5 backdrop-blur-sm transition-all duration-300 hover:bg-white/40">
-            <img src="https://www.figma.com/api/mcp/asset/53b99e1a-9d93-46be-af15-689dd8b2de7f" alt="Arrow"
-              class="h-5 w-5" />
-            <span class="font-nunito text-sm font-medium text-gray-100">Bắt Đầu</span>
+          <div class="flex items-center gap-1.5 rounded-full border border-white bg-white/20 px-3 py-1.5 text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/40">
+            <span class="font-nunito font-medium text-sm">Bắt Đầu</span>
           </div>
 
           <!-- Title + Description -->
@@ -153,29 +38,24 @@
           <!-- CTA Button - Siêu mượt -->
           <button
             class="group flex items-center gap-2.5 rounded-2xl bg-gradient-to-r from-gray-100 to-gray-50 px-6 py-3 shadow-lg transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-2xl hover:from-gray-50 hover:to-white">
-            <img src="https://www.figma.com/api/mcp/asset/36bba44c-76fc-441b-9259-87a9312baf87" alt="Rocket"
-              class="h-6 w-6 transition-transform duration-300 group-hover:rotate-12" />
-            <span class="font-nunitoSans text-base font-bold text-[#2f5755] tracking-wide">Bắt đầu ngay nào</span>
+            <Rocket class="h-6 w-6 text-[#2f5755]" />
+            <span class="font-nunitoSans text-base font-bold text-[#2f5755] tracking-wide">Đặt lịch ngay</span>
           </button>
         </div>
       </div>
 
       <!-- Footer Info -->
       <div
-        class="flex w-full max-w-5xl flex-col items-center gap-16 md:flex-row md:items-start md:justify-between md:gap-20">
+        class="flex flex-col items-center gap-16 md:flex-row md:items-start md:justify-between md:gap-32">
         <!-- Brand Section -->
-        <div class="flex w-full max-w-md flex-col gap-10 md:w-96">
+        <div class="flex flex-col gap-10">
           <!-- Logo + Mô tả -->
           <div class="flex flex-col gap-5">
-            <div class="inline-block rounded-xl bg-white/80 p-3 backdrop-blur-sm shadow-md transition-transform duration-300 hover:scale-105">
-              <div class="relative h-16 w-64 rounded-xl">
-                <img src="https://www.figma.com/api/mcp/asset/a74b9207-22ae-465b-bbdb-d185c2c347e3"
-                  alt="Dog Icon" class="absolute left-3 top-3 h-8 w-9" />
-                <img src="https://www.figma.com/api/mcp/asset/0168172e-4e1a-4d66-b60a-dc3679ff3a19"
-                  alt="PETTY" class="absolute left-[47px] top-2 h-12" />
-              </div>
+            <div class="rounded-xl md:w-64 bg-white/80 p-2 md:p-4 backdrop-blur-sm shadow-md transition-transform duration-300 hover:scale-105">
+              <img src="/src/assets/img_imports/Petty Logo.png"
+                alt="Dog Icon" class="h-full w-full" />
             </div>
-            <p class="max-w-md font-nunitoSans text-xs font-medium leading-7 text-gray-100 opacity-90">
+            <p class="max-w-md font-nunitoSans w-full text-md font-semibold leading-7 text-white opacity-90 md:w-97">
               Sứ mệnh của chúng tôi là mang lại trải nghiệm chăm sóc thú cưng toàn diện, hiện đại và dễ dàng hơn cho mọi chủ nuôi – thông qua hệ thống quản lý thông minh và đội ngũ bác sĩ tận tâm.
             </p>
           </div>
@@ -295,8 +175,31 @@
   </footer>
 </template>
 
-<script>
-export default {};
+<script setup>
+import Rocket from "@/assets/svg/rocket.svg";
+
+// Helper to create image item
+const img = (num, alt = 'Pet') => ({
+  type: 'image',
+  src: `/src/assets/img_imports/footer img/foot-pic${num}.jpg`,
+  alt
+});
+
+// Helper for placeholder
+const ph = () => ({ type: 'placeholder' });
+
+const footerGridItems = [
+  // Row 1
+  ph(), img(1), img(2), img(3), img(4), img(5), ph(),
+  // Row 2
+  ph(), img(6), img(7), img(8), img(9), img(10), ph(),
+  // Row 3
+  ph(), img(11), img(12), img(13), img(14), img(15), ph(),
+  // Row 4
+  ph(), img(16), img(17), img(18), img(19), img(20), ph(),
+  // Row 5
+  ph(), img(21, 'Chó Golden Retriever'), img(22, 'Mèo con ngủ'), img(23, 'Chó Pug'), img(24, 'Hamster ăn hạt'), img(25, 'Mèo tam thể'), ph(),
+];
 </script>
 
 <style scoped>

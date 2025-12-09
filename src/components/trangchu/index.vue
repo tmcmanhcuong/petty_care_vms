@@ -418,26 +418,25 @@
                 class="bg-[#d6d3d1] p-6 rounded-xl shadow-md flex flex-col items-end text-right group hover:shadow-xl hover:-translate-y-1 transition-all">
                 <div class="bg-white px-3 py-1 rounded-full shadow text-xs font-bold text-[#393e46] mb-3">Chi Nhánh
                 </div>
-                <div class="text-7xl font-bold text-[#222831]">30+</div>
-                <p class="text-base font-semibold text-[#393e46] mt-1">Phòng khám sử dụng VCMS</p>
+                <div class="text-7xl font-bold text-[#222831] mt-2">30+</div>
+                <p class="text-base font-semibold text-[#393e46] mt-6 ">Phòng khám sử dụng VCMS</p>
               </div>
               <div
                 class="bg-[#d6d3d1] p-6 rounded-xl shadow-md flex flex-col items-end text-right group hover:shadow-xl hover:-translate-y-1 transition-all">
                 <div class="bg-white px-3 py-1 rounded-full shadow text-xs font-bold text-[#393e46] mb-3">Người Dùng
                 </div>
-                <div class="text-7xl font-bold text-[#222831]">4.8</div>
-                <p class="text-base font-semibold text-[#393e46] mt-1">4.8 sao đánh giá trên Google</p>
+                <div class="text-7xl font-bold text-[#222831] mt-2">4.8</div>
+                <p class="text-base font-semibold text-[#393e46] mt-6">4.8 sao đánh giá trên Google</p>
               </div>
             </div>
           </div>
 
           <div class="lg:col-span-7">
             <div
-              class="bg-[#2f5755] p-8 md:p-10 rounded-xl shadow-md h-full flex flex-col justify-between text-white group hover:shadow-2xl hover:-translate-y-1 transition-all">
+              class="bg-[#2f5755] p-12 md:p-20 rounded-xl shadow-md h-full flex flex-col justify-between text-white group hover:shadow-2xl hover:-translate-y-1 transition-all">
               <div class="flex justify-between items-start mb-6">
                 <div class="bg-[#bef264] px-3 py-2 rounded flex items-center gap-1">
-                  <img src="https://www.figma.com/api/mcp/asset/ae7dce54-9a45-42fc-9e61-917ba72fedaa" alt=""
-                    class="w-3 h-3">
+                 <StarIcon class="w-full h-full" />
                   <span class="text-xl font-bold text-[#2f5755]">4.8</span>
                 </div>
                 <div class="bg-white px-3 py-1 rounded-full shadow">
@@ -450,21 +449,19 @@
               </p>
               <div class="mt-8 space-y-6">
                 <div class="flex items-center gap-4">
-                  <img src="https://www.figma.com/api/mcp/asset/6be2acfb-bfdd-4f59-9098-964ee4e1b8c2" alt=""
+                  <img src="/src/assets/img_imports/public_img/hp-pic12.jpg" alt=""
                     class="w-14 h-14 rounded-full object-cover ring-4 ring-white/20">
                   <div>
-                    <p class="font-bold text-base">Minh Anh</p>
+                    <p class="font-bold text-base text-white">Minh Anh</p>
                     <p class="text-sm text-[#eeeeee]/80">Chủ của mèo Miu Miu</p>
                   </div>
                 </div>
                 <div class="flex gap-4">
                   <button class="bg-[#eeeeee] p-3 rounded-xl hover:bg-white transition-colors">
-                    <img src="https://www.figma.com/api/mcp/asset/c0831ccb-3de3-4fb7-a78a-93175d87042c" alt=""
-                      class="w-3 h-3">
+                    <ArrowLeftIcon class="w-full h-full text-[#2f5755]" />
                   </button>
                   <button class="bg-[#eeeeee] p-3 rounded-xl hover:bg-white transition-colors">
-                    <img src="https://www.figma.com/api/mcp/asset/c0831ccb-3de3-4fb7-a78a-93175d87042c" alt=""
-                      class="w-3 h-3 rotate-180">
+                    <ArrowRightIcon class="w-full h-full text-[#2f5755]" />
                   </button>
                 </div>
               </div>
@@ -500,21 +497,18 @@
             <div class="relative overflow-hidden rounded-3xl shadow-lg mb-5">
               <img :src="post.image" alt=""
                 class="w-full h-64 md:h-72 object-cover group-hover:scale-105 transition-transform duration-500">
-              <div
+              <!-- <div
                 class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-[#393e46] shadow">
                 {{ post.badge }}
-              </div>
+              </div> -->
             </div>
-            <div class="space-y-3 text-center md:text-left">
+            <div class="space-y-3 md:text-left">
               <p class="text-[#393e46] text-sm font-medium">{{ post.date }}</p>
               <h3 class="text-xl md:text-2xl font-bold text-[#432323] leading-tight line-clamp-2">{{ post.title }}</h3>
               <button
-                class="inline-flex items-center gap-2 text-[#2f5755] font-semibold text-sm hover:gap-3 transition-all group">
+                class="inline-flex items-center gap-2 text-[#2f5755] border border-[#2f5755] rounded-full px-4 py-2 font-semibold text-sm hover:gap-3 hover:bg-[#2f5755] hover:text-white transition-all group">
                 <span>Xem Thêm</span>
-                <svg class="w-4 h-4 text-[#2f5755]" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <path d="M5 8h6m-3-3l3 3-3 3" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
+                <ArrowRightIcon class="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -538,6 +532,9 @@ import GoalIcon from '@/assets/svg/goal.svg'
 import CertificateIcon from '@/assets/svg/certificate-2.svg'
 import HandHeartIcon from '@/assets/svg/hand-heart.svg'
 import DogIcon from '@/assets/svg/dog2.svg'
+import StarIcon from '@/assets/svg/star.svg'
+import ArrowLeftIcon from '@/assets/svg/arrow-left.svg'
+import ArrowRightIcon from '@/assets/svg/arrow-right.svg'
 
 
 const route = useRoute();
