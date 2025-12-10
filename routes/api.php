@@ -54,11 +54,20 @@ Route::middleware('auth:sanctum')->group(function () {
             $user->load('phanQuyen');
         }
 
-        return response()->json([
+        $userData = [
             'status' => true,
             'data' => $user,
-            'user_type' => $user instanceof \App\Models\Admin ? 'admin' : 'nhan_vien'
-        ]);
+            'user_type' => $user instanceof \App\Models\Admin ? 'admin' : ($user instanceof \App\Models\NhanVien ? 'nhan_vien' : 'khach_hang'),
+        ];
+
+        // Thêm thông tin debug về quyền
+        if ($user && method_exists($user, 'hasPermission')) {
+            $userData['has_phan_quyen'] = $user->phanQuyen ? true : false;
+            $userData['phan_quyen_id'] = $user->phan_quyen_id ?? null;
+            $userData['has_phieu_nhap_kho_tao'] = $user->phanQuyen ? $user->phanQuyen->phieu_nhap_kho_tao : null;
+        }
+
+        return response()->json($userData);
     });
 
     Route::post('/khach-hang/cap-nhat', [KhachHangController::class, 'capNhat']);
@@ -72,14 +81,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/thu-cung/{thuCung}', [ThuCungController::class, 'update']);
     Route::delete('/thu-cung/{thuCung}', [ThuCungController::class, 'destroy']);
 
-    // Appointments (lich_hen) - Staff only với permission check
-    Route::post('/lich-hen', [LichHenController::class, 'store'])->middleware(['staff.only', 'permission:lich_hen_tao']);
-    Route::get('/lich-hen', [LichHenController::class, 'index'])->middleware(['staff.only', 'permission:lich_hen_xem']);
-    Route::get('/lich-hen/{lichHen}', [LichHenController::class, 'show'])->middleware(['staff.only', 'permission:lich_hen_xem']);
+    // Lịch hẹn - Khách hàng có thể tạo và xem lịch của mình
+    Route::post('/lich-hen', [LichHenController::class, 'store']); // Khách hàng đặt lịch
+    Route::get('/lich-hen', [LichHenController::class, 'index']); // Khách hàng xem lịch của mình
+    Route::get('/lich-hen/{lichHen}', [LichHenController::class, 'show']); // Khách hàng xem chi tiết lịch của mình
+    Route::match(['put', 'patch'], '/lich-hen/{lichHen}/ngay-gio', [LichHenController::class, 'updateNgayGio']); // Khách hàng đổi lịch của mình
+    Route::delete('/lich-hen/{lichHen}', [LichHenController::class, 'destroy']); // Khách hàng hủy lịch của mình
+
+    // Lịch hẹn - Staff quản lý (xem tất cả, sửa, xác nhận)
+    Route::get('/lich-hen-all', [LichHenController::class, 'indexAll'])->middleware(['staff.only', 'permission:lich_hen_xem']); // Staff xem tất cả lịch hẹn
     Route::match(['put', 'patch'], '/lich-hen/{lichHen}', [LichHenController::class, 'update'])->middleware(['staff.only', 'permission:lich_hen_sua']);
     Route::patch('/lich-hen/{lichHen}/xac-nhan', [LichHenController::class, 'confirm'])->middleware(['staff.only', 'permission:lich_hen_xac_nhan']);
-    Route::match(['put', 'patch'], '/lich-hen/{lichHen}/ngay-gio', [LichHenController::class, 'updateNgayGio'])->middleware(['staff.only', 'permission:lich_hen_sua']);
-    Route::delete('/lich-hen/{lichHen}', [LichHenController::class, 'destroy'])->middleware(['staff.only', 'permission:lich_hen_xoa']);
 
     // Lịch làm việc: tạo mới - Staff only
     Route::post('/lich-lam-viec', [LichLamViecController::class, 'store'])->middleware(['staff.only', 'permission:lich_lam_viec_tao']);
@@ -178,6 +190,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Nhà cung cấp: CRUD (staff only)
     Route::get('/nha-cung-cap', [NhaCungCapController::class, 'index'])->middleware('staff.only');
+    Route::get('/nha-cung-cap/with-debt', [NhaCungCapController::class, 'indexWithDebt'])->middleware('staff.only');
     Route::get('/nha-cung-cap/{nhaCungCap}', [NhaCungCapController::class, 'show'])->middleware('staff.only');
     Route::post('/nha-cung-cap', [NhaCungCapController::class, 'store'])->middleware('staff.only');
     Route::match(['put', 'patch'], '/nha-cung-cap/{nhaCungCap}', [NhaCungCapController::class, 'update'])->middleware('staff.only');
@@ -220,9 +233,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Phân quyền và vai trò: CRUD (staff only)
     Route::get('/phan-quyen', [PhanQuyenController::class, 'index'])->middleware('staff.only');
+    Route::get('/phan-quyen/danh-sach/tat-ca-quyen', [PhanQuyenController::class, 'getAllPermissions'])->middleware('staff.only');
     Route::get('/phan-quyen/{id}', [PhanQuyenController::class, 'show'])->middleware('staff.only');
     Route::match(['put', 'patch'], '/phan-quyen/{id}', [PhanQuyenController::class, 'update'])->middleware('staff.only');
-    Route::get('/phan-quyen/danh-sach/tat-ca-quyen', [PhanQuyenController::class, 'getAllPermissions'])->middleware('staff.only');
     // Kiểm tra mã khuyến mãi (public - cho khách hàng)
     Route::post('/khuyen-mai/check-code', [KhuyenMaiController::class, 'checkCode']);
 });

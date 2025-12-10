@@ -215,4 +215,62 @@ class NhaCungCapController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Lấy danh sách nhà cung cấp kèm công nợ từ phiếu chi
+     */
+    public function indexWithDebt(): JsonResponse
+    {
+        try {
+            $nhaCungCaps = NhaCungCap::with(['phieuChis' => function ($query) {
+                $query->where('loai_phieu_chi', 'chi_nhap_hang')
+                    ->select('id', 'ma_phieu_chi', 'nha_cung_cap_id', 'tong_so_tien', 'so_tien_thanh_toan_ngay', 'so_tien_con_no', 'trang_thai');
+            }])->orderBy('created_at', 'desc')->get();
+
+            $formattedData = $nhaCungCaps->map(function ($ncc) {
+                // Tính tổng công nợ từ các phiếu chi còn nợ
+                $tongCongNo = $ncc->phieuChis->where('trang_thai', 'con_no')->sum('so_tien_con_no');
+
+                return [
+                    'id' => $ncc->id,
+                    'ma_nha_cung_cap' => $ncc->ma_nha_cung_cap,
+                    'ten_nha_cung_cap' => $ncc->ten_nha_cung_cap,
+                    'ten_nguoi_lien_he' => $ncc->ten_nguoi_lien_he,
+                    'so_dien_thoai' => $ncc->so_dien_thoai,
+                    'dia_chi' => $ncc->dia_chi,
+                    'email' => $ncc->email,
+                    'ma_so_thue' => $ncc->ma_so_thue,
+                    'mo_ta' => $ncc->mo_ta,
+                    'trang_thai' => $ncc->trang_thai,
+                    'tong_cong_no' => $tongCongNo,
+                    'phieu_chis' => $ncc->phieuChis->map(function ($phieuChi) {
+                        return [
+                            'id' => $phieuChi->id,
+                            'ma_phieu_chi' => $phieuChi->ma_phieu_chi,
+                            'tong_so_tien' => $phieuChi->tong_so_tien,
+                            'so_tien_thanh_toan_ngay' => $phieuChi->so_tien_thanh_toan_ngay,
+                            'so_tien_con_no' => $phieuChi->so_tien_con_no,
+                            'trang_thai' => $phieuChi->trang_thai,
+                        ];
+                    }),
+                    'created_at' => $ncc->created_at,
+                    'updated_at' => $ncc->updated_at,
+                ];
+            });
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Lấy danh sách nhà cung cấp với công nợ thành công',
+                'data' => $formattedData
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi lấy danh sách nhà cung cấp với công nợ: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Có lỗi xảy ra khi lấy danh sách nhà cung cấp với công nợ',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -80,17 +80,28 @@ class LichHenController extends Controller
         // assign the authenticated customer id as khach_hang_id if available
         $user = $request->user();
         if ($user) {
-            $data['khach_hang_id'] = $user->id;
+            // Nếu là khách hàng đặt lịch
+            if ($user instanceof \App\Models\KhachHang) {
+                $data['khach_hang_id'] = $user->id;
 
-            // owner-check: ensure the pet belongs to the authenticated customer
-            $owns = ThuCung::where('id', $data['thu_cung_id'])
-                ->where('khach_hang_id', $user->id)
-                ->exists();
+                // owner-check: ensure the pet belongs to the authenticated customer
+                $owns = ThuCung::where('id', $data['thu_cung_id'])
+                    ->where('khach_hang_id', $user->id)
+                    ->exists();
 
-            if (! $owns) {
-                throw ValidationException::withMessages([
-                    'thu_cung_id' => [\Illuminate\Support\Facades\Lang::get('messages.pet_not_owner')],
-                ]);
+                if (! $owns) {
+                    throw ValidationException::withMessages([
+                        'thu_cung_id' => [\Illuminate\Support\Facades\Lang::get('messages.pet_not_owner')],
+                    ]);
+                }
+            }
+            // Nếu là Admin/NhanVien tạo lịch hẹn (khach_hang_id phải có trong request)
+            elseif ($user instanceof \App\Models\Admin || $user instanceof \App\Models\NhanVien) {
+                if (empty($data['khach_hang_id'])) {
+                    throw ValidationException::withMessages([
+                        'khach_hang_id' => ['Vui lòng chọn khách hàng'],
+                    ]);
+                }
             }
         }
 
@@ -175,17 +186,99 @@ class LichHenController extends Controller
     }
 
     /**
-     * Display the specified appointment (must belong to authenticated customer).
+     * Display a listing of ALL appointments (for staff/admin only)
+     */
+    public function indexAll(Request $request): JsonResponse
+    {
+        $query = LichHen::with(['thuCung', 'dichVu', 'nhanVien', 'thanhToan', 'khachHang']);
+
+        // Filter by customer
+        if ($request->filled('khach_hang_id')) {
+            $query->where('khach_hang_id', $request->get('khach_hang_id'));
+        }
+
+        // Filter by pet name (thu_cung.ten_thu_cung)
+        if ($request->filled('pet_name')) {
+            $petName = $request->get('pet_name');
+            $query->whereHas('thuCung', function ($q) use ($petName) {
+                $q->where('ten_thu_cung', 'like', '%' . $petName . '%');
+            });
+        }
+
+        // Filter by service id or service name
+        if ($request->filled('dich_vu_id')) {
+            $query->where('dich_vu_id', $request->get('dich_vu_id'));
+        } elseif ($request->filled('dich_vu_name')) {
+            $dvName = $request->get('dich_vu_name');
+            $query->whereHas('dichVu', function ($q) use ($dvName) {
+                $q->where('ten', 'like', '%' . $dvName . '%');
+            });
+        }
+
+        // Filter by trạng thái
+        if ($request->filled('trang_thai')) {
+            $query->where('trang_thai', $request->get('trang_thai'));
+        }
+
+        // Filter by nhan_vien_id
+        if ($request->filled('nhan_vien_id')) {
+            $query->where('nhan_vien_id', $request->get('nhan_vien_id'));
+        }
+
+        // Filter by time range: from_date and to_date (accepts date or datetime)
+        try {
+            $from = $request->filled('from_date') ? Carbon::parse($request->get('from_date')) : null;
+            $to = $request->filled('to_date') ? Carbon::parse($request->get('to_date')) : null;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => \Illuminate\Support\Facades\Lang::get('messages.invalid_date_format'),
+            ], 422);
+        }
+
+        if ($from && $to) {
+            $query->whereBetween('ngay_gio', [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s')]);
+        } elseif ($from) {
+            $query->where('ngay_gio', '>=', $from->format('Y-m-d H:i:s'));
+        } elseif ($to) {
+            $query->where('ngay_gio', '<=', $to->format('Y-m-d H:i:s'));
+        }
+
+        $query->orderBy('ngay_gio', 'desc');
+
+        // pagination or full list
+        if ($request->has('per_page')) {
+            $perPage = (int) $request->get('per_page', 15);
+            $data = $query->paginate($perPage);
+        } else {
+            $data = $query->get();
+        }
+
+        $payload = $this->transformData($data);
+
+        return response()->json([
+            'status' => true,
+            'data' => $payload,
+        ]);
+    }
+
+    /**
+     * Display the specified appointment (must belong to authenticated customer, or staff can view any).
      */
     public function show(Request $request, LichHen $lichHen): JsonResponse
     {
         $user = $request->user();
-        if ($lichHen->khach_hang_id !== $user->id) {
-            return response()->json([
-                'status' => false,
-                'message' => \Illuminate\Support\Facades\Lang::get('messages.appointment_unauthorized_view')
-            ], 403);
+
+        // Nếu là khách hàng, chỉ xem được lịch của mình
+        if ($user instanceof \App\Models\KhachHang) {
+            if ($lichHen->khach_hang_id !== $user->id) {
+                return response()->json([
+                    'status' => false,
+                    'message' => \Illuminate\Support\Facades\Lang::get('messages.appointment_unauthorized_view')
+                ], 403);
+            }
         }
+        // Staff (Admin/NhanVien) có thể xem bất kỳ lịch hẹn nào
 
         $payload = $this->transformData($lichHen->load(['thuCung', 'dichVu', 'nhanVien', 'thanhToan', 'khachHang']));
 
@@ -284,16 +377,22 @@ class LichHenController extends Controller
 
     /**
      * Update only the ngay_gio (date/time) of the appointment.
+     * Customer can update their own, staff can update any.
      */
     public function updateNgayGio(Request $request, LichHen $lichHen): JsonResponse
     {
         $user = $request->user();
-        if ($lichHen->khach_hang_id !== $user->id) {
-            return response()->json([
-                'status' => false,
-                'message' => \Illuminate\Support\Facades\Lang::get('messages.appointment_unauthorized_update')
-            ], 403);
+
+        // Nếu là khách hàng, chỉ sửa được lịch của mình
+        if ($user instanceof \App\Models\KhachHang) {
+            if ($lichHen->khach_hang_id !== $user->id) {
+                return response()->json([
+                    'status' => false,
+                    'message' => \Illuminate\Support\Facades\Lang::get('messages.appointment_unauthorized_update')
+                ], 403);
+            }
         }
+        // Staff có thể sửa bất kỳ lịch hẹn nào
 
         $validated = $request->validate([
             'ngay_gio' => ['required', 'date'],
@@ -311,17 +410,23 @@ class LichHenController extends Controller
     }
 
     /**
-     * Remove the specified appointment (only owner can delete).
+     * Remove the specified appointment.
+     * Customer can delete their own, staff can delete any.
      */
     public function destroy(Request $request, LichHen $lichHen): JsonResponse
     {
         $user = $request->user();
-        if ($lichHen->khach_hang_id !== $user->id) {
-            return response()->json([
-                'status' => false,
-                'message' => \Illuminate\Support\Facades\Lang::get('messages.appointment_unauthorized_delete')
-            ], 403);
+
+        // Nếu là khách hàng, chỉ xóa được lịch của mình
+        if ($user instanceof \App\Models\KhachHang) {
+            if ($lichHen->khach_hang_id !== $user->id) {
+                return response()->json([
+                    'status' => false,
+                    'message' => \Illuminate\Support\Facades\Lang::get('messages.appointment_unauthorized_delete')
+                ], 403);
+            }
         }
+        // Staff có thể xóa bất kỳ lịch hẹn nào
 
         $lichHen->delete();
 
