@@ -1,117 +1,262 @@
 <template>
-  <div class="flex flex-col gap-6 w-full">
-    <!-- Page Header -->
-    <div class="flex flex-col h-[60px]">
-      <h1 class="font-medium text-2xl leading-9 text-[#101828] tracking-[0.0703px]">
-        Lịch khám
-      </h1>
-      <p class="font-normal text-base leading-6 text-[#4a5565] tracking-[-0.3125px]">
+  <div class="flex flex-col gap-6 w-full max-w-screen-xl mx-auto p-4">
+    <!-- Header -->
+    <div class="flex flex-col">
+      <h1 class="font-medium text-2xl leading-9 text-[#101828]">Lịch khám</h1>
+      <p class="text-base text-[#4a5565]">
         Quản lý lịch khám - Chỉ hiển thị ca khám được phân cho bạn
       </p>
     </div>
 
-    <!-- Toolbar Card -->
-    <div class="bg-white border border-[rgba(0,0,0,0.1)] rounded-[14px] p-4">
-      <!-- Date Navigation -->
-      <div class="flex items-center gap-2 h-10 mb-4">
-        <button 
-          class="w-[38px] h-8 bg-white border border-[rgba(0,0,0,0.1)] rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+    <!-- Toolbar -->
+    <div class="bg-white border border-[rgba(0,0,0,0.1)] rounded-2xl p-4">
+      <div class="flex items-center gap-3 mb-4">
+        <button
           @click="previousDay"
+          :disabled="loading"
+          class="w-10 h-10 rounded-lg border border-[rgba(0,0,0,0.1)] hover:bg-gray-50 flex items-center justify-center"
         >
-          <img :src="icons.chevronLeft" alt="" class="w-4 h-4" />
+          <img src="@/assets/svg/chevron-left.svg" class="w-5 h-5" />
         </button>
-        <div class="bg-gray-50 rounded-[10px] px-[34.6px] py-[10.5px] flex-1">
-          <p class="font-normal text-base leading-6 text-[#101828] text-center tracking-[-0.3125px]">
-            {{ currentDateText }}
-          </p>
+
+        <div class="flex-1 bg-gray-50 rounded-xl px-8 py-3 text-center">
+          <p class="font-medium text-[#101828]">{{ currentDateText }}</p>
         </div>
-        <button 
-          class="w-[38px] h-8 bg-white border border-[rgba(0,0,0,0.1)] rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+
+        <button
           @click="nextDay"
+          :disabled="loading"
+          class="w-10 h-10 rounded-lg border border-[rgba(0,0,0,0.1)] hover:bg-gray-50 flex items-center justify-center"
         >
-          <img :src="icons.chevronRight" alt="" class="w-4 h-4" />
+          <img src="@/assets/svg/chevron-right.svg" class="w-5 h-5" />
         </button>
-        <button 
-          class="h-9 px-4 py-2 bg-[#5a9690] text-white font-medium text-sm leading-5 tracking-[-0.1504px] rounded-lg hover:bg-[#4a857f] transition-colors"
+
+        <button
           @click="goToToday"
+          class="h-10 px-6 bg-[#5a9690] text-white rounded-lg hover:bg-[#4a857f] font-medium"
         >
           Hôm nay
         </button>
       </div>
 
-      <!-- Status Filter Tabs -->
-      <div class="flex items-center gap-4 h-9">
-        <button 
-          v-for="tab in statusTabs" 
+      <!-- Tabs -->
+      <div class="flex gap-3">
+        <button
+          v-for="tab in statusTabs"
           :key="tab.value"
-          :class="[
-            'h-9 px-4 rounded-[10px] font-normal text-sm leading-5 tracking-[-0.1504px] transition-colors',
-            activeTab === tab.value 
-              ? 'bg-[#155dfc] text-white' 
-              : 'bg-gray-100 text-[#364153] hover:bg-gray-200'
-          ]"
           @click="activeTab = tab.value"
+          :class="[
+            'h-10 px-5 rounded-xl text-sm font-medium transition-colors',
+            activeTab === tab.value
+              ? 'bg-[#155dfc] text-white'
+              : 'bg-gray-100 text-[#364153] hover:bg-gray-200',
+          ]"
         >
-          {{ tab.label }}
-          <span class="opacity-75 ml-1">({{ tab.count }})</span>
+          {{ tab.label }} <span class="opacity-75 ml-1">({{ tab.count }})</span>
         </button>
       </div>
     </div>
 
-    <!-- Appointments List -->
-    <div class="flex flex-col gap-4">
-      <!-- Appointment Card 1: Milo - Late with Note (Blue Border) -->
-      <div class="bg-white border-l-4 border-[#60a5fa] border-t border-r border-b border-[rgba(0,0,0,0.1)] rounded-[14px]">
-        <div class="flex items-start h-[186px]">
-          <!-- Time Section -->
-          <div class="flex flex-col gap-3 w-[165px] border-r border-[rgba(0,0,0,0.1)] p-6">
-            <p class="font-normal text-2xl leading-8 text-[#101828] tracking-[0.0703px]">09:00</p>
-            <div class="flex items-center gap-1">
-              <img :src="icons.clockGray" alt="" class="w-3 h-3" />
-              <span class="font-normal text-sm leading-5 text-[#6a7282] tracking-[-0.1504px]">--:--</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="bg-[#dbe7ff] rounded-lg px-[9px] py-[3px] inline-flex">
-                <span class="font-medium text-xs leading-4 text-[#1447e6]">Sắp đến</span>
+    <!-- Loading / Empty -->
+    <div v-if="loading" class="text-center py-12 text-gray-500">
+      Đang tải lịch khám...
+    </div>
+    <div
+      v-else-if="displayAppointments.length === 0"
+      class="text-center py-12 text-gray-500"
+    >
+      Không có lịch khám nào trong ngày {{ formatDate(currentDate) }}.
+    </div>
+
+    <!-- Appointment List -->
+    <div v-else class="flex flex-col gap-4">
+      <div
+        v-for="appt in displayAppointments"
+        :key="appt.id"
+        class="bg-white rounded-2xl border overflow-hidden"
+        :class="{
+          'border-l-4 border-[#60a5fa] border-t border-r border-b border-[rgba(0,0,0,0.1)]':
+            appt.displayStatus.type === 'late',
+          'border-l-4 border-[#fb923c] border-t border-r border-b border-[rgba(0,0,0,0.1)]':
+            appt.displayStatus.type === 'examining',
+          'border border-[rgba(0,0,0,0.1)]': true,
+        }"
+      >
+        <div class="flex items-stretch h-48">
+          <!-- Time Column -->
+          <div
+            class="w-44 border-r border-[rgba(0,0,0,0.1)] p-6 flex flex-col justify-between"
+          >
+            <div>
+              <p class="text-3xl font-medium text-[#101828]">
+                {{ formatTime(appt.ngay_gio) }}
+              </p>
+
+              <div class="mt-3 flex items-center gap-2 text-sm">
+                <img
+                  v-if="appt.check_in_at"
+                  src="@/assets/svg/clock.svg"
+                  class="w-4 h-4 brightness-75 hue-rotate-[270deg]"
+                />
+                <img
+                  v-else-if="appt.displayStatus.type === 'late'"
+                  src="@/assets/svg/clock.svg"
+                  class="w-4 h-4 brightness-75 saturate-150 hue-rotate-[-10deg]"
+                />
+                <img
+                  v-else
+                  src="@/assets/svg/clock.svg"
+                  class="w-4 h-4 opacity-50"
+                />
+                <span
+                  :class="{
+                    'text-[#9810fa]': appt.check_in_at,
+                    'text-[#fb2c36]': appt.displayStatus.type === 'late',
+                    'text-[#6a7282]':
+                      !appt.check_in_at && appt.displayStatus.type !== 'late',
+                  }"
+                >
+                  {{
+                    appt.check_in_at
+                      ? "+" + formatTime(appt.check_in_at)
+                      : "--:--"
+                  }}
+                  <span v-if="appt.displayStatus.type === 'late'" class="ml-1"
+                    >Trễ {{ appt.displayStatus.lateMinutes }}</span
+                  >
+                </span>
               </div>
             </div>
-            <div class="flex items-center gap-1 bg-[#ffdbdb] rounded-lg px-[9px] py-[3px] w-fit">
-              <img :src="icons.clockRed" alt="" class="w-3 h-3" />
-              <span class="font-medium text-xs leading-4 text-[#fb2c36]">Trễ 30 phút</span>
+
+            <div class="flex flex-col gap-2">
+              <!-- Status Badge -->
+              <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium"
+                :class="{
+                  'bg-[#dbe7ff] text-[#1447e6]': [
+                    'upcoming',
+                    'future',
+                  ].includes(appt.displayStatus.type),
+                  'bg-[#d6fae1] text-[#00a63e]':
+                    appt.displayStatus.type === 'arrived',
+                  'bg-orange-100 text-[#ea580c]':
+                    appt.displayStatus.type === 'examining',
+                  'bg-green-100 text-[#00a63e]':
+                    appt.displayStatus.type === 'completed',
+                }"
+              >
+                <img
+                  v-if="appt.displayStatus.type === 'arrived'"
+                  src="@/assets/svg/tick.svg"
+                  class="w-4 h-4"
+                />
+                {{ appt.displayStatus.label }}
+              </div>
+
+              <!-- Wait / Remaining time -->
+              <div
+                v-if="
+                  appt.displayStatus.waitMinutes ||
+                  appt.displayStatus.futureMinutes
+                "
+                class="px-3 py-1 rounded-lg text-xs"
+                :class="
+                  appt.displayStatus.waitMinutes
+                    ? 'bg-gray-100 text-gray-600'
+                    : 'bg-cyan-100 text-[#0891b2]'
+                "
+              >
+                {{
+                  appt.displayStatus.waitMinutes
+                    ? appt.displayStatus.waitMinutes + " phút"
+                    : appt.displayStatus.label
+                }}
+              </div>
             </div>
           </div>
 
-          <!-- Pet Info Section -->
-          <div class="flex-1 p-6 flex items-start gap-4">
-            <div class="w-24 h-24 border-2 border-gray-200 rounded-[14px] overflow-hidden flex-shrink-0">
-              <img :src="appointments[0].petImage" alt="" class="w-full h-full object-cover" />
+          <!-- Pet & Customer Info -->
+          <div class="flex-1 p-6 flex gap-6">
+            <div
+              class="w-28 h-28 border-2 border-gray-200 rounded-2xl overflow-hidden flex-shrink-0"
+            >
+              <img
+                v-if="appt.thu_cung?.anh_dai_dien"
+                :src="appt.thu_cung.anh_dai_dien"
+                class="w-full h-full object-cover"
+              />
+              <div
+                v-else
+                class="w-full h-full bg-gray-50 flex items-center justify-center text-6xl"
+              >
+                🐾
+              </div>
             </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-2">
-                <h3 class="font-bold text-lg leading-7 text-[#101828] tracking-[-0.4395px]">{{ appointments[0].petName }}</h3>
-                <span class="font-normal text-lg leading-7 text-[#101828] tracking-[-0.4395px]">({{ appointments[0].petBreed }})</span>
-                <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">- {{ appointments[0].petAge }}</span>
-                <div class="bg-[#dbe7ff] rounded-lg px-[9px] py-[3px] inline-flex">
-                  <span class="font-medium text-xs leading-4 text-[#1447e6]">Đặt trước</span>
-                </div>
+
+            <div class="flex-1">
+              <div class="flex items-center gap-3 flex-wrap mb-3">
+                <h3 class="text-xl font-bold text-[#101828]">
+                  {{ appt.thu_cung?.ten_thu_cung || "Chưa có tên" }}
+                </h3>
+                <span class="text-[#101828]"
+                  >({{ appt.thu_cung?.giong_loai || "?" }})</span
+                >
+                <span class="text-sm text-[#4a5565]"
+                  >- {{ calculateAge(appt.thu_cung?.ngay_sinh) }}</span
+                >
+
+                <span
+                  class="px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1"
+                  :class="
+                    appt.la_khach_vang_lai
+                      ? 'bg-[#f2e6ff] text-[#8200db]'
+                      : 'bg-[#dbe7ff] text-[#1447e6]'
+                  "
+                >
+                  <img
+                    v-if="!appt.la_khach_vang_lai"
+                    src="@/assets/svg/calendar.svg"
+                    class="w-4 h-4"
+                  />
+                  <img
+                    v-else
+                    src="@/assets/svg/user-round.svg"
+                    class="w-4 h-4"
+                  />
+                  {{ appt.la_khach_vang_lai ? "Vãng lai" : "Đặt trước" }}
+                </span>
               </div>
-              <div class="flex items-center gap-2 mb-2">
-                <span class="font-normal text-sm leading-5 text-[#364153] tracking-[-0.1504px]">Chủ: </span>
-                <span class="font-bold text-sm leading-5 text-[#364153] tracking-[-0.1504px]">{{ appointments[0].ownerName }}</span>
-                <span class="font-normal text-base leading-6 text-[#99a1af] tracking-[-0.3125px]">•</span>
+
+              <div class="flex items-center gap-3 text-sm mb-3">
+                <span class="text-[#364153]">Chủ:</span>
+                <span class="font-bold">{{ appt.khach_hang }}</span>
+                <span class="text-[#99a1af]">•</span>
                 <div class="flex items-center gap-1">
-                  <img :src="icons.phone" alt="" class="w-3 h-3" />
-                  <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">{{ appointments[0].ownerPhone }}</span>
+                  <img src="@/assets/svg/phonecall.svg" class="w-4 h-4" />
+                  <span class="text-[#4a5565]">{{
+                    appt.khach_hang?.so_dien_thoai || "Chưa có"
+                  }}</span>
                 </div>
               </div>
-              <div class="bg-blue-50 border border-[#bedbff] rounded-lg px-2 py-[3px] inline-flex mb-2">
-                <span class="font-medium text-xs leading-4 text-[#1447e6]">{{ appointments[0].service }}</span>
+
+              <div
+                class="inline-flex px-3 py-1 bg-blue-50 border border-[#bedbff] rounded-lg text-xs text-[#1447e6]"
+              >
+                {{ appt.dich_vu?.ten || "Khám tổng quát" }}
               </div>
-              <div v-if="appointments[0].note" class="bg-amber-50 border border-[#fee685] rounded-[10px] px-3 py-2">
-                <div class="flex items-start gap-2">
-                  <img :src="icons.infoIcon" alt="" class="w-4 h-4 flex-shrink-0 mt-0.5" />
-                  <p class="font-normal text-sm leading-5 text-[#7b3306] tracking-[-0.1504px]">
-                    <span class="font-bold">Ghi chú:</span> {{ appointments[0].note }}
+
+              <!-- Ghi chú -->
+              <div
+                v-if="appt.ghi_chu"
+                class="mt-4 p-3 bg-amber-50 border border-[#fee685] rounded-xl"
+              >
+                <div class="flex gap-3 text-sm text-[#7b3306]">
+                  <img
+                    src="@/assets/svg/info-circle.svg"
+                    class="w-5 h-5 flex-shrink-0"
+                  />
+                  <p>
+                    <span class="font-bold">Ghi chú:</span> {{ appt.ghi_chu }}
                   </p>
                 </div>
               </div>
@@ -119,333 +264,75 @@
           </div>
 
           <!-- Action Button -->
-          <div class="w-[255px] p-6 flex items-center">
-            <button 
-              class="w-full h-9 bg-[#155dfc] text-white font-medium text-sm leading-5 tracking-[-0.1504px] rounded-lg flex items-center justify-center gap-2 hover:bg-[#1447e6] transition-colors"
-              @click="startExam"
-            >
-              <img :src="icons.playCircle" alt="" class="w-4 h-4" />
-              BẮT ĐẦU
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Appointment Card 2: Lu - Checked In (Standard Border) -->
-      <div class="bg-white border border-[rgba(0,0,0,0.1)] rounded-[14px]">
-        <div class="flex items-start h-[186px]">
-          <!-- Time Section -->
-          <div class="flex flex-col gap-3 w-[165px] border-r border-[rgba(0,0,0,0.1)] p-6">
-            <p class="font-normal text-2xl leading-8 text-[#101828] tracking-[0.0703px]">09:12</p>
-            <div class="flex items-center gap-1">
-              <img :src="icons.clockPurple" alt="" class="w-3 h-3" />
-              <span class="font-normal text-sm leading-5 text-[#9810fa] tracking-[-0.1504px]">+09:12</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="bg-[#d6fae1] rounded-lg px-[9px] py-[3px] inline-flex items-center gap-1">
-                <img :src="icons.checkCircle" alt="" class="w-3 h-3" />
-                <span class="font-medium text-xs leading-4 text-[#00a63e]">Đã đến</span>
-              </div>
-            </div>
-            <div class="bg-gray-100 rounded-lg px-[9px] py-[3px] inline-flex w-fit">
-              <span class="font-medium text-xs leading-4 text-[#4a5565]">3 phút</span>
-            </div>
-          </div>
-
-          <!-- Pet Info Section -->
-          <div class="flex-1 p-6 flex items-start gap-4">
-            <div class="w-24 h-24 border-2 border-gray-200 rounded-[14px] overflow-hidden flex-shrink-0">
-              <img :src="appointments[1].petImage" alt="" class="w-full h-full object-cover" />
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-2">
-                <h3 class="font-bold text-lg leading-7 text-[#101828] tracking-[-0.4395px]">{{ appointments[1].petName }}</h3>
-                <span class="font-normal text-lg leading-7 text-[#101828] tracking-[-0.4395px]">({{ appointments[1].petBreed }})</span>
-                <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">- {{ appointments[1].petAge }}</span>
-                <div class="bg-[#f2e6ff] rounded-lg px-[9px] py-[3px] inline-flex items-center gap-1">
-                  <img :src="icons.userPurple" alt="" class="w-3 h-3" />
-                  <span class="font-medium text-xs leading-4 text-[#8200db]">Vãng lai</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-2 mb-2">
-                <span class="font-normal text-sm leading-5 text-[#364153] tracking-[-0.1504px]">Chủ: </span>
-                <span class="font-bold text-sm leading-5 text-[#364153] tracking-[-0.1504px]">{{ appointments[1].ownerName }}</span>
-                <span class="font-normal text-base leading-6 text-[#99a1af] tracking-[-0.3125px]">•</span>
-                <div class="flex items-center gap-1">
-                  <img :src="icons.phone" alt="" class="w-3 h-3" />
-                  <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">{{ appointments[1].ownerPhone }}</span>
-                </div>
-              </div>
-              <div class="bg-blue-50 border border-[#bedbff] rounded-lg px-2 py-[3px] inline-flex">
-                <span class="font-medium text-xs leading-4 text-[#1447e6]">{{ appointments[1].service }}</span>
-              </div>
-              <div class="h-[52px]"></div>
-            </div>
-          </div>
-
-          <!-- Action Button -->
-          <div class="w-[255px] p-6 flex items-center">
-            <button 
-              class="w-full h-9 bg-[#155dfc] text-white font-medium text-sm leading-5 tracking-[-0.1504px] rounded-lg flex items-center justify-center gap-2 hover:bg-[#1447e6] transition-colors"
-              @click="startExam"
-            >
-              <img :src="icons.playCircle" alt="" class="w-4 h-4" />
-              BẮT ĐẦU
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Appointment Card 3: Luna - Member (Standard Border) -->
-      <div class="bg-white border border-[rgba(0,0,0,0.1)] rounded-[14px]">
-        <div class="flex items-start h-[186px]">
-          <!-- Time Section -->
-          <div class="flex flex-col gap-3 w-[165px] border-r border-[rgba(0,0,0,0.1)] p-6">
-            <p class="font-normal text-2xl leading-8 text-[#101828] tracking-[0.0703px]">09:24</p>
-            <div class="flex items-center gap-1">
-              <img :src="icons.clockPurple" alt="" class="w-3 h-3" />
-              <span class="font-normal text-sm leading-5 text-[#9810fa] tracking-[-0.1504px]">+09:24</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="bg-[#d6fae1] rounded-lg px-[9px] py-[3px] inline-flex items-center gap-1">
-                <img :src="icons.checkCircle" alt="" class="w-3 h-3" />
-                <span class="font-medium text-xs leading-4 text-[#00a63e]">Đã đến</span>
-              </div>
-            </div>
-            <div class="bg-gray-100 rounded-lg px-[9px] py-[3px] inline-flex w-fit">
-              <span class="font-medium text-xs leading-4 text-[#4a5565]">5 phút</span>
-            </div>
-          </div>
-
-          <!-- Pet Info Section -->
-          <div class="flex-1 p-6 flex items-start gap-4">
-            <div class="w-24 h-24 border-2 border-gray-200 rounded-[14px] overflow-hidden flex-shrink-0">
-              <img :src="appointments[2].petImage" alt="" class="w-full h-full object-cover" />
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-2">
-                <h3 class="font-bold text-lg leading-7 text-[#101828] tracking-[-0.4395px]">{{ appointments[2].petName }}</h3>
-                <span class="font-normal text-lg leading-7 text-[#101828] tracking-[-0.4395px]">({{ appointments[2].petBreed }})</span>
-                <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">- {{ appointments[2].petAge }}</span>
-                <div class="bg-[#dbe7ff] rounded-lg px-[9px] py-[3px] inline-flex items-center gap-1">
-                  <img :src="icons.userBlue" alt="" class="w-3 h-3" />
-                  <span class="font-medium text-xs leading-4 text-[#1447e6]">Thành Viên</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-2 mb-2">
-                <span class="font-normal text-sm leading-5 text-[#364153] tracking-[-0.1504px]">Chủ: </span>
-                <span class="font-bold text-sm leading-5 text-[#364153] tracking-[-0.1504px]">{{ appointments[2].ownerName }}</span>
-                <span class="font-normal text-base leading-6 text-[#99a1af] tracking-[-0.3125px]">•</span>
-                <div class="flex items-center gap-1">
-                  <img :src="icons.phone" alt="" class="w-3 h-3" />
-                  <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">{{ appointments[2].ownerPhone }}</span>
-                </div>
-              </div>
-              <div class="bg-blue-50 border border-[#bedbff] rounded-lg px-2 py-[3px] inline-flex">
-                <span class="font-medium text-xs leading-4 text-[#1447e6]">{{ appointments[2].service }}</span>
-              </div>
-              <div class="h-[52px]"></div>
-            </div>
-          </div>
-
-          <!-- Action Button -->
-          <div class="w-[255px] p-6 flex items-center">
-            <button 
-              class="w-full h-9 bg-[#155dfc] text-white font-medium text-sm leading-5 tracking-[-0.1504px] rounded-lg flex items-center justify-center gap-2 hover:bg-[#1447e6] transition-colors"
-              @click="startExam"
-            >
-              <img :src="icons.playCircle" alt="" class="w-4 h-4" />
-              BẮT ĐẦU
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Appointment Card 4: Max - Future (Standard Border, Disabled) -->
-      <div class="bg-white border border-[rgba(0,0,0,0.1)] rounded-[14px]">
-        <div class="flex items-start h-[186px]">
-          <!-- Time Section -->
-          <div class="flex flex-col gap-3 w-[165px] border-r border-[rgba(0,0,0,0.1)] p-6">
-            <p class="font-normal text-2xl leading-8 text-[#101828] tracking-[0.0703px]">10:30</p>
-            <div class="flex items-center gap-1">
-              <img :src="icons.clockGray" alt="" class="w-3 h-3" />
-              <span class="font-normal text-sm leading-5 text-[#6a7282] tracking-[-0.1504px]">--:--</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="bg-[#dbe7ff] rounded-lg px-[9px] py-[3px] inline-flex">
-                <span class="font-medium text-xs leading-4 text-[#1447e6]">Sắp đến</span>
-              </div>
-            </div>
-            <div class="bg-cyan-100 rounded-lg px-[9px] py-[3px] inline-flex w-fit">
-              <span class="font-medium text-xs leading-4 text-[#0891b2]">Còn 60 phút</span>
-            </div>
-          </div>
-
-          <!-- Pet Info Section -->
-          <div class="flex-1 p-6 flex items-start gap-4">
-            <div class="w-24 h-24 border-2 border-gray-200 rounded-[14px] overflow-hidden flex-shrink-0">
-              <img :src="appointments[3].petImage" alt="" class="w-full h-full object-cover" />
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-2">
-                <h3 class="font-bold text-lg leading-7 text-[#101828] tracking-[-0.4395px]">{{ appointments[3].petName }}</h3>
-                <span class="font-normal text-lg leading-7 text-[#101828] tracking-[-0.4395px]">({{ appointments[3].petBreed }})</span>
-                <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">- {{ appointments[3].petAge }}</span>
-                <div class="bg-[#dbe7ff] rounded-lg px-[9px] py-[3px] inline-flex items-center gap-1">
-                  <img :src="icons.calendarBadge" alt="" class="w-3 h-3" />
-                  <span class="font-medium text-xs leading-4 text-[#1447e6]">Đặt trước</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-2 mb-2">
-                <span class="font-normal text-sm leading-5 text-[#364153] tracking-[-0.1504px]">Chủ: </span>
-                <span class="font-bold text-sm leading-5 text-[#364153] tracking-[-0.1504px]">{{ appointments[3].ownerName }}</span>
-                <span class="font-normal text-base leading-6 text-[#99a1af] tracking-[-0.3125px]">•</span>
-                <div class="flex items-center gap-1">
-                  <img :src="icons.phone" alt="" class="w-3 h-3" />
-                  <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">{{ appointments[3].ownerPhone }}</span>
-                </div>
-              </div>
-              <div class="bg-blue-50 border border-[#bedbff] rounded-lg px-2 py-[3px] inline-flex">
-                <span class="font-medium text-xs leading-4 text-[#1447e6]">{{ appointments[3].service }}</span>
-              </div>
-              <div class="h-[52px]"></div>
-            </div>
-          </div>
-
-          <!-- Action Button -->
-          <div class="w-[255px] p-6 flex items-center">
-            <button 
-              class="w-full h-9 bg-gray-100 text-gray-400 font-medium text-sm leading-5 tracking-[-0.1504px] rounded-lg flex items-center justify-center gap-2 cursor-not-allowed"
-              disabled
-            >
-              <img :src="icons.playCircle" alt="" class="w-4 h-4 opacity-40" />
-              BẮT ĐẦU
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Appointment Card 5: Bella - In Progress (Orange Border, No Photo) -->
-      <div class="bg-white border-l-4 border-[#fb923c] border-t border-r border-b border-[rgba(0,0,0,0.1)] rounded-[14px]">
-        <div class="flex items-start h-[186px]">
-          <!-- Time Section -->
-          <div class="flex flex-col gap-3 w-[165px] border-r border-[rgba(0,0,0,0.1)] p-6">
-            <p class="font-normal text-2xl leading-8 text-[#101828] tracking-[0.0703px]">08:18</p>
-            <div class="flex items-center gap-1">
-              <img :src="icons.clockPurple" alt="" class="w-3 h-3" />
-              <span class="font-normal text-sm leading-5 text-[#9810fa] tracking-[-0.1504px]">+08:18</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="bg-[#d6fae1] rounded-lg px-[9px] py-[3px] inline-flex items-center gap-1">
-                <img :src="icons.checkCircle" alt="" class="w-3 h-3" />
-                <span class="font-medium text-xs leading-4 text-[#00a63e]">Đã đến</span>
-              </div>
-            </div>
-            <div class="bg-orange-100 rounded-lg px-[9px] py-[3px] inline-flex w-fit">
-              <span class="font-medium text-xs leading-4 text-[#ea580c]">Đang khám</span>
-            </div>
-          </div>
-
-          <!-- Pet Info Section -->
-          <div class="flex-1 p-6 flex items-start gap-4">
-            <div class="w-24 h-24 border-2 border-gray-200 rounded-[14px] overflow-hidden flex-shrink-0 flex items-center justify-center bg-gray-50">
-              <span class="text-5xl">🐕</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-2">
-                <h3 class="font-bold text-lg leading-7 text-[#101828] tracking-[-0.4395px]">{{ appointments[4].petName }}</h3>
-                <span class="font-normal text-lg leading-7 text-[#101828] tracking-[-0.4395px]">({{ appointments[4].petBreed }})</span>
-                <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">- {{ appointments[4].petAge }}</span>
-                <div class="bg-[#dbe7ff] rounded-lg px-[9px] py-[3px] inline-flex items-center gap-1">
-                  <img :src="icons.userBlue" alt="" class="w-3 h-3" />
-                  <span class="font-medium text-xs leading-4 text-[#1447e6]">Thành Viên</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-2 mb-2">
-                <span class="font-normal text-sm leading-5 text-[#364153] tracking-[-0.1504px]">Chủ: </span>
-                <span class="font-bold text-sm leading-5 text-[#364153] tracking-[-0.1504px]">{{ appointments[4].ownerName }}</span>
-                <span class="font-normal text-base leading-6 text-[#99a1af] tracking-[-0.3125px]">•</span>
-                <div class="flex items-center gap-1">
-                  <img :src="icons.phone" alt="" class="w-3 h-3" />
-                  <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">{{ appointments[4].ownerPhone }}</span>
-                </div>
-              </div>
-              <div class="bg-blue-50 border border-[#bedbff] rounded-lg px-2 py-[3px] inline-flex">
-                <span class="font-medium text-xs leading-4 text-[#1447e6]">{{ appointments[4].service }}</span>
-              </div>
-              <div class="h-[52px]"></div>
-            </div>
-          </div>
-
-          <!-- Action Button -->
-          <div class="w-[255px] p-6 flex items-center">
-            <button 
-              class="w-full h-9 bg-[#f54900] text-white font-medium text-sm leading-5 tracking-[-0.1504px] rounded-lg hover:bg-[#ca3500] transition-colors"
-              @click="startExam"
+          <div class="w-64 p-6 flex items-center justify-end">
+            <!-- Đang khám → TIẾP TỤC -->
+            <button
+              v-if="appt.trang_thai === 'in-progress'"
+              @click="startExam(appt.id)"
+              class="w-full h-11 bg-[#f54900] text-white rounded-xl font-medium hover:bg-[#ca3500]"
             >
               TIẾP TỤC
             </button>
-          </div>
-        </div>
-      </div>
 
-      <!-- Appointment Card 6: Meo - Completed (Standard Border) -->
-      <div class="bg-white border border-[rgba(0,0,0,0.1)] rounded-[14px]">
-        <div class="flex items-start h-[186px]">
-          <!-- Time Section -->
-          <div class="flex flex-col gap-3 w-[165px] border-r border-[rgba(0,0,0,0.1)] p-6">
-            <p class="font-normal text-2xl leading-8 text-[#101828] tracking-[0.0703px]">11:00</p>
-            <div class="flex items-center gap-1">
-              <img :src="icons.clockPurple" alt="" class="w-3 h-3" />
-              <span class="font-normal text-sm leading-5 text-[#9810fa] tracking-[-0.1504px]">+10:50</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="bg-[#d6fae1] rounded-lg px-[9px] py-[3px] inline-flex items-center gap-1">
-                <img :src="icons.checkCircle" alt="" class="w-3 h-3" />
-                <span class="font-medium text-xs leading-4 text-[#00a63e]">Đã đến</span>
-              </div>
-            </div>
-            <div class="bg-green-100 rounded-lg px-[9px] py-[3px] inline-flex w-fit">
-              <span class="font-medium text-xs leading-4 text-[#00a63e]">Hoàn thành</span>
-            </div>
-          </div>
-
-          <!-- Pet Info Section -->
-          <div class="flex-1 p-6 flex items-start gap-4">
-            <div class="w-24 h-24 border-2 border-gray-200 rounded-[14px] overflow-hidden flex-shrink-0">
-              <img :src="appointments[5].petImage" alt="" class="w-full h-full object-cover" />
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-2">
-                <h3 class="font-bold text-lg leading-7 text-[#101828] tracking-[-0.4395px]">{{ appointments[5].petName }}</h3>
-                <span class="font-normal text-lg leading-7 text-[#101828] tracking-[-0.4395px]">({{ appointments[5].petBreed }})</span>
-                <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">- {{ appointments[5].petAge }}</span>
-                <div class="bg-[#dbe7ff] rounded-lg px-[9px] py-[3px] inline-flex items-center gap-1">
-                  <img :src="icons.userBlue" alt="" class="w-3 h-3" />
-                  <span class="font-medium text-xs leading-4 text-[#1447e6]">Thành Viên</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-2 mb-2">
-                <span class="font-normal text-sm leading-5 text-[#364153] tracking-[-0.1504px]">Chủ: </span>
-                <span class="font-bold text-sm leading-5 text-[#364153] tracking-[-0.1504px]">{{ appointments[5].ownerName }}</span>
-                <span class="font-normal text-base leading-6 text-[#99a1af] tracking-[-0.3125px]">•</span>
-                <div class="flex items-center gap-1">
-                  <img :src="icons.phone" alt="" class="w-3 h-3" />
-                  <span class="font-normal text-sm leading-5 text-[#4a5565] tracking-[-0.1504px]">{{ appointments[5].ownerPhone }}</span>
-                </div>
-              </div>
-              <div class="bg-blue-50 border border-[#bedbff] rounded-lg px-2 py-[3px] inline-flex">
-                <span class="font-medium text-xs leading-4 text-[#1447e6]">{{ appointments[5].service }}</span>
-              </div>
-              <div class="h-[52px]"></div>
-            </div>
-          </div>
-
-          <!-- Action Button -->
-          <div class="w-[255px] p-6 flex items-center">
-            <button class="w-full h-9 bg-white border border-[rgba(0,0,0,0.1)] text-gray-700 font-medium text-sm leading-5 tracking-[-0.1504px] rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
-              <img :src="icons.eyeIcon" alt="" class="w-4 h-4" />
+            <!-- Hoàn thành → Xem lại -->
+            <button
+              v-else-if="appt.trang_thai === 'completed'"
+              class="w-full h-11 border border-[rgba(0,0,0,0.1)] rounded-xl flex items-center justify-center gap-2 text-gray-700 hover:bg-gray-50"
+            >
+              <img src="@/assets/svg/eye.svg" class="w-5 h-5" />
               Xem lại
+            </button>
+
+            <!-- Có thể bắt đầu -->
+            <button
+              v-else-if="
+                ['late', 'arrived', 'upcoming'].includes(
+                  appt.displayStatus.type
+                )
+              "
+              @click="startExam(appt.id)"
+              class="w-full h-11 bg-[#155dfc] text-white rounded-xl flex items-center justify-center gap-2 hover:bg-[#1447e6]"
+            >
+              <svg
+                class="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path d="M10 8L16 12L10 16V8Z" fill="currentColor" />
+              </svg>
+              BẮT ĐẦU
+            </button>
+
+            <!-- Tương lai → disable -->
+            <button
+              v-else
+              disabled
+              class="w-full h-11 bg-gray-100 text-gray-400 rounded-xl flex items-center justify-center gap-2 cursor-not-allowed"
+            >
+              <svg
+                class="w-5 h-5 opacity-40"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path d="M10 8L16 12L10 16V8Z" fill="currentColor" />
+              </svg>
+              BẮT ĐẦU
             </button>
           </div>
         </div>
@@ -455,180 +342,173 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, watch, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import api from "@/utils/api";
+import { format, differenceInMinutes, parseISO } from "date-fns";
+import { vi } from "date-fns/locale";
 
+// State
 const router = useRouter();
-
-// Icons from Figma
-const icons = {
-  chevronLeft: "https://www.figma.com/api/mcp/asset/dcda70b5-46a3-4c0f-a889-348b89df96b9",
-  chevronRight: "https://www.figma.com/api/mcp/asset/e1aa7f82-33cb-4128-b2c5-56d7232ce76c",
-  checkCircle: "https://www.figma.com/api/mcp/asset/702a1446-dc44-463a-9a81-499741bad4ca",
-  clockGray: "https://www.figma.com/api/mcp/asset/2b0f3bff-0c89-4d37-8acb-6d96e8eb4b9d",
-  clockPurple: "https://www.figma.com/api/mcp/asset/8f92ae18-d9e9-4c1f-9f7e-4ed2e0df5c93",
-  clockRed: "https://www.figma.com/api/mcp/asset/9c4a7f3e-5b8d-4a2c-9e1f-7f8e2c3d4e5f",
-  phone: "https://www.figma.com/api/mcp/asset/52ad630b-cd0d-4286-b1dd-c58339a7e5dc",
-  playCircle: "https://www.figma.com/api/mcp/asset/d25d6ebf-e2f5-467d-a889-01913a6f996a",
-  infoIcon: "https://www.figma.com/api/mcp/asset/3d8f9a1b-2c4e-5f6d-7e8f-9a0b1c2d3e4f",
-  userPurple: "https://www.figma.com/api/mcp/asset/4e9f0a2b-3c5e-6f7d-8e9f-0a1b2c3d4e5f",
-  userBlue: "https://www.figma.com/api/mcp/asset/5f0a1b2c-4d6e-7f8d-9e0f-1a2b3c4d5e6f",
-  calendarBadge: "https://www.figma.com/api/mcp/asset/6f1a2b3c-5d7e-8f9d-0e1f-2a3b4c5d6e7f",
-  eyeIcon: "https://www.figma.com/api/mcp/asset/a872ff23-fc92-4bde-8371-dd6a95d301e8"
-};
-
-// Current date
 const currentDate = ref(new Date());
+const appointments = ref([]);
+const loading = ref(false);
+const activeTab = ref("all");
+
+// Format helpers
+const formatDate = (date) => format(date, "dd/MM/yyyy");
+const formatTime = (dateString) => {
+  if (!dateString) return "--:--";
+  return format(parseISO(dateString), "HH:mm");
+};
 const currentDateText = computed(() => {
-  const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-  const day = days[currentDate.value.getDay()];
-  const date = currentDate.value.getDate().toString().padStart(2, '0');
-  const month = (currentDate.value.getMonth() + 1).toString().padStart(2, '0');
-  const year = currentDate.value.getFullYear();
-  return `${day}, ${date}/${month}/${year}`;
+  return format(currentDate.value, "EEEE, dd/MM/yyyy", { locale: vi }).replace(
+    /^\w/,
+    (c) => c.toUpperCase()
+  );
 });
 
-// Active tab
-const activeTab = ref('all');
+// Tính tuổi thú cưng
+const calculateAge = (birthDate) => {
+  if (!birthDate) return "Chưa rõ tuổi";
+  const years = new Date().getFullYear() - new Date(birthDate).getFullYear();
+  return `${years} tuổi`;
+};
 
-// Status tabs
-const statusTabs = ref([
-  { label: 'Tất cả', value: 'all', count: 6 },
-  { label: 'Đang chờ', value: 'waiting', count: 4 },
-  { label: 'Đang khám', value: 'examining', count: 1 },
-  { label: 'Hoàn thành', value: 'completed', count: 1 }
-]);
+// Xác định trạng thái hiển thị của lịch hẹn
+const getStatus = (appt) => {
+  const now = new Date();
+  const apptTime = parseISO(appt.ngay_gio);
+  const diff = differenceInMinutes(now, apptTime);
 
-// Appointments data
-const appointments = ref([
-  {
-    time: '09:00',
-    checkInTime: null,
-    status: 'waiting',
-    late: true,
-    lateMinutes: 30,
-    petName: 'Milo',
-    petBreed: 'Chó Golden Retriever',
-    petAge: '2 tuổi',
-    petImage: 'https://www.figma.com/api/mcp/asset/d5407383-5007-4d71-b56f-dc25ff3edbad',
-    ownerName: 'Nguyễn Văn A',
-    ownerPhone: '0901234567',
-    service: 'Khám Tổng Quát',
-    badge: 'Đặt trước',
-    note: 'Bé hơi dữ, cẩn thận khi tiếp cận'
-  },
-  {
-    time: '09:12',
-    checkInTime: '09:12',
-    status: 'waiting',
-    arrived: true,
-    waitMinutes: 3,
-    petName: 'Lu',
-    petBreed: 'Mèo Anh Lông Ngắn',
-    petAge: '2 tuổi',
-    petImage: 'https://www.figma.com/api/mcp/asset/85b46eea-5637-456e-a38e-14d4280cf26a',
-    ownerName: 'Đỗ Thị D',
-    ownerPhone: '0912345678',
-    service: 'Khám Tổng Quát',
-    badge: 'Vãng lai'
-  },
-  {
-    time: '09:24',
-    checkInTime: '09:24',
-    status: 'waiting',
-    arrived: true,
-    waitMinutes: 5,
-    petName: 'Luna',
-    petBreed: 'Mèo Ba Tư',
-    petAge: '2 tuổi',
-    petImage: 'https://www.figma.com/api/mcp/asset/90036aa7-c05d-4d2c-9626-b1121e0039f5',
-    ownerName: 'Trần Thị B',
-    ownerPhone: '0912345678',
-    service: 'Tiêm Phòng Vắc-Xin',
-    badge: 'Thành Viên'
-  },
-  {
-    time: '10:30',
-    checkInTime: null,
-    status: 'waiting',
-    future: true,
-    futureMinutes: 60,
-    petName: 'Max',
-    petBreed: 'Chó Husky',
-    petAge: '3 tuổi',
-    petImage: 'https://www.figma.com/api/mcp/asset/ec0c8147-a467-46fc-a61d-0006c6610147',
-    ownerName: 'Lê Văn C',
-    ownerPhone: '0923456789',
-    service: 'Khám Tổng Quát',
-    badge: 'Đặt trước'
-  },
-  {
-    time: '08:18',
-    checkInTime: '08:18',
-    status: 'examining',
-    arrived: true,
-    petName: 'Bella',
-    petBreed: 'Chó Poodle',
-    petAge: '4 tuổi',
-    petImage: null,
-    ownerName: 'Phạm Thị D',
-    ownerPhone: '0934567890',
-    service: 'Khám Tổng Quát',
-    badge: 'Thành Viên'
-  },
-  {
-    time: '11:00',
-    checkInTime: '10:50',
-    status: 'completed',
-    arrived: true,
-    petName: 'Meo',
-    petBreed: 'Mèo Anh Lông Dài',
-    petAge: '1 tuổi',
-    petImage: 'https://www.figma.com/api/mcp/asset/3a2b1c0d-4e5f-6a7b-8c9d-0e1f2a3b4c5d',
-    ownerName: 'Nguyễn Thị F',
-    ownerPhone: '0956789012',
-    service: 'Khám Da Liễu',
-    badge: 'Thành Viên'
+  if (appt.trang_thai === "in-progress") {
+    return { type: "examining", label: "Đang khám", color: "orange" };
   }
-]);
+  if (appt.trang_thai === "completed") {
+    return { type: "completed", label: "Hoàn thành", color: "green" };
+  }
 
-// Methods
-const previousDay = () => {
-  currentDate.value = new Date(currentDate.value.setDate(currentDate.value.getDate() - 1));
+  // Đã check-in
+  if (appt.check_in_at) {
+    const wait = differenceInMinutes(now, parseISO(appt.check_in_at));
+    return { type: "arrived", label: "Đã đến", waitMinutes: wait };
+  }
+
+  // Tương lai
+  if (apptTime > now) {
+    const minutesLeft = differenceInMinutes(apptTime, now);
+    return {
+      type: "future",
+      label:
+        minutesLeft <= 60
+          ? `Còn ${minutesLeft} phút`
+          : `Còn ${Math.round(minutesLeft / 60)} giờ`,
+      futureMinutes: minutesLeft,
+    };
+  }
+
+  // Quá giờ chưa check-in
+  if (diff > 0) {
+    if (diff <= 30) return { type: "upcoming", label: "Sắp đến" };
+    return { type: "late", label: `Trễ ${diff} phút`, lateMinutes: diff };
+  }
+
+  return { type: "upcoming", label: "Sắp đến" };
 };
 
-const nextDay = () => {
-  currentDate.value = new Date(currentDate.value.setDate(currentDate.value.getDate() + 1));
+// Tabs count
+const statusTabs = computed(() => {
+  const all = appointments.value.length;
+  const waiting = appointments.value.filter((a) =>
+    ["pending", "confirmed"].includes(a.trang_thai)
+  ).length;
+  const examining = appointments.value.filter(
+    (a) => a.trang_thai === "in-progress"
+  ).length;
+  const completed = appointments.value.filter(
+    (a) => a.trang_thai === "completed"
+  ).length;
+
+  return [
+    { label: "Tất cả", value: "all", count: all },
+    { label: "Đang chờ", value: "waiting", count: waiting },
+    { label: "Đang khám", value: "examining", count: examining },
+    { label: "Hoàn thành", value: "completed", count: completed },
+  ];
+});
+
+const displayAppointments = computed(() => {
+  let list = [...appointments.value];
+
+  if (activeTab.value === "waiting") {
+    list = list.filter((a) => ["pending", "confirmed"].includes(a.trang_thai));
+  } else if (activeTab.value === "examining") {
+    list = list.filter((a) => a.trang_thai === "in-progress");
+  } else if (activeTab.value === "completed") {
+    list = list.filter((a) => a.trang_thai === "completed");
+  }
+
+  // Sắp xếp theo thời gian
+  return list.sort((a, b) => new Date(a.ngay_gio) - new Date(b.ngay_gio));
+});
+
+// Lấy dữ liệu từ API
+const fetchAppointments = async () => {
+  loading.value = true;
+  try {
+    const dateStr = format(currentDate.value, "yyyy-MM-dd");
+
+    const res = await api.get("/lich-hen-all", {
+      params: {
+        from_date: `${dateStr} 00:00:00`,
+        to_date: `${dateStr} 23:59:59`,
+        per_page: 100,
+      },
+    });
+
+    console.log("API Response:", res.data);
+
+    // Handle both paginated and non-paginated responses
+    let data = [];
+    if (res.data.status && res.data.data) {
+      if (Array.isArray(res.data.data)) {
+        data = res.data.data;
+      } else if (res.data.data.data && Array.isArray(res.data.data.data)) {
+        data = res.data.data.data;
+      }
+    }
+
+    console.log("Processed data:", data);
+
+    appointments.value = data.map((appt) => ({
+      ...appt,
+      displayStatus: getStatus(appt),
+    }));
+  } catch (err) {
+    console.error("Error fetching appointments:", err);
+    console.error("Error details:", err.response?.data);
+  } finally {
+    loading.value = false;
+  }
 };
 
-const goToToday = () => {
-  currentDate.value = new Date();
-};
+// Navigation
+const previousDay = () =>
+  (currentDate.value = new Date(
+    currentDate.value.setDate(currentDate.value.getDate() - 1)
+  ));
+const nextDay = () =>
+  (currentDate.value = new Date(
+    currentDate.value.setDate(currentDate.value.getDate() + 1)
+  ));
+const goToToday = () => (currentDate.value = new Date());
 
-const startExam = () => {
-  router.push('/doctor/lich-kham/phieu-kham');
+watch(currentDate, fetchAppointments);
+onMounted(fetchAppointments);
+
+// Bắt đầu khám
+const startExam = (id) => {
+  router.push(`/doctor/lich-kham/phieu-kham/${id}`);
 };
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-</style>
+<style scoped></style>
