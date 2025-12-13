@@ -24,6 +24,38 @@ class LichHenController extends Controller
         $arr['khach_hang'] = optional($lichHen->khachHang)->full_name ?? null;
         unset($arr['khach_hang_id']);
 
+        // Format thu_cung data properly for FE
+        if (isset($arr['thu_cung']) && is_array($arr['thu_cung'])) {
+            $thuCung = &$arr['thu_cung'];
+
+            // Map backend fields to FE expected fields
+            $thuCung['loai'] = $thuCung['loai_thu_cung'] ?? null;
+            $thuCung['species'] = $thuCung['loai_thu_cung'] ?? null;
+            $thuCung['giong'] = $thuCung['giong_thu_cung'] ?? null;
+            $thuCung['giong_loai'] = $thuCung['giong_thu_cung'] ?? null;
+            $thuCung['breed'] = $thuCung['giong_thu_cung'] ?? null;
+            $thuCung['ngay_sinh'] = $thuCung['tuoi_thu_cung'] ?? null;
+            $thuCung['ten'] = $thuCung['ten_thu_cung'] ?? null;
+        }
+
+        // Format y_ta_checkin info if exists
+        if (isset($arr['y_ta_checkin']) && is_array($arr['y_ta_checkin'])) {
+            $arr['y_ta_checkin_info'] = [
+                'id' => $arr['y_ta_checkin']['id'] ?? null,
+                'full_name' => $arr['y_ta_checkin']['full_name'] ?? null,
+                'vai_tro' => $arr['y_ta_checkin']['vai_tro'] ?? null,
+            ];
+        }
+
+        // Format nhan_vien (bac si) info if exists
+        if (isset($arr['nhan_vien']) && is_array($arr['nhan_vien'])) {
+            $arr['bac_si_info'] = [
+                'id' => $arr['nhan_vien']['id'] ?? null,
+                'full_name' => $arr['nhan_vien']['full_name'] ?? null,
+                'vai_tro' => $arr['nhan_vien']['vai_tro'] ?? null,
+            ];
+        }
+
         return $arr;
     }
 
@@ -107,7 +139,7 @@ class LichHenController extends Controller
 
         $lichHen = LichHen::create($data);
 
-        $payload = $this->transformData($lichHen->fresh()->load(['thuCung', 'dichVu', 'khachHang']));
+        $payload = $this->transformData($lichHen->fresh()->load(['thuCung', 'dichVu', 'nhanVien', 'yTaCheckin', 'khachHang']));
 
         return response()->json([
             'status' => true,
@@ -121,7 +153,7 @@ class LichHenController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        $query = LichHen::with(['thuCung', 'dichVu', 'nhanVien', 'thanhToan'])
+        $query = LichHen::with(['thuCung', 'dichVu', 'nhanVien', 'yTaCheckin', 'thanhToan'])
             ->where('khach_hang_id', $user->id);
 
         // Filter by pet name (thu_cung.ten_thu_cung)
@@ -190,7 +222,7 @@ class LichHenController extends Controller
      */
     public function indexAll(Request $request): JsonResponse
     {
-        $query = LichHen::with(['thuCung', 'dichVu', 'nhanVien', 'thanhToan', 'khachHang']);
+        $query = LichHen::with(['thuCung', 'dichVu', 'nhanVien', 'yTaCheckin', 'thanhToan', 'khachHang']);
 
         // Filter by customer
         if ($request->filled('khach_hang_id')) {
@@ -280,7 +312,7 @@ class LichHenController extends Controller
         }
         // Staff (Admin/NhanVien) có thể xem bất kỳ lịch hẹn nào
 
-        $payload = $this->transformData($lichHen->load(['thuCung', 'dichVu', 'nhanVien', 'thanhToan', 'khachHang']));
+        $payload = $this->transformData($lichHen->load(['thuCung', 'dichVu', 'nhanVien', 'yTaCheckin', 'thanhToan', 'khachHang']));
 
         return response()->json([
             'status' => true,
@@ -316,7 +348,7 @@ class LichHenController extends Controller
             $lichHen->save();
 
             // Load relationships để trả lại dữ liệu đầy đủ
-            $lichHen->load(['khachHang', 'thuCung', 'dichVu', 'nhanVien', 'thanhToan']);
+            $lichHen->load(['khachHang', 'thuCung', 'dichVu', 'nhanVien', 'yTaCheckin', 'thanhToan']);
 
             $payload = $this->transformData($lichHen);
 
@@ -358,7 +390,7 @@ class LichHenController extends Controller
             $lichHen->save();
 
             // Load relationships để trả lại dữ liệu đầy đủ
-            $lichHen->load(['khachHang', 'thuCung', 'dichVu', 'nhanVien', 'thanhToan']);
+            $lichHen->load(['khachHang', 'thuCung', 'dichVu', 'nhanVien', 'yTaCheckin', 'thanhToan']);
 
             $payload = $this->transformData($lichHen);
 
@@ -401,7 +433,7 @@ class LichHenController extends Controller
         $lichHen->ngay_gio = Carbon::parse($validated['ngay_gio'])->format('Y-m-d H:i:s');
         $lichHen->save();
 
-        $payload = $this->transformData($lichHen->fresh()->load(['thuCung', 'dichVu', 'khachHang']));
+        $payload = $this->transformData($lichHen->fresh()->load(['thuCung', 'dichVu', 'nhanVien', 'yTaCheckin', 'khachHang']));
 
         return response()->json([
             'status' => true,
@@ -483,30 +515,29 @@ class LichHenController extends Controller
 
             // Thực hiện check-in
             $lichHen->thoi_gian_checkin = now();
-            $lichHen->trang_thai = 'in-progress'; // Chuyển sang trạng thái đang khám
+            $lichHen->trang_thai = 'in-progress'; // Chuyển sang trạng thái chờ bác sĩ khám
+            $lichHen->y_ta_checkin_id = $user->id; // Lưu ID y tá thực hiện check-in
 
-            // Có thể lưu ID nhân viên check-in (nếu chưa có nhan_vien_id)
-            if (!$lichHen->nhan_vien_id) {
-                $lichHen->nhan_vien_id = $user->id;
-            }
+            // Không gán nhan_vien_id ở đây vì đó là ID bác sĩ, sẽ được gán khi bác sĩ bắt đầu khám
 
             $lichHen->save();
 
             // Load relationships để trả lại dữ liệu đầy đủ
-            $lichHen->load(['khachHang', 'thuCung', 'dichVu', 'nhanVien', 'thanhToan']);
+            $lichHen->load(['khachHang', 'thuCung', 'dichVu', 'nhanVien', 'yTaCheckin', 'thanhToan']);
 
             $payload = $this->transformData($lichHen);
 
             return response()->json([
                 'status' => true,
-                'message' => 'Check-in lịch hẹn thành công',
+                'message' => 'Check-in lịch hẹn thành công. Bệnh nhân đã sẵn sàng chờ bác sĩ khám.',
                 'data' => $payload,
                 'thoi_gian_checkin' => $lichHen->thoi_gian_checkin->format('Y-m-d H:i:s'),
-                'checked_in_by' => [
+                'y_ta_checkin' => [
                     'id' => $user->id,
                     'full_name' => $user->full_name,
                     'vai_tro' => $user->vai_tro,
                 ],
+                'notification' => 'Lịch hẹn đã được chuyển vào danh sách chờ khám của bác sĩ',
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -533,7 +564,7 @@ class LichHenController extends Controller
                 ], 403);
             }
 
-            $query = LichHen::with(['khachHang', 'thuCung', 'dichVu', 'nhanVien'])
+            $query = LichHen::with(['khachHang', 'thuCung', 'dichVu', 'nhanVien', 'yTaCheckin'])
                 ->whereIn('trang_thai', ['pending', 'confirmed'])
                 ->whereNull('thoi_gian_checkin');
 
@@ -591,7 +622,7 @@ class LichHenController extends Controller
                 ], 403);
             }
 
-            $query = LichHen::with(['khachHang', 'thuCung', 'dichVu', 'nhanVien'])
+            $query = LichHen::with(['khachHang', 'thuCung', 'dichVu', 'nhanVien', 'yTaCheckin'])
                 ->whereNotNull('thoi_gian_checkin');
 
             // Filter theo ngày nếu có
@@ -654,7 +685,7 @@ class LichHenController extends Controller
                 ], 403);
             }
 
-            $query = LichHen::with(['khachHang', 'thuCung', 'dichVu', 'nhanVien'])
+            $query = LichHen::with(['khachHang', 'thuCung', 'dichVu', 'nhanVien', 'yTaCheckin'])
                 ->whereNotNull('thoi_gian_checkin') // Đã check-in
                 ->where('trang_thai', 'in-progress') // Đang chờ khám
                 ->whereNull('thoi_gian_bat_dau_kham'); // Chưa bắt đầu khám

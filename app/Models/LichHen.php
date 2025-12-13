@@ -18,6 +18,7 @@ class LichHen extends Model
         'trang_thai',
         'nguon_goc',
         'thoi_gian_checkin',
+        'y_ta_checkin_id',
         'thoi_gian_bat_dau_kham',
         'thoi_gian_hoan_thanh',
         'khach_hang_id',
@@ -58,5 +59,10 @@ class LichHen extends Model
     public function nhanVien()
     {
         return $this->belongsTo(NhanVien::class, 'nhan_vien_id');
+    }
+
+    public function yTaCheckin()
+    {
+        return $this->belongsTo(NhanVien::class, 'y_ta_checkin_id');
     }
 }
