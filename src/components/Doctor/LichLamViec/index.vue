@@ -246,21 +246,51 @@
                   :key="dayIndex"
                   class="border border-[#d1d5dc] h-24 p-1.5"
                 >
-                  <div
-                    v-if="daySchedule"
-                    :class="[
-                      'h-full border-2 rounded-lg p-2 flex flex-col justify-center',
-                      getScheduleCellClass(daySchedule.status),
-                      daySchedule.status === 'ongoing' ? 'animate-pulse' : '',
-                    ]"
-                  >
-                    <span
-                      class="text-xs font-semibold text-[#364153] truncate"
-                      style="font-family: 'Inter', sans-serif"
+                  <!-- ✅ FIX: Xử lý cả single shift và multiple shifts (array) -->
+                  <template v-if="daySchedule">
+                    <!-- Single shift -->
+                    <div
+                      v-if="!Array.isArray(daySchedule)"
+                      :class="[
+                        'h-full border-2 rounded-lg p-2 flex flex-col justify-center',
+                        getScheduleCellClass(daySchedule.status),
+                        daySchedule.status === 'ongoing' ? 'animate-pulse' : '',
+                      ]"
                     >
-                      {{ daySchedule.room }}
-                    </span>
-                  </div>
+                      <span
+                        class="text-xs font-semibold text-[#364153] truncate"
+                        style="font-family: 'Inter', sans-serif"
+                      >
+                        {{ daySchedule.room }}
+                      </span>
+                    </div>
+
+                    <!-- Multiple shifts - show first one, add indicator -->
+                    <div
+                      v-else
+                      :class="[
+                        'h-full border-2 rounded-lg p-2 flex flex-col justify-between',
+                        getScheduleCellClass(daySchedule[0].status),
+                        daySchedule[0].status === 'ongoing'
+                          ? 'animate-pulse'
+                          : '',
+                      ]"
+                    >
+                      <span
+                        class="text-xs font-semibold text-[#364153] truncate"
+                        style="font-family: 'Inter', sans-serif"
+                      >
+                        {{ daySchedule[0].room }}
+                      </span>
+                      <span
+                        v-if="daySchedule.length > 1"
+                        class="text-[10px] font-bold text-[#155dfc] mt-0.5"
+                        style="font-family: 'Inter', sans-serif"
+                      >
+                        +{{ daySchedule.length - 1 }} ca khác
+                      </span>
+                    </div>
+                  </template>
                   <div v-else class="bg-gray-50 h-full rounded-lg" />
                 </td>
               </tr>
@@ -646,6 +676,10 @@ import {
   getMySchedule,
   getMyTodaySchedule,
 } from "@/services/lichLamViecService";
+import {
+  getDanhSachLichDangKy,
+  getCaDaXacNhanCuaToi,
+} from "@/services/lichDangKyService";
 import api from "@/utils/api";
 import DangKyCa from "./DangKyCa/index.vue";
 
@@ -759,13 +793,19 @@ const goToNextWeek = () => {
 const fetchScheduleData = async () => {
   loading.value = true;
   try {
-    const data = await getMySchedule(
-      formatDate(startOfWeek.value),
-      formatDate(endOfWeek.value)
-    );
+    const weekStart = formatDate(startOfWeek.value);
+    const weekEnd = formatDate(endOfWeek.value);
 
-    if (data.status) {
+    console.log(`\n📅 Fetching schedule for week: ${weekStart} to ${weekEnd}`);
+    console.log(`   Current date: ${formatDate(currentDate.value)}`);
+
+    const data = await getMySchedule(weekStart, weekEnd);
+
+    console.log("📦 fetchScheduleData response:", data);
+
+    if (data && data.status) {
       scheduleData.value = data.data;
+      console.log("✅ Schedule data loaded:", data.data);
       updateCalendarData(data.data);
 
       // Update employee info
@@ -775,43 +815,106 @@ const fetchScheduleData = async () => {
           ...data.data.nhan_vien,
         };
       }
+    } else {
+      console.warn("⚠️ No schedule data or status false:", data);
+      // Vẫn cần update calendar với data rỗng
+      updateCalendarData({ schedule: [], statistics: null });
     }
 
-    // Also fetch approved registered shifts
+    // ✅ LUÔN fetch ca đăng ký đã duyệt (dù có hay không có lịch chính thức)
     try {
-      const approvedRes = await api.get("/lich-dang-ky", {
-        params: { per_page: 500 },
-      });
-      const approvedShifts =
-        approvedRes.data?.data?.data || approvedRes.data?.data || [];
+      console.log("🔄 Fetching approved shifts...");
 
-      // Filter only approved shifts and add to calendar
-      approvedShifts.forEach((item) => {
+      // Thử endpoint getDanhSachLichDangKy với filter trang_thai
+      const approvedRes = await getDanhSachLichDangKy({
+        trang_thai: "da_xac_nhan",
+        per_page: 500,
+      });
+
+      console.log("📦 Raw API response:", approvedRes);
+
+      // ✅ Handle response structure: data.data (pagination) or data (direct array)
+      let approvedShifts = [];
+      if (approvedRes && approvedRes.success && approvedRes.data) {
+        if (Array.isArray(approvedRes.data)) {
+          // Direct array
+          approvedShifts = approvedRes.data;
+        } else if (
+          approvedRes.data.data &&
+          Array.isArray(approvedRes.data.data)
+        ) {
+          // Paginated response
+          approvedShifts = approvedRes.data.data;
+        } else {
+          console.warn("⚠️ Unknown response structure:", approvedRes.data);
+        }
+      } else {
+        console.error("❌ API response invalid or failed:", approvedRes);
+      }
+
+      console.log(
+        `✅ Extracted ${approvedShifts.length} approved shifts:`,
+        approvedShifts
+      );
+
+      // Add approved shifts to calendar
+      approvedShifts.forEach((item, index) => {
+        console.log(
+          `\n🔍 [${index + 1}/${approvedShifts.length}] Processing shift:`,
+          {
+            id: item.id,
+            ngay_gio: item.ngay_gio,
+            trang_thai: item.trang_thai,
+            ghi_chu: item.ghi_chu,
+            nhan_vien_id: item.nhan_vien_id,
+          }
+        );
+
+        // ✅ Backend đã filter ra chỉ những ca "da_xac_nhan" rồi
+        // Nhưng kiểm tra lại cho chắc
         const status = item.trang_thai || "";
+
         if (
           status !== "da_xac_nhan" &&
           status !== "confirmed" &&
           status !== "đã_xác_nhận"
         ) {
+          console.warn(`❌ Skip shift ${item.id} - invalid status: ${status}`);
           return;
         }
 
+        console.log(`✅ Status OK for shift ${item.id}`);
         const itemDate = item.ngay_gio;
-        const date = new Date(itemDate);
+        // Parse date string safely (handle timezone issues)
+        let date;
+        if (typeof itemDate === "string" && itemDate.includes("T")) {
+          // ISO string format - parse just the date part
+          const dateOnly = itemDate.split("T")[0];
+          const [year, month, day] = dateOnly.split("-");
+          date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        } else if (typeof itemDate === "string" && itemDate.includes(" ")) {
+          // "2025-12-15 14:30:00" format
+          const dateOnly = itemDate.split(" ")[0];
+          const [year, month, day] = dateOnly.split("-");
+          date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        } else {
+          date = new Date(itemDate);
+        }
+
         const dayOfWeek = date.getDay();
         const dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
         // Check if this date is within the current week
-        const itemDateStr = `${date.getFullYear()}-${String(
-          date.getMonth() + 1
-        ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        const itemDateStr = formatDate(date);
         const startStr = formatDate(startOfWeek.value);
         const endStr = formatDate(endOfWeek.value);
 
+        console.log(
+          `📅 Checking shift ${item.id}: ${itemDateStr} (week: ${startStr} to ${endStr})`
+        );
+
         if (itemDateStr >= startStr && itemDateStr <= endStr) {
-          // Add a special slot for registered shifts (time slot 3 if available)
-          // Or we can add it to an existing slot
-          // For now, let's create a virtual slot for registered shifts
+          // Get time from datetime
           const time = new Date(itemDate).toLocaleTimeString("vi-VN", {
             hour: "2-digit",
             minute: "2-digit",
@@ -819,63 +922,48 @@ const fetchScheduleData = async () => {
 
           // Format room name with time and note
           const roomName = item.ghi_chu
-            ? `Đăng ký ${time} - ${item.ghi_chu}`
-            : `Đăng ký ${time}`;
+            ? `Ca đăng ký ${time} - ${item.ghi_chu}`
+            : `Ca đăng ký ${time}`;
 
-          // Add to timeSlots - we'll use index 3 for registered shifts if available
-          // Or display separately
+          console.log(
+            `✅ Adding approved shift to day ${itemDateStr} (${dayIndex}):`,
+            roomName
+          );
+
+          // ✅ Make sure we have 4 time slots
           if (!timeSlots.value[3]) {
             timeSlots.value[3] = {
-              name: "Đăng ký",
-              time: "Các giờ khác",
+              name: "Ca đăng ký",
+              time: "Đã duyệt",
               schedule: [null, null, null, null, null, null, null],
             };
           }
 
+          const shiftData = {
+            id: item.id,
+            room: roomName,
+            patients: 0, // Ca đăng ký không có lịch hẹn
+            status: getShiftStatus(itemDateStr, "ca_dang_ky"),
+            appointments: [],
+            date: itemDate,
+            shift: "ca_dang_ky",
+            ghi_chu: item.ghi_chu,
+            isRegistered: true, // Đánh dấu đây là ca đăng ký
+          };
+
+          // Handle multiple shifts in same day
           if (timeSlots.value[3].schedule[dayIndex]) {
-            // If slot already has a shift, we need to handle multiple shifts
-            // For now, we'll replace (or we can create a list)
             const existing = timeSlots.value[3].schedule[dayIndex];
             if (Array.isArray(existing)) {
-              existing.push({
-                id: item.id,
-                room: roomName,
-                patients: 0,
-                status: "upcoming",
-                appointments: [],
-                date: itemDate,
-                shift: "ca_dang_ky",
-                ghi_chu: item.ghi_chu,
-              });
+              existing.push(shiftData);
             } else {
-              timeSlots.value[3].schedule[dayIndex] = [
-                {
-                  ...existing,
-                },
-                {
-                  id: item.id,
-                  room: roomName,
-                  patients: 0,
-                  status: "upcoming",
-                  appointments: [],
-                  date: itemDate,
-                  shift: "ca_dang_ky",
-                  ghi_chu: item.ghi_chu,
-                },
-              ];
+              timeSlots.value[3].schedule[dayIndex] = [existing, shiftData];
             }
           } else {
-            timeSlots.value[3].schedule[dayIndex] = {
-              id: item.id,
-              room: roomName,
-              patients: 0,
-              status: "upcoming",
-              appointments: [],
-              date: itemDate,
-              shift: "ca_dang_ky",
-              ghi_chu: item.ghi_chu,
-            };
+            timeSlots.value[3].schedule[dayIndex] = shiftData;
           }
+        } else {
+          console.log(`⚠️ Skip shift ${item.id} - outside current week`);
         }
       });
 
@@ -885,19 +973,100 @@ const fetchScheduleData = async () => {
         startOfWeek.value,
         endOfWeek.value
       );
+
+      console.log(
+        `📊 Total approved shifts added to calendar: ${
+          approvedShifts.filter(
+            (s) =>
+              formatDate(new Date(s.ngay_gio)) >=
+                formatDate(startOfWeek.value) &&
+              formatDate(new Date(s.ngay_gio)) <= formatDate(endOfWeek.value)
+          ).length
+        }`
+      );
+
+      // ⭐ FALLBACK: If main schedule is empty, also try to populate from approved shifts
+      // This handles case where /lich-lam-viec returns empty
+      if (
+        !scheduleData.value?.schedule ||
+        scheduleData.value.schedule.length === 0 ||
+        (scheduleData.value.schedule.length > 0 &&
+          scheduleData.value.schedule.every(
+            (s) => !s.lich_lam_viec || s.lich_lam_viec.length === 0
+          ))
+      ) {
+        console.warn(
+          "Main schedule is empty, trying to populate from approved shifts"
+        );
+
+        // Group approved shifts by date
+        const shiftsByDate = {};
+        approvedShifts.forEach((item) => {
+          const status = item.trang_thai || "";
+          if (
+            status === "da_xac_nhan" ||
+            status === "confirmed" ||
+            status === "đã_xác_nhận"
+          ) {
+            const dateOnly = (item.ngay_gio || "").split("T")[0];
+            if (!shiftsByDate[dateOnly]) {
+              shiftsByDate[dateOnly] = [];
+            }
+            shiftsByDate[dateOnly].push(item);
+          }
+        });
+
+        console.log("Grouping approved shifts by date:", shiftsByDate);
+      }
     } catch (err) {
-      console.error("Error fetching approved registered shifts:", err);
-      // Don't fail if we can't get registered shifts
+      console.error("❌ Error fetching approved registered shifts:", err);
+      console.error("Error status:", err.response?.status);
+      console.error("Error message:", err.response?.data?.message);
+      console.error("Error details:", err.response?.data || err.message);
+
+      // Nếu lỗi 404 hoặc endpoint không tồn tại, thử endpoint khác
+      if (err.response?.status === 404 || err.response?.status === 405) {
+        console.warn("⚠️ Endpoint không tồn tại, thử dùng /lich-dang-ky");
+        try {
+          const fallbackRes = await getDanhSachLichDangKy({
+            trang_thai: "da_xac_nhan",
+            per_page: 500,
+          });
+
+          console.log("✅ Fallback response:", fallbackRes);
+
+          if (fallbackRes && fallbackRes.success && fallbackRes.data) {
+            let fallbackShifts = [];
+            if (Array.isArray(fallbackRes.data)) {
+              fallbackShifts = fallbackRes.data;
+            } else if (
+              fallbackRes.data.data &&
+              Array.isArray(fallbackRes.data.data)
+            ) {
+              fallbackShifts = fallbackRes.data.data;
+            }
+
+            // Process fallback shifts (same logic as above)
+            console.log(`✅ Got ${fallbackShifts.length} shifts from fallback`);
+            // TODO: Process these shifts
+          }
+        } catch (fallbackErr) {
+          console.error("❌ Fallback also failed:", fallbackErr);
+        }
+      }
+
+      // Don't fail if we can't get registered shifts, just continue
     }
   } catch (error) {
-    console.error("Error fetching schedule:", error);
+    console.error("❌ Error fetching main schedule:", error);
     showErrorToast(
       "Lỗi",
       error.response?.data?.message || "Không thể tải lịch làm việc"
     );
-  } finally {
-    loading.value = false;
   }
+
+  // ✅ Đảm bảo loading = false dù thành công hay thất bại
+  loading.value = false;
 };
 
 // Fetch today's schedule
@@ -940,23 +1109,21 @@ const fetchConfirmedShifts = async () => {
   }
 };
 
-// Fetch registered shifts (Ca đã đăng ký - chờ duyệt)
+// Fetch registered shifts (Ca đã đăng ký - tất cả trạng thái)
 const fetchRegisteredShifts = async () => {
   loading.value = true;
   try {
-    const response = await api.get("/lich-dang-ky", {
-      params: { per_page: 500 },
-    });
+    const response = await getDanhSachLichDangKy({ per_page: 500 });
 
-    if (response.data.success) {
-      // Handle paginated response: response.data.data has pagination info
+    if (response.success) {
+      // Handle paginated response
       let shifts = [];
-      if (response.data.data && Array.isArray(response.data.data)) {
+      if (response.data && Array.isArray(response.data)) {
         // Direct array
-        shifts = response.data.data;
-      } else if (response.data.data && response.data.data.data) {
+        shifts = response.data;
+      } else if (response.data && response.data.data) {
         // Paginated response with nested data
-        shifts = response.data.data.data;
+        shifts = response.data.data;
       }
 
       console.log("Fetched registered shifts:", shifts);
@@ -974,12 +1141,19 @@ const fetchRegisteredShifts = async () => {
 
 // Update calendar data from API response
 const updateCalendarData = (data) => {
-  if (!data || !data.schedule) return;
+  if (!data || !data.schedule) {
+    console.warn("updateCalendarData: No data or schedule", data);
+    return;
+  }
+
+  console.log("updateCalendarData: Processing schedule", data.schedule);
 
   // Reset time slots
   timeSlots.value.forEach((slot) => {
     slot.schedule = [null, null, null, null, null, null, null];
   });
+
+  console.log("📅 Starting to process schedule data...");
 
   // Map schedule data to calendar
   data.schedule.forEach((daySchedule) => {
@@ -987,14 +1161,91 @@ const updateCalendarData = (data) => {
     const dayOfWeek = date.getDay();
     const dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Monday = 0, Sunday = 6
 
+    console.log(
+      `Processing day ${daySchedule.date}, shifts:`,
+      daySchedule.lich_lam_viec
+    );
+
     // Process work shifts
-    daySchedule.lich_lam_viec.forEach((shift) => {
-      const slotIndex = getTimeSlotIndex(shift.thoi_gian_truc);
-      if (slotIndex !== -1 && timeSlots.value[slotIndex]) {
+    const shifts = daySchedule.lich_lam_viec || [];
+
+    if (!Array.isArray(shifts)) {
+      console.warn(
+        `lich_lam_viec is not array for ${daySchedule.date}:`,
+        daySchedule.lich_lam_viec
+      );
+      return;
+    }
+
+    // ✅ FIX: Kiểm tra lịch hẹn
+    const appointments = daySchedule.lich_hen || [];
+    const hasAppointments = appointments.length > 0;
+
+    if (shifts.length === 0) {
+      console.log(`⚠️ No shifts assigned for ${daySchedule.date}`);
+
+      // ✅ Nếu không có ca làm việc nhưng CÓ lịch hẹn → Tạo ca "Lịch hẹn"
+      if (hasAppointments) {
+        console.log(
+          `📅 Found ${appointments.length} appointment(s) without shift for ${daySchedule.date}`
+        );
+
+        // Tạo một "pseudo shift" để hiển thị lịch hẹn
+        // Xác định ca dựa trên giờ hẹn đầu tiên
+        const firstAppointment = appointments[0];
+        const appointmentTime = new Date(firstAppointment.ngay_gio);
+        const hour = appointmentTime.getHours();
+
+        let slotIndex = 0; // Mặc định ca sáng
+        let shiftType = "ca_sang";
+
+        if (hour >= 7 && hour < 12) {
+          slotIndex = 0; // Ca sáng
+          shiftType = "ca_sang";
+        } else if (hour >= 13 && hour < 18) {
+          slotIndex = 1; // Ca chiều
+          shiftType = "ca_chieu";
+        } else if (hour >= 18 && hour < 22) {
+          slotIndex = 2; // Ca tối
+          shiftType = "ca_toi";
+        }
+
+        const shiftData = {
+          id: `appointment-${daySchedule.date}`,
+          room: `Lịch hẹn (${appointments.length} khách)`,
+          patients: appointments.length,
+          status: getShiftStatus(daySchedule.date, shiftType),
+          appointments: appointments,
+          date: daySchedule.date,
+          shift: shiftType,
+          isAppointmentOnly: true, // Đánh dấu đây là lịch hẹn không có ca làm việc
+        };
+
+        timeSlots.value[slotIndex].schedule[dayIndex] = shiftData;
+      }
+    } else {
+      console.log(`✅ Found ${shifts.length} shift(s) for ${daySchedule.date}`);
+    }
+
+    shifts.forEach((shift) => {
+      let slotIndex = getTimeSlotIndex(shift.thoi_gian_truc);
+
+      // ✅ FIX: Nếu không thuộc 3 ca tiêu chuẩn (sáng/chiều/tối),
+      // đưa vào slot 4 "Phân công" (index 3)
+      if (slotIndex === -1) {
+        slotIndex = 3; // Slot "Phân công"
+        console.log(
+          `Admin-assigned shift (non-standard time) for ${daySchedule.date}:`,
+          shift.thoi_gian_truc
+        );
+      }
+
+      if (timeSlots.value[slotIndex]) {
         const appointmentCount = daySchedule.lich_hen
           ? daySchedule.lich_hen.length
           : 0;
-        timeSlots.value[slotIndex].schedule[dayIndex] = {
+
+        const shiftData = {
           id: shift.id,
           room: formatRoomName(shift.thoi_gian_truc, shift.ghi_chu),
           patients: appointmentCount,
@@ -1003,8 +1254,35 @@ const updateCalendarData = (data) => {
           date: daySchedule.date,
           shift: shift.thoi_gian_truc,
         };
+
+        // ✅ Xử lý nhiều ca trong cùng 1 slot (ví dụ: nhiều lịch phân công)
+        if (timeSlots.value[slotIndex].schedule[dayIndex]) {
+          const existing = timeSlots.value[slotIndex].schedule[dayIndex];
+          if (Array.isArray(existing)) {
+            existing.push(shiftData);
+          } else {
+            timeSlots.value[slotIndex].schedule[dayIndex] = [
+              existing,
+              shiftData,
+            ];
+          }
+        } else {
+          timeSlots.value[slotIndex].schedule[dayIndex] = shiftData;
+        }
       }
     });
+  });
+
+  // ✅ Log tổng kết sau khi xử lý
+  console.log("📊 Calendar update summary:");
+  timeSlots.value.forEach((slot, idx) => {
+    const count = slot.schedule.filter((s) => s !== null).length;
+    const shifts = slot.schedule.filter((s) => s !== null);
+    console.log(`  - ${slot.name} (${slot.time}): ${count} shift(s)`);
+    if (count > 0 && idx === 3) {
+      // Log chi tiết ca đăng ký
+      console.log(`    ✅ Ca đăng ký đã duyệt:`, shifts);
+    }
   });
 
   // Update statistics
@@ -1073,7 +1351,8 @@ const getShiftName = (thoi_gian_truc) => {
     ca_chieu: "Ca Chiều",
     ca_toi: "Ca Tối",
   };
-  return names[thoi_gian_truc] || thoi_gian_truc;
+  // ✅ FIX: Nếu không phải 3 ca tiêu chuẩn, trả về "Phân công"
+  return names[thoi_gian_truc] || "Phân công";
 };
 
 // Helper function to format room/location name
@@ -1157,6 +1436,11 @@ const timeSlots = ref([
   {
     name: "Tối",
     time: "18h-21h",
+    schedule: [null, null, null, null, null, null, null],
+  },
+  {
+    name: "Ca đăng ký",
+    time: "Đã duyệt",
     schedule: [null, null, null, null, null, null, null],
   },
 ]);

@@ -209,9 +209,10 @@ const routes = [
         component: () => import("../components/Doctor/LichKham/index.vue"),
       },
       {
-        path: "lich-kham/phieu-kham",
+        path: "lich-kham/phieu-kham/:id",
         component: () =>
           import("../components/Doctor/LichKham/PhieuKhamBenh/index.vue"),
+        props: true,
       },
       {
         path: "benh-an",

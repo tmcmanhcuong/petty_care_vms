@@ -2,9 +2,11 @@
   <div class="flex flex-col gap-6 w-full max-w-screen-xl mx-auto p-4">
     <!-- Header -->
     <div class="flex flex-col">
-      <h1 class="font-medium text-2xl leading-9 text-[#101828]">Lịch khám</h1>
+      <h1 class="font-medium text-2xl leading-9 text-[#101828]">
+        Bệnh nhân chờ khám
+      </h1>
       <p class="text-base text-[#4a5565]">
-        Quản lý lịch khám - Chỉ hiển thị ca khám được phân cho bạn
+        Danh sách bệnh nhân đã check-in và chờ được khám bệnh
       </p>
     </div>
 
@@ -88,43 +90,36 @@
             class="w-44 border-r border-[rgba(0,0,0,0.1)] p-6 flex flex-col justify-between"
           >
             <div>
+              <!-- Giờ hẹn -->
               <p class="text-3xl font-medium text-[#101828]">
                 {{ formatTime(appt.ngay_gio) }}
               </p>
 
+              <!-- Giờ check-in -->
               <div class="mt-3 flex items-center gap-2 text-sm">
                 <img
-                  v-if="appt.check_in_at"
                   src="@/assets/svg/clock.svg"
                   class="w-4 h-4 brightness-75 hue-rotate-[270deg]"
                 />
-                <img
-                  v-else-if="appt.displayStatus.type === 'late'"
-                  src="@/assets/svg/clock.svg"
-                  class="w-4 h-4 brightness-75 saturate-150 hue-rotate-[-10deg]"
-                />
-                <img
-                  v-else
-                  src="@/assets/svg/clock.svg"
-                  class="w-4 h-4 opacity-50"
-                />
-                <span
-                  :class="{
-                    'text-[#9810fa]': appt.check_in_at,
-                    'text-[#fb2c36]': appt.displayStatus.type === 'late',
-                    'text-[#6a7282]':
-                      !appt.check_in_at && appt.displayStatus.type !== 'late',
-                  }"
-                >
-                  {{
-                    appt.check_in_at
-                      ? "+" + formatTime(appt.check_in_at)
-                      : "--:--"
-                  }}
-                  <span v-if="appt.displayStatus.type === 'late'" class="ml-1"
-                    >Trễ {{ appt.displayStatus.lateMinutes }}</span
-                  >
+                <span class="text-[#9810fa]">
+                  Check-in: {{ formatTime(appt.thoi_gian_checkin) }}
                 </span>
+              </div>
+
+              <!-- Thời gian chờ -->
+              <div
+                v-if="appt.displayStatus.waitMinutes"
+                class="mt-2 text-xs text-gray-500"
+              >
+                Đã chờ: {{ appt.displayStatus.waitMinutes }} phút
+              </div>
+
+              <!-- Thời gian khám -->
+              <div
+                v-if="appt.displayStatus.examMinutes"
+                class="mt-2 text-xs text-orange-600"
+              >
+                Đang khám: {{ appt.displayStatus.examMinutes }} phút
               </div>
             </div>
 
@@ -133,12 +128,8 @@
               <div
                 class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium"
                 :class="{
-                  'bg-[#dbe7ff] text-[#1447e6]': [
-                    'upcoming',
-                    'future',
-                  ].includes(appt.displayStatus.type),
-                  'bg-[#d6fae1] text-[#00a63e]':
-                    appt.displayStatus.type === 'arrived',
+                  'bg-[#dbe7ff] text-[#1447e6]':
+                    appt.displayStatus.type === 'waiting',
                   'bg-orange-100 text-[#ea580c]':
                     appt.displayStatus.type === 'examining',
                   'bg-green-100 text-[#00a63e]':
@@ -146,31 +137,27 @@
                 }"
               >
                 <img
-                  v-if="appt.displayStatus.type === 'arrived'"
+                  v-if="appt.displayStatus.type === 'completed'"
                   src="@/assets/svg/tick.svg"
                   class="w-4 h-4"
                 />
                 {{ appt.displayStatus.label }}
               </div>
 
-              <!-- Wait / Remaining time -->
+              <!-- Thời gian chờ -->
               <div
-                v-if="
-                  appt.displayStatus.waitMinutes ||
-                  appt.displayStatus.futureMinutes
-                "
-                class="px-3 py-1 rounded-lg text-xs"
-                :class="
-                  appt.displayStatus.waitMinutes
-                    ? 'bg-gray-100 text-gray-600'
-                    : 'bg-cyan-100 text-[#0891b2]'
-                "
+                v-if="appt.displayStatus.waitMinutes > 0"
+                class="px-3 py-1 rounded-lg text-xs bg-gray-100 text-gray-600"
               >
-                {{
-                  appt.displayStatus.waitMinutes
-                    ? appt.displayStatus.waitMinutes + " phút"
-                    : appt.displayStatus.label
-                }}
+                Chờ {{ appt.displayStatus.waitMinutes }} phút
+              </div>
+
+              <!-- Thời gian khám -->
+              <div
+                v-if="appt.displayStatus.examMinutes > 0"
+                class="px-3 py-1 rounded-lg text-xs bg-orange-100 text-orange-700"
+              >
+                Khám {{ appt.displayStatus.examMinutes }} phút
               </div>
             </div>
           </div>
@@ -267,30 +254,27 @@
           <div class="w-64 p-6 flex items-center justify-end">
             <!-- Đang khám → TIẾP TỤC -->
             <button
-              v-if="appt.trang_thai === 'in-progress'"
+              v-if="appt.displayStatus.type === 'examining'"
               @click="startExam(appt.id)"
               class="w-full h-11 bg-[#f54900] text-white rounded-xl font-medium hover:bg-[#ca3500]"
             >
-              TIẾP TỤC
+              TIẾP TỤC KHÁM
             </button>
 
             <!-- Hoàn thành → Xem lại -->
             <button
-              v-else-if="appt.trang_thai === 'completed'"
+              v-else-if="appt.displayStatus.type === 'completed'"
+              @click="viewExamDetail(appt.id)"
               class="w-full h-11 border border-[rgba(0,0,0,0.1)] rounded-xl flex items-center justify-center gap-2 text-gray-700 hover:bg-gray-50"
             >
               <img src="@/assets/svg/eye.svg" class="w-5 h-5" />
-              Xem lại
+              Xem kết quả
             </button>
 
-            <!-- Có thể bắt đầu -->
+            <!-- Chờ khám → BẮT ĐẦU KHÁM -->
             <button
-              v-else-if="
-                ['late', 'arrived', 'upcoming'].includes(
-                  appt.displayStatus.type
-                )
-              "
-              @click="startExam(appt.id)"
+              v-else-if="appt.displayStatus.type === 'waiting'"
+              @click="confirmStartExam(appt)"
               class="w-full h-11 bg-[#155dfc] text-white rounded-xl flex items-center justify-center gap-2 hover:bg-[#1447e6]"
             >
               <svg
@@ -308,31 +292,7 @@
                 />
                 <path d="M10 8L16 12L10 16V8Z" fill="currentColor" />
               </svg>
-              BẮT ĐẦU
-            </button>
-
-            <!-- Tương lai → disable -->
-            <button
-              v-else
-              disabled
-              class="w-full h-11 bg-gray-100 text-gray-400 rounded-xl flex items-center justify-center gap-2 cursor-not-allowed"
-            >
-              <svg
-                class="w-5 h-5 opacity-40"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="2"
-                />
-                <path d="M10 8L16 12L10 16V8Z" fill="currentColor" />
-              </svg>
-              BẮT ĐẦU
+              BẮT ĐẦU KHÁM
             </button>
           </div>
         </div>
@@ -351,15 +311,35 @@ import { vi } from "date-fns/locale";
 // State
 const router = useRouter();
 const currentDate = ref(new Date());
-const appointments = ref([]);
+const appointments = ref([]); // Bệnh nhân chờ khám
+const examiningAppointments = ref([]); // Bệnh nhân đang khám
 const loading = ref(false);
-const activeTab = ref("all");
+const activeTab = ref("waiting"); // Mặc định tab "Chờ khám"
 
 // Format helpers
 const formatDate = (date) => format(date, "dd/MM/yyyy");
 const formatTime = (dateString) => {
   if (!dateString) return "--:--";
-  return format(parseISO(dateString), "HH:mm");
+  try {
+    // Xử lý nhiều format datetime
+    let date;
+    if (typeof dateString === "string") {
+      // Nếu là string có dạng "YYYY-MM-DD HH:mm:ss" (MySQL format)
+      date = new Date(dateString.replace(" ", "T"));
+    } else {
+      date = new Date(dateString);
+    }
+
+    if (isNaN(date.getTime())) {
+      // Fallback: thử parseISO
+      date = parseISO(dateString);
+    }
+
+    return format(date, "HH:mm");
+  } catch (error) {
+    console.error("Error formatting time:", dateString, error);
+    return "--:--";
+  }
 };
 const currentDateText = computed(() => {
   return format(currentDate.value, "EEEE, dd/MM/yyyy", { locale: vi }).replace(
@@ -375,98 +355,113 @@ const calculateAge = (birthDate) => {
   return `${years} tuổi`;
 };
 
-// Xác định trạng thái hiển thị của lịch hẹn
+// Xác định trạng thái hiển thị của bệnh nhân (sau khi đã check-in)
 const getStatus = (appt) => {
   const now = new Date();
-  const apptTime = parseISO(appt.ngay_gio);
-  const diff = differenceInMinutes(now, apptTime);
 
-  if (appt.trang_thai === "in-progress") {
-    return { type: "examining", label: "Đang khám", color: "orange" };
-  }
-  if (appt.trang_thai === "completed") {
+  // Helper function to parse datetime
+  const parseDateTime = (dateString) => {
+    if (!dateString) return null;
+    try {
+      if (typeof dateString === "string") {
+        // MySQL datetime format: "YYYY-MM-DD HH:mm:ss"
+        return new Date(dateString.replace(" ", "T"));
+      }
+      return new Date(dateString);
+    } catch (error) {
+      console.error("Error parsing datetime:", dateString, error);
+      return null;
+    }
+  };
+
+  // Hoàn thành khám
+  if (appt.trang_thai === "completed" && appt.thoi_gian_hoan_thanh) {
     return { type: "completed", label: "Hoàn thành", color: "green" };
   }
 
-  // Đã check-in
-  if (appt.check_in_at) {
-    const wait = differenceInMinutes(now, parseISO(appt.check_in_at));
-    return { type: "arrived", label: "Đã đến", waitMinutes: wait };
-  }
-
-  // Tương lai
-  if (apptTime > now) {
-    const minutesLeft = differenceInMinutes(apptTime, now);
+  // Đang khám: có thoi_gian_bat_dau_kham nhưng chưa hoàn thành
+  if (appt.thoi_gian_bat_dau_kham && !appt.thoi_gian_hoan_thanh) {
+    const startTime = parseDateTime(appt.thoi_gian_bat_dau_kham);
+    const examMinutes = startTime ? differenceInMinutes(now, startTime) : 0;
     return {
-      type: "future",
-      label:
-        minutesLeft <= 60
-          ? `Còn ${minutesLeft} phút`
-          : `Còn ${Math.round(minutesLeft / 60)} giờ`,
-      futureMinutes: minutesLeft,
+      type: "examining",
+      label: "Đang khám",
+      color: "orange",
+      examMinutes: examMinutes,
     };
   }
 
-  // Quá giờ chưa check-in
-  if (diff > 0) {
-    if (diff <= 30) return { type: "upcoming", label: "Sắp đến" };
-    return { type: "late", label: `Trễ ${diff} phút`, lateMinutes: diff };
+  // Chờ khám: đã check-in nhưng chưa bắt đầu khám
+  if (appt.thoi_gian_checkin && !appt.thoi_gian_bat_dau_kham) {
+    const checkInTime = parseDateTime(appt.thoi_gian_checkin);
+    const waitMinutes = checkInTime ? differenceInMinutes(now, checkInTime) : 0;
+    return {
+      type: "waiting",
+      label: "Chờ khám",
+      waitMinutes: waitMinutes,
+      color: "blue",
+    };
   }
 
-  return { type: "upcoming", label: "Sắp đến" };
+  // Fallback
+  return { type: "arrived", label: "Đã đến", color: "green" };
 };
 
-// Tabs count
+// Tabs count - Dựa trên bệnh nhân đã check-in
 const statusTabs = computed(() => {
-  const all = appointments.value.length;
-  const waiting = appointments.value.filter((a) =>
-    ["pending", "confirmed"].includes(a.trang_thai)
-  ).length;
-  const examining = appointments.value.filter(
-    (a) => a.trang_thai === "in-progress"
-  ).length;
-  const completed = appointments.value.filter(
-    (a) => a.trang_thai === "completed"
-  ).length;
+  // Chờ khám: đã check-in, chưa bắt đầu khám
+  const waiting = appointments.value.length;
+
+  // Đang khám: có thoi_gian_bat_dau_kham nhưng chưa hoàn thành
+  const examining = examiningAppointments.value.length;
+
+  // Tổng số
+  const all = waiting + examining;
 
   return [
-    { label: "Tất cả", value: "all", count: all },
-    { label: "Đang chờ", value: "waiting", count: waiting },
+    { label: "Chờ khám", value: "waiting", count: waiting },
     { label: "Đang khám", value: "examining", count: examining },
-    { label: "Hoàn thành", value: "completed", count: completed },
+    { label: "Tất cả", value: "all", count: all },
   ];
 });
 
 const displayAppointments = computed(() => {
-  let list = [...appointments.value];
+  let list = [];
 
   if (activeTab.value === "waiting") {
-    list = list.filter((a) => ["pending", "confirmed"].includes(a.trang_thai));
+    // Tab chờ khám - lấy từ appointments
+    list = [...appointments.value];
   } else if (activeTab.value === "examining") {
-    list = list.filter((a) => a.trang_thai === "in-progress");
-  } else if (activeTab.value === "completed") {
-    list = list.filter((a) => a.trang_thai === "completed");
+    // Tab đang khám - lấy từ examiningAppointments
+    list = [...examiningAppointments.value];
+  } else {
+    // Tab tất cả - gộp cả 2 list
+    list = [...appointments.value, ...examiningAppointments.value];
   }
 
-  // Sắp xếp theo thời gian
-  return list.sort((a, b) => new Date(a.ngay_gio) - new Date(b.ngay_gio));
+  // Sắp xếp theo thời gian check-in (ai check-in trước khám trước)
+  return list.sort((a, b) => {
+    const aTime = a.thoi_gian_checkin || a.ngay_gio;
+    const bTime = b.thoi_gian_checkin || b.ngay_gio;
+    return new Date(aTime) - new Date(bTime);
+  });
 });
 
-// Lấy dữ liệu từ API
+// Lấy dữ liệu từ API - CHỈ BỆNH NHÂN ĐÃ CHECK-IN (chờ khám)
 const fetchAppointments = async () => {
   loading.value = true;
   try {
     const dateStr = format(currentDate.value, "yyyy-MM-dd");
 
-    const res = await api.get("/lich-hen-all", {
+    // Sử dụng API /benh-nhan-cho-kham - danh sách bệnh nhân đã check-in, chưa bắt đầu khám
+    const res = await api.get("/benh-nhan-cho-kham", {
       params: {
-        from_date: `${dateStr} 00:00:00`,
-        to_date: `${dateStr} 23:59:59`,
+        ngay: dateStr,
         per_page: 100,
       },
     });
 
-    console.log("API Response:", res.data);
+    console.log("API Response (Bệnh nhân chờ khám):", res.data);
 
     // Handle both paginated and non-paginated responses
     let data = [];
@@ -478,7 +473,17 @@ const fetchAppointments = async () => {
       }
     }
 
-    console.log("Processed data:", data);
+    console.log("Processed data count:", data.length);
+    if (data.length > 0) {
+      console.log("Sample appointment:", {
+        id: data[0].id,
+        ngay_gio: data[0].ngay_gio,
+        thoi_gian_checkin: data[0].thoi_gian_checkin,
+        trang_thai: data[0].trang_thai,
+        khach_hang: data[0].khach_hang,
+        thu_cung: data[0].thu_cung?.ten_thu_cung,
+      });
+    }
 
     appointments.value = data.map((appt) => ({
       ...appt,
@@ -492,6 +497,45 @@ const fetchAppointments = async () => {
   }
 };
 
+// Lấy danh sách bệnh nhân đang khám
+const fetchExaminingAppointments = async () => {
+  try {
+    const dateStr = format(currentDate.value, "yyyy-MM-dd");
+
+    const res = await api.get("/benh-nhan-dang-kham", {
+      params: {
+        ngay: dateStr,
+        per_page: 100,
+      },
+    });
+
+    console.log("API Response (Bệnh nhân đang khám):", res.data);
+
+    let data = [];
+    if (res.data.status && res.data.data) {
+      if (Array.isArray(res.data.data)) {
+        data = res.data.data;
+      } else if (res.data.data.data && Array.isArray(res.data.data.data)) {
+        data = res.data.data.data;
+      }
+    }
+
+    examiningAppointments.value = data.map((appt) => ({
+      ...appt,
+      displayStatus: getStatus(appt),
+    }));
+  } catch (err) {
+    console.error("Error fetching examining appointments:", err);
+  }
+};
+
+// Fetch tất cả dữ liệu
+const fetchAllData = async () => {
+  loading.value = true;
+  await Promise.all([fetchAppointments(), fetchExaminingAppointments()]);
+  loading.value = false;
+};
+
 // Navigation
 const previousDay = () =>
   (currentDate.value = new Date(
@@ -503,11 +547,44 @@ const nextDay = () =>
   ));
 const goToToday = () => (currentDate.value = new Date());
 
-watch(currentDate, fetchAppointments);
-onMounted(fetchAppointments);
+watch(currentDate, fetchAllData);
+onMounted(fetchAllData);
 
-// Bắt đầu khám
+// Xác nhận bắt đầu khám
+const confirmStartExam = async (appt) => {
+  if (!confirm(`Bắt đầu khám bệnh cho ${appt.thu_cung?.ten_thu_cung}?`)) {
+    return;
+  }
+
+  try {
+    // Gọi API bắt đầu khám
+    const res = await api.post(`/lich-hen/${appt.id}/bat-dau-kham`);
+
+    if (res.data.status) {
+      alert("Đã bắt đầu khám bệnh!");
+
+      // Refresh danh sách
+      await fetchAllData();
+
+      // Chuyển sang tab "Đang khám"
+      activeTab.value = "examining";
+
+      // Chuyển sang trang phiếu khám
+      router.push(`/doctor/lich-kham/phieu-kham/${appt.id}`);
+    }
+  } catch (err) {
+    console.error("Error starting exam:", err);
+    alert(err.response?.data?.message || "Lỗi khi bắt đầu khám bệnh");
+  }
+};
+
+// Bắt đầu khám (nếu đã bắt đầu rồi)
 const startExam = (id) => {
+  router.push(`/doctor/lich-kham/phieu-kham/${id}`);
+};
+
+// Xem chi tiết kết quả khám
+const viewExamDetail = (id) => {
   router.push(`/doctor/lich-kham/phieu-kham/${id}`);
 };
 </script>

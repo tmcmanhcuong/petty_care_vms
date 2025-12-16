@@ -126,8 +126,8 @@
         <!-- Pets List -->
         <div class="px-6 py-10 flex flex-col gap-3">
           <div
-            v-for="pet in customer.pets"
-            :key="pet.id"
+            v-for="(pet, petIndex) in customer.pets"
+            :key="`pet-${customer.id}-${petIndex}`"
             class="bg-gray-50 border border-gray-200 rounded-[10px] p-[17px] flex items-center gap-4"
           >
             <!-- Pet Image -->
@@ -169,7 +169,7 @@
 
             <!-- View Button -->
             <button
-              @click="viewRecord(customer.id, pet.id)"
+              @click="viewRecord(customer.id, pet.id || petIndex)"
               class="bg-[#155dfc] hover:bg-[#0d47c9] transition-colors rounded-lg px-3 py-[6px] flex items-center gap-3 flex-shrink-0"
             >
               <img :src="icons.eye" alt="" class="w-4 h-4" />
@@ -177,6 +177,106 @@
                 Xem Hồ sơ
               </span>
             </button>
+
+            <!-- Expand Exam Records Button -->
+            <button
+              @click="togglePetDetail(`pet-${customer.id}-${petIndex}`)"
+              :class="[
+                'rounded-lg px-3 py-[6px] flex items-center gap-3 flex-shrink-0 transition-colors',
+                expandedPets.has(`pet-${customer.id}-${petIndex}`)
+                  ? 'bg-gray-200 text-gray-700'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+              ]"
+            >
+              <span class="text-sm font-medium leading-5 tracking-[-0.1504px]">
+                {{ expandedPets.has(`pet-${customer.id}-${petIndex}`) ? '▼ Ẩn' : '▶ Chi tiết' }}
+              </span>
+            </button>
+          </div>
+
+          <!-- Exam Records Section (Expandable) -->
+          <div v-if="expandedPets.has(`pet-${customer.id}-${petIndex}`) && getPhieuKhamForPet(pet.id || petIndex).length > 0" class="border-t border-gray-200 mt-4 pt-4 px-6">
+            <h4 class="text-sm font-bold text-gray-700 mb-3">Lịch sử khám bệnh</h4>
+            <div class="space-y-3">
+              <div v-if="getPhieuKhamForPet(pet.id || petIndex).length === 0" class="text-center py-4">
+                <p class="text-sm text-gray-500">Chưa có phiếu khám nào</p>
+              </div>
+              <div
+                v-for="exam in getPhieuKhamForPet(pet.id || petIndex)"
+                :key="exam.id"
+                class="bg-white border border-gray-200 rounded-[8px] p-3"
+              >
+                <!-- Exam Header -->
+                <div class="flex items-start justify-between mb-2">
+                  <div class="flex-1">
+                    <p class="text-xs font-bold text-gray-600 leading-4">
+                      {{ formatDateTime(exam.created_at || exam.ngay_kham) }}
+                    </p>
+                    <p class="text-xs text-gray-500 leading-4">
+                      Bác sĩ: {{ exam.nhan_vien?.ten || exam.nhanVien?.ten || 'N/A' }}
+                    </p>
+                  </div>
+                  <div
+                    :class="[
+                      'px-2 py-1 rounded text-xs font-medium',
+                      exam.loai_chi_dinh === 'chi_dinh_can_lam_sang'
+                        ? 'bg-purple-100 text-purple-700'
+                        : exam.loai_chi_dinh === 'don_thuoc'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-cyan-100 text-cyan-700'
+                    ]"
+                  >
+                    {{
+                      exam.loai_chi_dinh === 'chi_dinh_can_lam_sang'
+                        ? 'Cận lâm sàng'
+                        : exam.loai_chi_dinh === 'don_thuoc'
+                        ? 'Đơn thuốc'
+                        : 'Tái khám'
+                    }}
+                  </div>
+                </div>
+
+                <!-- Vital Signs -->
+                <div v-if="exam.nhiet_do || exam.can_nang || exam.nhip_tim || exam.nhip_tho" class="mb-2">
+                  <p class="text-xs font-semibold text-gray-600 mb-1">Dấu hiệu sinh tồn:</p>
+                  <div class="flex gap-2 flex-wrap">
+                    <span v-if="exam.nhiet_do" class="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                      Nhiệt độ: {{ exam.nhiet_do }}°C
+                    </span>
+                    <span v-if="exam.can_nang" class="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                      Cân nặng: {{ exam.can_nang }} kg
+                    </span>
+                    <span v-if="exam.nhip_tim" class="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                      Nhịp tim: {{ exam.nhip_tim }} bpm
+                    </span>
+                    <span v-if="exam.nhip_tho" class="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                      Nhịp thở: {{ exam.nhip_tho }}/phút
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Medical Info -->
+                <div v-if="exam.ly_do_den_kham" class="mb-2">
+                  <p class="text-xs font-semibold text-gray-600">Lý do đến khám:</p>
+                  <p class="text-xs text-gray-700">{{ exam.ly_do_den_kham }}</p>
+                </div>
+
+                <div v-if="exam.trieu_chung" class="mb-2">
+                  <p class="text-xs font-semibold text-gray-600">Triệu chứng:</p>
+                  <p class="text-xs text-gray-700">{{ exam.trieu_chung }}</p>
+                </div>
+
+                <div v-if="exam.chan_doan" class="mb-2">
+                  <p class="text-xs font-semibold text-gray-600">Chẩn đoán:</p>
+                  <p class="text-xs text-gray-700 font-medium text-blue-700">{{ exam.chan_doan }}</p>
+                </div>
+
+                <div v-if="exam.ghi_chu" class="mb-2">
+                  <p class="text-xs font-semibold text-gray-600">Ghi chú:</p>
+                  <p class="text-xs text-gray-700">{{ exam.ghi_chu }}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -185,8 +285,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import api from '@/utils/api'
+import { showErrorToast } from '@/utils/toast'
+import { format } from 'date-fns'
+import { vi } from 'date-fns/locale'
 
 const router = useRouter()
 
@@ -210,6 +314,15 @@ const icons = {
 // State
 const searchQuery = ref('')
 const selectedFilter = ref('all')
+const phieuKhamList = ref([])
+const loading = ref(false)
+const expandedPets = ref(new Set()) // Track which pets show their exam records
+const pagination = ref({
+  total: 0,
+  per_page: 15,
+  current_page: 1,
+  last_page: 1
+})
 
 // Sample data
 const customers = ref([
@@ -333,8 +446,72 @@ const filteredCustomers = computed(() => {
 })
 
 // Methods
+const loadPhieuKham = async () => {
+  loading.value = true
+  try {
+    const response = await api.get('/phieu-kham', {
+      params: {
+        page: pagination.value.current_page
+      }
+    })
+
+    console.log('=== Phiếu Khám API Response ===')
+    console.log('Response:', response.data)
+
+    if (response.data.status || response.data.message) {
+      phieuKhamList.value = response.data.data || []
+      if (response.data.pagination) {
+        pagination.value = response.data.pagination
+      }
+      console.log('Loaded phieuKham:', phieuKhamList.value)
+    }
+  } catch (error) {
+    console.error('Error loading phiếu khám:', error)
+    showErrorToast('Lỗi khi tải danh sách phiếu khám')
+  } finally {
+    loading.value = false
+  }
+}
+
+// Get exam records for a specific pet
+const getPhieuKhamForPet = (petId) => {
+  return phieuKhamList.value.filter(pk => pk.lich_hen?.thu_cung_id === petId)
+}
+
+// Get exam records for a specific customer
+const getPhieuKhamForCustomer = (customerId) => {
+  return phieuKhamList.value.filter(pk => {
+    const khachHangId = pk.lich_hen?.khach_hang_id || pk.lich_hen?.khachHang?.id
+    return khachHangId === customerId
+  })
+}
+
+// Toggle pet detail expansion
+const togglePetDetail = (petId) => {
+  if (expandedPets.value.has(petId)) {
+    expandedPets.value.delete(petId)
+  } else {
+    expandedPets.value.add(petId)
+  }
+}
+
+// Format date time
+const formatDateTime = (dateString) => {
+  if (!dateString) return '-'
+  try {
+    return format(new Date(dateString), 'dd/MM/yyyy HH:mm', { locale: vi })
+  } catch (e) {
+    return dateString
+  }
+}
+
 const viewRecord = (customerId, petId) => {
   console.log('View record:', customerId, petId)
   router.push('/doctor/benh-an/chi-tiet')
 }
+
+// Load data on mount
+onMounted(() => {
+  loadPhieuKham()
+})
 </script>

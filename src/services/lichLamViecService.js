@@ -8,6 +8,7 @@ import api from "@/utils/api";
  */
 export const getMySchedule = async (startDate, endDate) => {
   try {
+    // ✅ FIX: Sử dụng endpoint /lich-lam-viec/cua-toi (getMySchedule từ backend)
     const response = await api.get("/lich-lam-viec/cua-toi", {
       params: {
         start_date: startDate,
@@ -27,6 +28,7 @@ export const getMySchedule = async (startDate, endDate) => {
  */
 export const getMyTodaySchedule = async () => {
   try {
+    // ✅ FIX: Sử dụng endpoint /lich-lam-viec/cua-toi/hom-nay (getMyTodaySchedule từ backend)
     const response = await api.get("/lich-lam-viec/cua-toi/hom-nay");
     return response.data;
   } catch (error) {
@@ -44,6 +46,7 @@ export const getMyTodaySchedule = async () => {
  */
 export const getScheduleByDoctor = async (nhanVienId, startDate, endDate) => {
   try {
+    // ✅ FIX: Sử dụng endpoint getScheduleByDoctor từ backend
     const response = await api.get(`/lich-lam-viec/bac-si/${nhanVienId}`, {
       params: {
         start_date: startDate,
@@ -58,7 +61,7 @@ export const getScheduleByDoctor = async (nhanVienId, startDate, endDate) => {
 };
 
 /**
- * Lấy danh sách tất cả bác sĩ/nhân viên với lịch làm việc trong ngày hôm nay
+ * Lấy danh sách tất cả bác sĩ/nhân viên với lịch làm việc trong ngày hôm nay (Admin only)
  * @param {string} date - Ngày cần xem (YYYY-MM-DD), mặc định là hôm nay
  * @returns {Promise} Response data
  */
@@ -69,6 +72,7 @@ export const getTodaySchedule = async (date = null) => {
       params.date = date;
     }
 
+    // ✅ FIX: Sử dụng endpoint /lich-lam-viec/hom-nay (getTodaySchedule từ backend)
     const response = await api.get("/lich-lam-viec/hom-nay", { params });
     return response.data;
   } catch (error) {
