@@ -51,8 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         $user = $request->user();
 
-        // Load thông tin vai trò và quyền nếu có
-        if ($user && method_exists($user, 'load')) {
+        // Load thông tin vai trò và quyền nếu có (chỉ cho Admin và NhanVien, không phải KhachHang)
+        if ($user && method_exists($user, 'load') && !($user instanceof \App\Models\KhachHang)) {
             $user->load('phanQuyen');
         }
 
