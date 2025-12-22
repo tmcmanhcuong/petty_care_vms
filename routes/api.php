@@ -296,9 +296,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Phiếu khám: CRUD (staff only - bác sĩ/y tá khám bệnh)
     Route::get('/phieu-kham', [PhieuKhamController::class, 'index'])->middleware('staff.only'); // Lấy danh sách
     Route::post('/phieu-kham', [PhieuKhamController::class, 'store'])->middleware('staff.only'); // Tạo phiếu khám
-    Route::get('/phieu-kham/{phieuKham}', [PhieuKhamController::class, 'show'])->middleware('staff.only'); // Chi tiết
+    Route::get('/phieu-kham/{id}', [PhieuKhamController::class, 'show'])->middleware('staff.only'); // Lấy chi tiết
     Route::match(['put', 'patch'], '/phieu-kham/{phieuKham}', [PhieuKhamController::class, 'update'])->middleware('staff.only'); // Cập nhật
     Route::delete('/phieu-kham/{phieuKham}', [PhieuKhamController::class, 'destroy'])->middleware('staff.only'); // Xóa
+    Route::get('/phieu-kham/thu-cung/{thuCungId}', [PhieuKhamController::class, 'getByPet'])->middleware('staff.only'); // Lấy theo thú cưng
+    Route::get('/phieu-kham/bac-si/{nhanVienId}', [PhieuKhamController::class, 'getByDoctor'])->middleware('staff.only'); // Lấy theo bác sĩ
+    Route::get('/phieu-kham-hom-nay', [PhieuKhamController::class, 'getTodayExaminations'])->middleware('staff.only'); // Lấy hôm nay
 
     // Kiểm tra mã khuyến mãi (public - cho khách hàng)
     Route::post('/khuyen-mai/check-code', [KhuyenMaiController::class, 'checkCode']);

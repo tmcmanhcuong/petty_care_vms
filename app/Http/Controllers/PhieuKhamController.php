@@ -118,34 +118,270 @@ class PhieuKhamController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Lấy chi tiết phiếu khám bệnh
      */
-    public function show(PhieuKham $phieuKham)
+    public function show($id)
     {
-        //
+        try {
+            $phieuKham = PhieuKham::with([
+                'lichHen.thuCung',
+                'lichHen.khachHang',
+                'nhanVien'
+            ])->find($id);
+
+            if (!$phieuKham) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy phiếu khám với ID này'
+                ], 404);
+            }
+
+            $thuCung = $phieuKham->lichHen?->thuCung;
+            $khachHang = $phieuKham->lichHen?->khachHang;
+            $lichHen = $phieuKham->lichHen;
+
+            if (!$thuCung || !$khachHang) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy thông tin thú cưng hoặc chủ nuôi'
+                ], 404);
+            }
+
+            // Lấy lịch sử khám của cùng thú cưng
+            $lichSuKham = PhieuKham::whereHas('lichHen', fn($q) => $q->where('thu_cung_id', $thuCung->id))
+                ->with('nhanVien')
+                ->orderByDesc('created_at')
+                ->get();
+
+            // Lịch sử cân nặng
+            $lichSuCanNang = $lichSuKham->filter(fn($pk) => $pk->can_nang !== null)
+                ->map(fn($pk) => [
+                    'date' => $pk->created_at->format('m/Y'),
+                    'value' => (float) $pk->can_nang
+                ])->values();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy chi tiết phiếu khám thành công',
+                'data' => [
+                    'id' => $phieuKham->id,
+                    'created_at' => $phieuKham->created_at->format('d/m/Y H:i'),
+                    'pet' => [
+                        'id' => $thuCung->id,
+                        'image' => $thuCung->anh ?? null,
+                        'name' => $thuCung->ten ?? 'Chưa đặt tên',
+                        'species' => $thuCung->loai_thu_cung ?? 'Thú cưng',
+                        'breed' => $thuCung->giong ?? '',
+                        'age' => $thuCung->tuoi ?? null,
+                        'gender' => $thuCung->gioi_tinh === 'male' ? 'Đực' : ($thuCung->gioi_tinh === 'female' ? 'Cái' : 'Không xác định'),
+                        'color' => $thuCung->mau_trai ?? '',
+                        'note' => $thuCung->ghi_chu ?? ''
+                    ],
+                    'owner' => [
+                        'id' => $khachHang->id,
+                        'full_name' => $khachHang->ho_ten ?? $khachHang->ten ?? 'Chưa có tên',
+                        'phone' => $khachHang->so_dien_thoai ?? '',
+                        'address' => $khachHang->dia_chi ?? '',
+                        'email' => $khachHang->email ?? '',
+                        'type' => $khachHang->la_thanh_vien ? 'member' : 'khach_vang_lai'
+                    ],
+                    'doctor' => [
+                        'id' => $phieuKham->nhanVien?->id,
+                        'name' => $phieuKham->nhanVien?->full_name ?? 'Chưa xác định',
+                        'specialization' => $phieuKham->nhanVien?->chuyen_mon ?? ''
+                    ],
+                    'examination' => [
+                        'reason' => $phieuKham->ly_do_den_kham ?? '',
+                        'symptoms' => $phieuKham->trieu_chung ?? '',
+                        'diagnosis' => $phieuKham->chan_doan ?? '',
+                        'notes' => $phieuKham->ghi_chu ?? ''
+                    ],
+                    'vital_signs' => [
+                        'temperature' => $phieuKham->nhiet_do ?? null,
+                        'weight' => $phieuKham->can_nang ?? null,
+                        'heart_rate' => $phieuKham->nhip_tim ?? null,
+                        'respiratory_rate' => $phieuKham->nhip_tho ?? null
+                    ],
+                    'referral_type' => $phieuKham->loai_chi_dinh ?? '',
+                    'appointment' => [
+                        'id' => $lichHen?->id,
+                        'date' => $lichHen?->ngay_hen ? \Carbon\Carbon::parse($lichHen->ngay_hen)->format('d/m/Y') : null,
+                        'time' => $lichHen?->gio_hen ?? null,
+                        'status' => $lichHen?->trang_thai ?? ''
+                    ],
+                    'histories' => $lichSuKham->map(fn($pk) => [
+                        'id' => $pk->id,
+                        'date' => $pk->created_at->format('d/m/Y'),
+                        'time' => $pk->created_at->format('H:i'),
+                        'reason' => $pk->ly_do_den_kham ?? 'Khám bệnh',
+                        'doctor_name' => $pk->nhanVien?->full_name ?? 'Bác sĩ',
+                        'symptoms' => $pk->trieu_chung ?? '',
+                        'diagnosis' => $pk->chan_doan ?? '',
+                        'treatment' => $pk->ghi_chu ?? '',
+                        'weight' => $pk->can_nang ?? null
+                    ]),
+                    'weight_history' => $lichSuCanNang->toArray()
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lấy chi tiết phiếu khám',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Show the form for editing the existing resource.
-     */
-    public function edit(PhieuKham $phieuKham)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Cập nhật phiếu khám
      */
     public function update(Request $request, PhieuKham $phieuKham)
     {
-        //
+        try {
+            // Validate dữ liệu cập nhật
+            $validated = $request->validate([
+                'nhiet_do' => 'nullable|numeric|between:30,45',
+                'can_nang' => 'nullable|numeric|min:0',
+                'nhip_tim' => 'nullable|integer|between:30,200',
+                'nhip_tho' => 'nullable|integer|between:5,50',
+                'ly_do_den_kham' => 'nullable|string|max:255',
+                'trieu_chung' => 'nullable|string',
+                'chan_doan' => 'nullable|string',
+                'ghi_chu' => 'nullable|string',
+                'loai_chi_dinh' => 'nullable|in:chi_dinh_can_lam_sang,don_thuoc,hen_tai_kham',
+            ]);
+
+            // Cập nhật phiếu khám
+            $phieuKham->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật phiếu khám thành công',
+                'data' => $phieuKham
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi cập nhật phiếu khám',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Xóa phiếu khám
      */
     public function destroy(PhieuKham $phieuKham)
     {
-        //
+        try {
+            $phieuKham->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Xóa phiếu khám thành công'
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi xóa phiếu khám',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Lấy danh sách phiếu khám theo thú cưng
+     */
+    public function getByPet($thuCungId)
+    {
+        try {
+            $phieuKhams = PhieuKham::whereHas('lichHen', fn($q) => $q->where('thu_cung_id', $thuCungId))
+                ->with(['lichHen.thuCung', 'lichHen.khachHang', 'nhanVien'])
+                ->orderByDesc('created_at')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy danh sách phiếu khám của thú cưng thành công',
+                'data' => $phieuKhams
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lấy danh sách phiếu khám',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Lấy danh sách phiếu khám theo bác sĩ
+     */
+    public function getByDoctor($nhanVienId)
+    {
+        try {
+            $phieuKhams = PhieuKham::where('nhan_vien_id', $nhanVienId)
+                ->with(['lichHen.thuCung', 'lichHen.khachHang', 'nhanVien'])
+                ->orderByDesc('created_at')
+                ->paginate(15);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy danh sách phiếu khám của bác sĩ thành công',
+                'data' => $phieuKhams->items(),
+                'pagination' => [
+                    'total' => $phieuKhams->total(),
+                    'per_page' => $phieuKhams->perPage(),
+                    'current_page' => $phieuKhams->currentPage(),
+                    'last_page' => $phieuKhams->lastPage(),
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lấy danh sách phiếu khám',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Thống kê phiếu khám hôm nay
+     */
+    public function getTodayExaminations()
+    {
+        try {
+            $today = \Carbon\Carbon::today();
+
+            $phieuKhams = PhieuKham::whereDate('created_at', $today)
+                ->with(['lichHen.thuCung', 'lichHen.khachHang', 'nhanVien'])
+                ->orderByDesc('created_at')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy danh sách phiếu khám hôm nay thành công',
+                'data' => $phieuKhams,
+                'total' => count($phieuKhams)
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lấy danh sách phiếu khám',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
