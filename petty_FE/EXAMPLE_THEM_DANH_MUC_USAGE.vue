@@ -1,8 +1,8 @@
 <!-- 
   Example: Cách sử dụng ThemDanhMuc component
   File này là reference - copy logic vào parent component của bạn
+  GHI CHÚ Ở ĐÂY 
 -->
-
 <template>
   <div class="w-full min-h-screen p-6">
     <!-- Header -->
