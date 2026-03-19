@@ -31,6 +31,7 @@ class KhachHangSeeder extends Seeder
                 [
                     'full_name' => 'Nguyễn Văn An',
                     'email' => 'nguyenvan.an@example.com',
+                    'email_verified_at' => now(),
                     'password' => Hash::make('Password123!'),
                     'phone' => '0912345678',
                     'address' => '123 Đường A, Quận 1, TP.HCM',
@@ -42,6 +43,7 @@ class KhachHangSeeder extends Seeder
                 [
                     'full_name' => 'Trần Thị Bình',
                     'email' => 'tranthi.binh@example.com',
+                    'email_verified_at' => now(),
                     'password' => Hash::make('Password123!'),
                     'phone' => '0987654321',
                     'address' => '45 Phố B, Quận 3, TP.HCM',
@@ -53,6 +55,7 @@ class KhachHangSeeder extends Seeder
                 [
                     'full_name' => 'Lê Cường',
                     'email' => 'le.cuong@example.com',
+                    'email_verified_at' => now(),
                     'password' => Hash::make('Password123!'),
                     'phone' => '0933123456',
                     'address' => '89 Đường C, Quận 5, TP.HCM',
@@ -64,6 +67,7 @@ class KhachHangSeeder extends Seeder
                 [
                     'full_name' => 'Phạm Dương',
                     'email' => 'pham.duong@example.com',
+                    'email_verified_at' => now(),
                     'password' => Hash::make('Password123!'),
                     'phone' => '0909123456',
                     'address' => '12 Ngõ D, Hà Nội',
@@ -75,6 +79,7 @@ class KhachHangSeeder extends Seeder
                 [
                     'full_name' => 'Hoàng Em',
                     'email' => 'hoang.em@example.com',
+                    'email_verified_at' => now(),
                     'password' => Hash::make('Password123!'),
                     'phone' => '0911222333',
                     'address' => '77 Đại lộ E, Đà Nẵng',
@@ -86,6 +91,7 @@ class KhachHangSeeder extends Seeder
                 [
                     'full_name' => 'Vũ Phúc',
                     'email' => 'vu.phuc@example.com',
+                    'email_verified_at' => now(),
                     'password' => Hash::make('Password123!'),
                     'phone' => '0944556677',
                     'address' => '33 Khu F, Hải Phòng',
@@ -97,6 +103,7 @@ class KhachHangSeeder extends Seeder
                 [
                     'full_name' => 'Đỗ Giang',
                     'email' => 'do.giang@example.com',
+                    'email_verified_at' => now(),
                     'password' => Hash::make('Password123!'),
                     'phone' => '0955667788',
                     'address' => '55 Phố G, Cần Thơ',
@@ -108,6 +115,7 @@ class KhachHangSeeder extends Seeder
                 [
                     'full_name' => 'Bùi Hà',
                     'email' => 'bui.ha@example.com',
+                    'email_verified_at' => now(),
                     'password' => Hash::make('Password123!'),
                     'phone' => '0966778899',
                     'address' => '101 Đường H, Nha Trang',
@@ -119,6 +127,7 @@ class KhachHangSeeder extends Seeder
                 [
                     'full_name' => 'Ngô Minh',
                     'email' => 'ngo.minh@example.com',
+                    'email_verified_at' => now(),
                     'password' => Hash::make('Password123!'),
                     'phone' => '0977889900',
                     'address' => '200 Khu I, Vũng Tàu',
@@ -130,6 +139,7 @@ class KhachHangSeeder extends Seeder
                 [
                     'full_name' => 'Dương Lan',
                     'email' => 'duong.lan@example.com',
+                    'email_verified_at' => now(),
                     'password' => Hash::make('Password123!'),
                     'phone' => '0988990011',
                     'address' => '9 Hẻm J, Huế',
