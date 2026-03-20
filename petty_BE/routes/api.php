@@ -26,6 +26,7 @@ use App\Http\Controllers\PhanQuyenController;
 use App\Http\Controllers\LichDangKyController;
 use App\Http\Controllers\PhieuKhamController;
 use App\Http\Controllers\HoSoBenhAnController;
+use App\Http\Controllers\ChatbotController;
 
 
 Route::post('/khach-hang/dang-ki', [KhachHangController::class, 'dangKi']);
@@ -33,6 +34,7 @@ Route::post('/khach-hang/dang-nhap', [KhachHangController::class, 'dangNhap']);
 
 // Admin login route
 Route::post('/admin/dang-nhap', [AdminController::class, 'dangNhap']);
+Route::post('/chatbot/message', [ChatbotController::class, 'message'])->middleware('throttle:20,1');
 
 // Nhân viên login route
 Route::post('/nhan-vien/dang-nhap', [NhanVienController::class, 'dangNhap']);

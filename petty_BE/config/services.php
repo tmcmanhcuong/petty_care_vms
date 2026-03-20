@@ -40,6 +40,11 @@ return [
         'redirect' => env('FACEBOOK_REDIRECT_URI'),
     ],
 
+    'together' => [
+        'api_key' => env('TOGETHER_API_KEY'),
+        'model' => env('TOGETHER_MODEL', 'meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

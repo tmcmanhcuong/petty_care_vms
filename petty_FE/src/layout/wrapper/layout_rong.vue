@@ -13,11 +13,13 @@
         <!-- Footer -->
 		</div>
         <BotTrangChu></BotTrangChu>
+        <ChatbotWidget></ChatbotWidget>
 	</div>
 </template>
 <script>
 import TopTrangChu from "../components/TopTrangChu.vue";
 import BotTrangChu from "../components/BotTrangChu.vue";
+import ChatbotWidget from "../components/ChatbotWidget.vue";
 import "../../assets/js/bootstrap.bundle.min.js";
 import "../../assets/js/jquery.min.js";
 import "../../assets/plugins/simplebar/js/simplebar.min.js";
@@ -29,7 +31,7 @@ import "../../assets/js/pace.min.js";
 export default {
     name        :   "app",
     components  :   {
-       TopTrangChu, BotTrangChu
+       TopTrangChu, BotTrangChu, ChatbotWidget
     }
 }
 </script>
