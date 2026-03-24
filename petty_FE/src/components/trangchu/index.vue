@@ -504,7 +504,7 @@
 
         <div class="row-span-2 rounded-2xl overflow-hidden shadow-xl">
           <img
-            src="/src/assets/img_import/001.png"
+            src="/src/assets/img_imports/public_img/hp-pic5.png"
             alt="PETTY Services"
             class="w-full h-full object-cover"
           />
@@ -992,14 +992,14 @@ const expertiseCards = [
 const blogPosts = [
   {
     id: 1,
-    image: "/src/assets/img_import/002 (1).png",
+    image: "/src/assets/img_imports/public_img/hp-pic10.png",
     badge: "Tối ưu vận hành phòng khám với hệ thống VCMS",
     date: "Ngày: 25/09/2025",
     title: "Tối ưu vận hành phòng khám với hệ thống VCMS",
   },
   {
     id: 2,
-    image: "/src/assets/img_import/002 (2).png",
+    image: "/src/assets/img_imports/public_img/hp-pic9.png",
     badge: "Chuyển đổi số trong chăm sóc thú y",
     date: "Ngày: 10/09/2025",
     title:
@@ -1008,7 +1008,7 @@ const blogPosts = [
   {
     id: 3,
     image:
-      "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?w=800&h=600&fit=crop",
+      "/src/assets/img_imports/public_img/hp-pic9.png",
     badge: "Xây dựng niềm tin với chủ nuôi",
     date: "Ngày: 02/09/2025",
     title: "Xây dựng niềm tin với chủ nuôi qua trải nghiệm kỹ thuật số",

@@ -37,24 +37,16 @@
         <div class="max-w-[1440px] mx-auto px-20">
           <div class="flex items-center gap-[60px]">
             <div
-              class="bg-white/20 rounded-full w-12 h-12 flex items-center justify-center"
+              class="bg-white/20 rounded-full w-12 h-12 flex items-center justify-center p-2"
             >
-              <img
-                src="https://www.figma.com/api/mcp/asset/70f8e6f6-7ea3-41c2-b9a1-a7d85485dd9d"
-                alt="Emergency"
-                class="w-7 h-7"
-              />
+              <AlertCircle class="w-full h-full text-white" />
             </div>
             <div class="flex flex-col">
               <p class="text-lg text-white leading-7 tracking-[-0.44px]">
                 Cấp cứu 24/7 ? Gọi ngay hotline
               </p>
               <div class="flex items-center gap-2">
-                <img
-                  src="https://www.figma.com/api/mcp/asset/b9aaa714-728a-4ecd-bb02-3cdc9174307a"
-                  alt="Phone"
-                  class="w-6 h-6"
-                />
+                <Phone class="w-6 h-6 text-white" />
                 <p class="text-2xl text-white leading-8 tracking-[0.07px]">
                   1900-xxxx
                 </p>
@@ -81,13 +73,9 @@
             <!-- Address Section -->
             <div class="flex gap-3">
               <div
-                class="bg-[#cbfbf1] rounded-[10px] w-10 h-10 flex items-center justify-center shrink-0"
+                class="bg-[#cbfbf1] rounded-[10px] w-10 h-10 flex items-center justify-center shrink-0 p-2"
               >
-                <img
-                  src="https://www.figma.com/api/mcp/asset/2071990e-b340-4ec4-b11d-9a6283e6be60"
-                  alt="Location"
-                  class="w-5 h-5"
-                />
+                <MapPin class="w-full h-full text-teal-600" />
               </div>
               <div class="flex flex-col gap-1">
                 <p class="text-base font-medium text-[#101828] leading-6">
@@ -156,11 +144,7 @@
               <div
                 class="bg-[#fff7ed] border !border-[#ffd6a7] rounded-[10px] px-3 py-3 flex items-start gap-2"
               >
-                <img
-                  src="https://www.figma.com/api/mcp/asset/703fe1aa-eb63-4886-85f7-de232246d27b"
-                  alt="Info"
-                  class="w-4 h-4 mt-0.5"
-                />
+                <Info class="w-4 h-4 mt-0.5 text-[#7e2a0c]" />
                 <p class="text-sm text-[#7e2a0c] leading-5 tracking-[-0.15px]">
                   Cấp cứu 24/7: Luôn sẵn sàng
                 </p>
@@ -185,13 +169,9 @@
                 @click="openZalo"
               >
                 <div
-                  class="bg-[#dbeafe] rounded-[10px] w-10 h-10 flex items-center justify-center"
+                  class="bg-[#dbeafe] rounded-[10px] w-10 h-10 flex items-center justify-center p-2"
                 >
-                  <img
-                    src="https://www.figma.com/api/mcp/asset/831aaee1-c14f-4ae9-8bb9-e36992d9f0d3"
-                    alt="Zalo"
-                    class="w-4 h-4"
-                  />
+                  <MessageCircle class="w-full h-full text-blue-600" />
                 </div>
                 <div class="flex flex-col items-start">
                   <p
@@ -213,13 +193,9 @@
                 @click="openMessenger"
               >
                 <div
-                  class="bg-[#dbeafe] rounded-[10px] w-10 h-10 flex items-center justify-center"
+                  class="bg-[#dbeafe] rounded-[10px] w-10 h-10 flex items-center justify-center p-2"
                 >
-                  <img
-                    src="https://www.figma.com/api/mcp/asset/191c497d-6952-4c2d-baee-3551c5373054"
-                    alt="Messenger"
-                    class="w-4 h-4"
-                  />
+                  <MessageSquare class="w-full h-full text-blue-600" />
                 </div>
                 <div class="flex flex-col items-start">
                   <p
@@ -241,13 +217,9 @@
                 @click="sendEmail"
               >
                 <div
-                  class="bg-[#cbfbf1] rounded-[10px] w-10 h-10 flex items-center justify-center"
+                  class="bg-[#cbfbf1] rounded-[10px] w-10 h-10 flex items-center justify-center p-2"
                 >
-                  <img
-                    src="https://www.figma.com/api/mcp/asset/8883a3ac-b313-4ef6-939d-ee63aa564dda"
-                    alt="Email"
-                    class="w-4 h-4"
-                  />
+                  <Mail class="w-full h-full text-teal-600" />
                 </div>
                 <div class="flex flex-col items-start">
                   <p
@@ -269,13 +241,9 @@
                 @click="callPhone"
               >
                 <div
-                  class="bg-[#ffedd4] rounded-[10px] w-10 h-10 flex items-center justify-center"
+                  class="bg-[#ffedd4] rounded-[10px] w-10 h-10 flex items-center justify-center p-2"
                 >
-                  <img
-                    src="https://www.figma.com/api/mcp/asset/82db6522-475d-48d2-8ab9-e9676be4f23b"
-                    alt="Phone"
-                    class="w-4 h-4"
-                  />
+                  <PhoneCall class="w-full h-full text-orange-500" />
                 </div>
                 <div class="flex flex-col items-start">
                   <p
@@ -299,13 +267,12 @@
       <div class="flex flex-col gap-6 flex-1">
         <!-- Map -->
         <div
-          class="h-[436px] rounded-2xl shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1)] overflow-hidden"
+          class="h-[436px] rounded-2xl shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1)] overflow-hidden bg-gray-200 flex items-center justify-center"
         >
-          <img
-            src="https://www.figma.com/api/mcp/asset/ba8baeff-5ee5-444b-8307-1f8f9c9562e6"
-            alt="Map"
-            class="w-full h-full object-cover"
-          />
+          <div class="text-center text-gray-500 flex flex-col items-center gap-2">
+            <Map class="w-12 h-12" />
+            <p>Bản đồ khu vực</p>
+          </div>
         </div>
 
         <!-- Contact Form Card -->
@@ -371,11 +338,7 @@
                     <option value="emergency">Cấp cứu</option>
                     <option value="other">Khác</option>
                   </select>
-                  <img
-                    src="https://www.figma.com/api/mcp/asset/857f12bf-3829-4cea-aa62-ac65db5d1e9c"
-                    alt="Dropdown"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                  />
+                  <ChevronDown class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
                 </div>
               </div>
 
@@ -397,11 +360,7 @@
                 type="submit"
                 class="bg-[#0d9488] text-white h-12 rounded-lg flex items-center justify-center gap-2 text-sm font-medium tracking-[-0.15px] hover:bg-[#0f766e] transition-colors"
               >
-                <img
-                  src="https://www.figma.com/api/mcp/asset/b9087ffe-3bb4-4c05-bb93-e0c654810366"
-                  alt="Send"
-                  class="w-4 h-4"
-                />
+                <Send class="w-4 h-4" />
                 Gửi tin nhắn
               </button>
             </form>
@@ -432,21 +391,15 @@
             @click="toggleFaq(index)"
           >
             <div class="flex items-center gap-3">
-              <img
-                src="https://www.figma.com/api/mcp/asset/5466e71c-1c49-41eb-98ef-7d33a530b54d"
-                alt="Question"
-                class="w-5 h-5"
-              />
+              <HelpCircle class="w-5 h-5 text-gray-400" />
               <p
                 class="text-sm font-medium text-[#101828] leading-5 tracking-[-0.15px]"
               >
                 {{ faq.question }}
               </p>
             </div>
-            <img
-              src="https://www.figma.com/api/mcp/asset/4d67db5d-bf70-4187-a458-f26e4c1848ae"
-              alt="Expand"
-              class="w-4 h-4"
+            <ChevronDown
+              class="w-4 h-4 text-gray-500 transition-transform duration-300"
               :class="{ 'rotate-180': faq.isOpen }"
             />
           </button>
@@ -463,11 +416,7 @@
             class="bg-[#009689] text-white px-4 h-9 rounded-lg flex items-center gap-2 text-sm font-medium tracking-[-0.15px] hover:bg-[#00897b] transition-colors"
             @click="openChat"
           >
-            <img
-              src="https://www.figma.com/api/mcp/asset/86c31df9-38ab-4d55-95ea-2abe2437ec51"
-              alt="Chat"
-              class="w-4 h-4"
-            />
+            <MessageCircle class="w-4 h-4" />
             Chat trực tiếp với chúng tôi
           </button>
         </div>
@@ -476,75 +425,85 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "Contact",
-  data() {
-    return {
-      form: {
-        name: "",
-        phone: "",
-        topic: "",
-        message: "",
-      },
-      faqs: [
-        {
-          question: "Phòng khám có chỗ đậu ô tô không?",
-          isOpen: false,
-        },
-        {
-          question: "Có nhận lưu chuồng qua đêm không?",
-          isOpen: false,
-        },
-        {
-          question: "Thanh toán bằng thẻ/QR được không?",
-          isOpen: false,
-        },
-        {
-          question: "Phòng khám có dịch vụ cấp cứu 24/7 không?",
-          isOpen: false,
-        },
-      ],
-    };
+<script setup>
+import { ref } from 'vue';
+import { 
+  AlertCircle, 
+  Phone, 
+  MapPin, 
+  Info, 
+  MessageCircle, 
+  MessageSquare, 
+  Mail, 
+  PhoneCall, 
+  ChevronDown, 
+  Send,
+  HelpCircle,
+  Map
+} from 'lucide-vue-next';
+
+// Data
+const form = ref({
+  name: "",
+  phone: "",
+  topic: "",
+  message: "",
+});
+
+const faqs = ref([
+  {
+    question: "Phòng khám có chỗ đậu ô tô không?",
+    isOpen: false,
   },
-  methods: {
-    submitForm() {
-      console.log("Form submitted:", this.form);
-      // TODO: Implement form submission logic
-      alert("Tin nhắn đã được gửi! Chúng tôi sẽ phản hồi sớm nhất.");
-      // Reset form
-      this.form = {
-        name: "",
-        phone: "",
-        topic: "",
-        message: "",
-      };
-    },
-    toggleFaq(index) {
-      this.faqs[index].isOpen = !this.faqs[index].isOpen;
-    },
-    openZalo() {
-      console.log("Open Zalo");
-      // TODO: Implement Zalo integration
-    },
-    openMessenger() {
-      console.log("Open Messenger");
-      window.open("https://m.me/vcms.petcare", "_blank");
-    },
-    sendEmail() {
-      window.location.href = "mailto:contact@vcms.vn";
-    },
-    callPhone() {
-      window.location.href = "tel:1900xxxx";
-    },
-    openChat() {
-      console.log("Open live chat");
-      // TODO: Implement live chat
-    },
+  {
+    question: "Có nhận lưu chuồng qua đêm không?",
+    isOpen: false,
   },
-  mounted() {
-    console.log("Trang Liên hệ đã được load!");
+  {
+    question: "Thanh toán bằng thẻ/QR được không?",
+    isOpen: false,
   },
+  {
+    question: "Phòng khám có dịch vụ cấp cứu 24/7 không?",
+    isOpen: false,
+  },
+]);
+
+// Methods
+const submitForm = () => {
+  console.log("Form submitted:", form.value);
+  alert("Tin nhắn đã được gửi! Chúng tôi sẽ phản hồi sớm nhất.");
+  // Reset form
+  form.value = {
+    name: "",
+    phone: "",
+    topic: "",
+    message: "",
+  };
+};
+
+const toggleFaq = (index) => {
+  faqs.value[index].isOpen = !faqs.value[index].isOpen;
+};
+
+const openZalo = () => {
+  console.log("Open Zalo");
+};
+
+const openMessenger = () => {
+  window.open("https://m.me/vcms.petcare", "_blank");
+};
+
+const sendEmail = () => {
+  window.location.href = "mailto:contact@vcms.vn";
+};
+
+const callPhone = () => {
+  window.location.href = "tel:1900xxxx";
+};
+
+const openChat = () => {
+  console.log("Open live chat");
 };
 </script>
 
@@ -552,10 +511,5 @@ export default {
 /* Transition for FAQ arrows */
 .rotate-180 {
   transform: rotate(180deg);
-  transition: transform 0.3s ease;
-}
-
-button img {
-  transition: transform 0.3s ease;
 }
 </style>

@@ -170,213 +170,187 @@
       </div>
 
       <!-- TAB SẮP TỚI -->
-      <div v-if="activeTab === 'upcoming'" class="space-y-6">
+      <div v-if="activeTab === 'upcoming'" class="grid grid-cols-1 gap-4">
         <div
           v-for="appt in upcomingAppointments"
           :key="appt.id"
-          class="bg-white rounded-2xl overflow-hidden border !border-black/5 shadow-sm"
+          class="group bg-white rounded-xl overflow-hidden border border-teal-100/60 shadow-sm hover:shadow-md transition-all duration-300"
         >
-          <div class="bg-teal-50 border-b border-teal-100 p-6">
-            <div class="flex justify-between flex-col md:flex-row gap-4">
-              <div>
-                <div class="flex items-center gap-3 mb-2">
-                  <h3 class="text-lg font-semibold">{{ appt.service }}</h3>
+          <!-- Card Header: Super Compact -->
+          <div class="bg-gradient-to-r from-teal-50/30 to-white border-b border-teal-50/50 px-5 py-3.5">
+            <div class="flex flex-row items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="p-2 bg-teal-50/50 rounded-lg border border-teal-100/50 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="text-lg font-bold text-gray-900 leading-tight">{{ appt.service }}</h3>
                   <span
                     :class="[
-                      'px-3 py-1 rounded-lg font-medium text-base',
+                      'px-2.5 py-1 rounded-full font-bold text-[10px] uppercase tracking-wider',
                       statusClass(appt.status),
                     ]"
                   >
                     {{ statusLabel(appt.status) }}
                   </span>
+                  <span class="text-gray-400 text-xs font-medium hidden sm:inline">#{{ appt.id }}</span>
                 </div>
-                <p class="text-gray-600 font-medium">
-                  Mã lịch hẹn: {{ appt.id }}
-                </p>
               </div>
-              <div class="text-right md:text-left">
-                <div class="font-medium">{{ appt.date }}</div>
-                <div class="text-teal-600 font-medium text-lg">
-                  {{ appt.time }}
+
+              <div class="flex items-center gap-3 bg-white p-2 px-4 rounded-lg border border-teal-50 shadow-sm">
+                <div class="flex items-baseline gap-1.5">
+                  <span class="text-gray-400 text-[10px] font-bold uppercase tracking-tight">Ngày:</span>
+                  <span class="text-gray-900 font-bold text-sm">{{ appt.date }}</span>
+                </div>
+                <div class="w-px h-5 bg-teal-100 mx-1"></div>
+                <div class="flex items-baseline gap-1.5">
+                  <span class="text-teal-600 text-[10px] font-bold uppercase tracking-tight">Giờ:</span>
+                  <span class="text-teal-600 font-black text-base">{{ appt.time }}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-6">
-              <div class="space-y-6">
-                <div class="flex gap-4">
-                  <svg
-                    class="w-6 h-6 mt-1 flex-shrink-0 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle cx="12" cy="8" r="3.5" stroke-width="2" />
-                    <path d="M4 20c0-4 4-7 8-7s8 3 8 7" stroke-width="2" />
-                  </svg>
-                  <div>
-                    <p class="text-gray-600 font-medium mb-1">Thú cưng</p>
-                    <p
-                      :class="
-                        appt.pet === 'Milo' ? 'text-amber-700' : 'text-sky-500'
-                      "
-                      class="text-lg font-semibold"
-                    >
-                      {{ appt.pet }}
-                    </p>
-                    <div
-                      class="flex flex-wrap gap-4 mt-2 text-gray-600 font-medium"
-                    >
-                      <span>{{ appt.breed }}</span>
+          <!-- Card Body: Horizontal Layout & Minimal Spacing -->
+          <div class="px-5 py-3.5">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex flex-1 flex-col sm:flex-row gap-8">
+                <!-- Pet Info -->
+                <div class="flex items-center gap-3">
+                  <div class="flex-shrink-0 w-10 h-10 bg-sky-50 rounded-lg flex items-center justify-center border border-sky-100/50">
+                    <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-0.5">Thú cưng</p>
+                    <div class="flex items-baseline gap-2 truncate">
+                      <span class="text-base font-bold text-gray-900">{{ appt.pet }}</span>
+                      <span class="text-gray-400 font-medium text-xs">• {{ appt.breed }}</span>
                     </div>
                   </div>
                 </div>
-                <div class="flex gap-4">
-                  <svg
-                    class="w-6 h-6 mt-1 flex-shrink-0 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 12a5 5 0 100-10 5 5 0 000 10zM4 20c0-5 4-8 8-8s8 3 8 8"
-                      stroke-width="2"
-                    />
-                  </svg>
-                  <div>
-                    <p class="text-gray-600 font-medium mb-1">Bác sĩ</p>
-                    <p class="font-semibold">{{ appt.doctor }}</p>
+
+                <!-- Location Info -->
+                <div class="flex items-center gap-3">
+                  <div class="flex-shrink-0 w-10 h-10 bg-teal-50 rounded-lg flex items-center justify-center border border-teal-100/50">
+                    <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    </svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-0.5">Địa điểm</p>
+                    <p class="text-sm font-bold text-gray-900 truncate">{{ appt.clinic }}</p>
                   </div>
                 </div>
               </div>
-              <div class="space-y-6">
-                <div class="flex gap-4">
-                  <svg
-                    class="w-6 h-6 mt-1 flex-shrink-0 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2a8 8 0 00-8 8c0 6 8 12 8 12s8-6 8-12a8 8 0 00-8-8z"
-                      stroke-width="2"
-                    />
-                    <circle cx="12" cy="10" r="3" fill="currentColor" />
-                  </svg>
-                  <div>
-                    <p class="text-gray-600 font-medium mb-1">Địa điểm</p>
-                    <p class="font-semibold">{{ appt.clinic }}</p>
-                    <p class="text-gray-600 font-medium">{{ appt.address }}</p>
-                  </div>
-                </div>
-                <div
-                  v-if="appt.note"
-                  class="bg-yellow-50 border !border-yellow-200 rounded-xl p-4"
+
+              <!-- Action Buttons -->
+              <div class="flex items-center gap-3">
+                <button
+                  @click="handleReschedule(appt.id)"
+                  class="p-2.5 border border-teal-100 rounded-lg text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition-colors shadow-sm"
+                  title="Đổi lịch"
                 >
-                  <p class="font-bold text-amber-800 text-sm mb-1">Lưu ý:</p>
-                  <p class="font-medium text-amber-800">{{ appt.note }}</p>
-                </div>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </button>
+                <button
+                  @click="handleCancel(appt.id)"
+                  class="p-2.5 border border-red-50 rounded-lg text-red-500 hover:bg-red-50 transition-colors shadow-sm"
+                  title="Hủy hẹn"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+                <button
+                  @click="openDetail(appt)"
+                  class="px-5 py-2.5 bg-[#5A9690] text-white rounded-lg font-bold text-sm hover:bg-[#4a7d78] shadow-sm flex items-center gap-2 transition-all"
+                >
+                  Chi tiết
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
               </div>
             </div>
 
-            <div
-              class="pt-6 border-t border-zinc-200 flex flex-col md:flex-row gap-4"
-            >
-              <button
-                @click="handleReschedule(appt.id)"
-                class="flex-1 flex items-center justify-center gap-2 py-3 border border-black/10 rounded-lg hover:bg-gray-50 transition"
-              >
-                <svg class="w-5 h-5" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M8 2v12M2 8h12"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                  />
-                </svg>
-                Đổi lịch
-              </button>
-              <button
-                @click="handleCancel(appt.id)"
-                class="flex-1 flex items-center justify-center gap-2 py-3 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition"
-              >
-                <svg class="w-5 h-5" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M2 8h12"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                  />
-                </svg>
-                Hủy hẹn
-              </button>
-              <button
-                @click="openDetail(appt)"
-                class="flex-1 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium"
-              >
-                Xem chi tiết
-              </button>
+            <!-- Notes: Inline & Discreet -->
+            <div v-if="appt.note" class="mt-3 pt-3 border-t border-teal-50/50 flex items-center gap-3">
+              <span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded-md text-[10px] font-black uppercase tracking-tight">Lưu ý</span>
+              <p class="text-gray-600 text-xs font-medium leading-tight line-clamp-1 italic">{{ appt.note }}</p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- TAB ĐÃ QUA -->
-      <div v-if="activeTab === 'past'" class="space-y-6">
+      <div v-if="activeTab === 'past'" class="grid grid-cols-1 gap-4">
         <div
           v-for="appt in pastAppointments"
           :key="appt.id"
-          class="bg-white rounded-2xl border border-black/5 overflow-hidden shadow-sm"
+          class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 opacity-90"
         >
-          <div class="p-6">
-            <div class="flex justify-between flex-col md:flex-row gap-4 mb-4">
-              <div>
-                <div class="flex items-center gap-3 flex-wrap">
-                  <h3 class="text-lg font-semibold">{{ appt.service }}</h3>
-                  <span
-                    class="px-3 py-1 rounded-lg text-sm font-medium"
-                    :class="
-                      appt.status === 'completed'
-                        ? 'bg-emerald-100 text-green-700'
-                        : 'bg-gray-200 text-gray-700'
-                    "
-                  >
-                    {{ appt.badge1 }}
-                  </span>
-                  <span
-                    v-if="appt.badge2"
-                    class="px-3 py-1 bg-emerald-50 border border-emerald-200 text-green-700 rounded-lg text-sm font-medium"
-                  >
-                    {{ appt.badge2 }}
-                  </span>
+          <div class="bg-gray-50/50 px-5 py-3.5 border-b border-gray-100">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="flex flex-wrap items-center gap-3">
+                  <h3 class="text-lg font-bold text-gray-700">{{ appt.service }}</h3>
+                  <div class="flex gap-2">
+                    <span
+                      class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                      :class="appt.status === 'completed' ? 'bg-emerald-100 text-green-700' : 'bg-gray-200 text-gray-700'"
+                    >
+                      {{ statusLabel(appt.status) }}
+                    </span>
+                    <span
+                      v-if="appt.raw.thanhToan?.trang_thai === 'paid' || appt.status === 'paid'"
+                      class="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                    >
+                      Đã thanh toán
+                    </span>
+                  </div>
                 </div>
-                <p class="text-gray-600 font-medium mt-1">
-                  Mã lịch hẹn: {{ appt.id }}
-                </p>
               </div>
-              <div class="text-right">
-                <div class="font-medium">{{ appt.date }}</div>
-                <div class="text-gray-600">{{ appt.time }}</div>
+              <div class="flex items-center gap-3 text-right">
+                <div class="text-gray-500 font-bold text-sm">{{ appt.date }}</div>
+                <div class="w-px h-4 bg-gray-300"></div>
+                <div class="text-gray-400 font-medium text-sm">{{ appt.time }}</div>
               </div>
             </div>
+          </div>
 
-            <div class="grid grid-cols-2 gap-4 max-w-md ml-auto pt-4">
-              <div>
+          <div class="px-5 py-3.5">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex items-center gap-6">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <span class="text-sm font-bold text-gray-600">{{ appt.pet }}</span>
+                </div>
+                <div class="w-px h-4 bg-gray-200"></div>
+                <div class="text-xs text-gray-500 font-medium">Mã: #{{ appt.id }}</div>
+              </div>
+
+              <div class="flex items-center gap-3">
                 <button
                   v-if="appt.status === 'completed'"
                   @click="viewResult(appt.id)"
-                  class="w-full px-6 py-3.5 bg-white border border-black/10 rounded-xl hover:bg-gray-50 transition font-semibold text-center"
+                  class="px-4 py-2 bg-white border border-teal-600 text-teal-600 rounded-lg hover:bg-teal-50 transition font-bold text-xs"
                 >
                   Xem kết quả
                 </button>
-              </div>
-              <div>
                 <button
                   v-if="appt.status !== 'cancelled'"
                   @click="rebook(appt.id)"
-                  class="w-full px-6 py-3.5 bg-white border border-black/10 rounded-xl hover:bg-gray-50 transition font-semibold text-center"
+                  class="px-4 py-2 bg-[#5A9690] text-white rounded-lg hover:bg-[#4a7d78] transition font-bold text-xs shadow-sm"
                 >
                   Đặt lại
                 </button>
@@ -469,52 +443,6 @@ const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000/api";
 const mapAppointment = (item) => {
   // item: LichHen with relations thuCung, dichVu, nhanVien, thanhToan
   const ngayGio = item.ngay_gio ? new Date(item.ngay_gio) : null;
-  const day = ngayGio ? String(ngayGio.getDate()).padStart(2, "0") : "";
-  const month = ngayGio ? String(ngayGio.getMonth() + 1).padStart(2, "0") : "";
-  const year = ngayGio ? ngayGio.getFullYear() : "";
-  const hours = ngayGio ? String(ngayGio.getHours()).padStart(2, "0") : "";
-  const minutes = ngayGio ? String(ngayGio.getMinutes()).padStart(2, "0") : "";
-
-  // Xử lý tên bác sĩ - ưu tiên nhiều trường hợp
-  let doctorName = "Chưa phân công";
-
-  if (item.nhanVien) {
-    // Backend trả về relation nhanVien (camelCase)
-    doctorName =
-      item.nhanVien.full_name ||
-      item.nhanVien.ho_ten ||
-      item.nhanVien.name ||
-      item.nhanVien.ten ||
-      `BS #${item.nhanVien.id}`;
-  } else if (item.nhan_vien) {
-    // Fallback: snake_case format
-    doctorName =
-      item.nhan_vien.full_name ||
-      item.nhan_vien.ho_ten ||
-      item.nhan_vien.name ||
-      item.nhan_vien.ten ||
-      `BS #${item.nhan_vien.id}`;
-  } else if (item.bacSi) {
-    // Fallback: có thể có trường bacSi
-    doctorName =
-      item.bacSi.full_name ||
-      item.bacSi.ho_ten ||
-      item.bacSi.name ||
-      `BS #${item.bacSi.id}`;
-  } else if (item.bac_si) {
-    // Fallback: snake_case bacSi
-    doctorName =
-      item.bac_si.full_name ||
-      item.bac_si.ho_ten ||
-      item.bac_si.name ||
-      `BS #${item.bac_si.id}`;
-  } else if (item.doctor_name || item.doctorName) {
-    // Fallback: có sẵn tên bác sĩ
-    doctorName = item.doctor_name || item.doctorName;
-  } else if (item.nhan_vien_id) {
-    // Có ID nhưng không có relation
-    doctorName = `Bác sĩ #${item.nhan_vien_id}`;
-  }
 
   return {
     id: item.id || item.ma || `LH${item.id}`,
@@ -525,8 +453,16 @@ const mapAppointment = (item) => {
       item.dich_vu?.ten ||
       item.dich_vu?.name ||
       "Dịch vụ",
-    date: ngayGio ? `${day}/${month}/${year}` : "",
-    time: ngayGio ? `${hours}:${minutes}` : "",
+    date: ngayGio
+      ? `${String(ngayGio.getDate()).padStart(2, "0")}/${String(
+          ngayGio.getMonth() + 1
+        ).padStart(2, "0")}/${ngayGio.getFullYear()}`
+      : "",
+    time: ngayGio
+      ? `${String(ngayGio.getHours()).padStart(2, "0")}:${String(
+          ngayGio.getMinutes()
+        ).padStart(2, "0")}`
+      : "",
     pet:
       item.thuCung?.ten_thu_cung ||
       item.thuCung?.ten ||
@@ -552,7 +488,6 @@ const mapAppointment = (item) => {
       : item.thuCung?.weight
       ? `${item.thuCung.weight} kg`
       : "-",
-    doctor: doctorName,
     clinic:
       item.dia_diem || item.clinic || "Phòng khám Petty - Chi nhánh Quận 1",
     address: item.dia_chi || "123 Nguyễn Huệ, Q.1, TP.HCM",

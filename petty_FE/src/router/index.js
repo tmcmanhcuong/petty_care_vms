@@ -101,11 +101,6 @@ const routes = [
           import("../components/Admin/TaiNguyen/QuanLyDichVu/index.vue"),
       },
       {
-        path: "kho-thuoc-vat-tu",
-        component: () =>
-          import("../components/Admin/TaiNguyen/QuanLyKhoThuocVatTu/index.vue"),
-      },
-      {
         path: "tai-khoan",
         component: () =>
           import("../components/Admin/NhanSu/QuanLyTaiKhoan/index.vue"),
@@ -116,24 +111,9 @@ const routes = [
           import("../components/Admin/NhanSu/QuanLyLichLamViec/index.vue"),
       },
       {
-        path: "quan-ly-lich-hen",
-        component: () =>
-          import("../components/Admin/VanHanh/QuanLyLichHen/index.vue"),
-      },
-      {
-        path: "ho-so-benh-an",
-        component: () =>
-          import("../components/Admin/VanHanh/HoSoBenhAn/index.vue"),
-      },
-      {
         path: "danh-sach-hoa-don",
         component: () =>
           import("../components/Admin/TaiChinhHoaDon/DanhSachHoaDon/index.vue"),
-      },
-      {
-        path: "phieu-chi",
-        component: () =>
-          import("../components/Admin/TaiChinhHoaDon/PhieuChi/index.vue"),
       },
       {
         path: "bai-viet",

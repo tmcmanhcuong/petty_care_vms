@@ -1,8 +1,9 @@
 <template>
-  <div class="min-h-screen max-w-5xl mx-auto md:px-6 sm:px-4">
-    <div
-      class="bg-teal-50 border text-teal-300 rounded-xl p-8 flex gap-3 mb-6 sm:p-4"
-    >
+  <div>
+    <div class="min-h-screen max-w-5xl mx-auto md:px-6 sm:px-4">
+      <div
+        class="bg-teal-50 border text-teal-300 rounded-xl p-8 flex gap-3 mb-6 sm:p-4"
+      >
       <HeartIcon class="w-7 h-7 text-teal-500 flex-shrink-0 mt-1" />
       <div>
         <p class="font-semibold text-base text-teal-900 mb-2">
@@ -163,10 +164,6 @@
               <div class="flex items-center gap-1">
                 <ClockIcon class="w-4 h-4 text-gray-500" />
                 <span>{{ appt.time }}</span>
-              </div>
-              <div class="flex items-center gap-1">
-                <HeartIcon class="w-4 h-4 text-gray-500" />
-                <span>{{ appt.doctor }}</span>
               </div>
             </div>
           </div>
@@ -349,6 +346,7 @@
     :selectedAppt="selectedAppointment"
     @close="closeAppointmentDetail"
   />
+  </div>
 </template>
 
 <script setup>
@@ -419,9 +417,6 @@ const mapAppointment = (item) => {
       : item.thuCung?.weight
       ? `${item.thuCung.weight} kg`
       : "-",
-    doctor: item.nhanVien
-      ? item.nhanVien.full_name || item.nhanVien.name
-      : "Chưa phân công",
     clinic:
       item.dia_diem || item.clinic || "Phòng khám Petty - Chi nhánh Quận 1",
     address: item.dia_chi || "123 Nguyễn Huệ, Q.1, TP.HCM",

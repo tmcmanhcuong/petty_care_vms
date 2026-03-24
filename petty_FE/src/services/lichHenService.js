@@ -159,9 +159,9 @@ export const deleteAppointment = async (id) => {
  * @param {number} id - Appointment ID
  * @returns {Promise}
  */
-export const checkInAppointment = async (id) => {
+export const checkInAppointment = async (id, payload = {}) => {
   try {
-    const response = await api.post(`/lich-hen/${id}/check-in`);
+    const response = await api.post(`/lich-hen/${id}/check-in`, payload);
     return response.data;
   } catch (error) {
     console.error("Error checking in appointment:", error);

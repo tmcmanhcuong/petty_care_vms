@@ -131,7 +131,7 @@ const router = useRouter();
 const route = useRoute();
 const toast = useToast();
 
-const rememberMe = ref(false);
+const rememberMe = ref(true);
 const isSubmitting = ref(false);
 const errors = ref({});
 

@@ -127,10 +127,7 @@
           </div>
 
           <!-- Bác sĩ phụ trách -->
-          <div
-            v-if="appointment?.nhan_vien"
-            class="flex items-start gap-3 pt-2 border-t border-blue-200"
-          >
+          <div class="flex items-start gap-3 pt-4 border-t border-blue-200">
             <svg
               class="w-5 h-5 text-[#009689] mt-0.5"
               fill="none"
@@ -145,48 +142,17 @@
               />
             </svg>
             <div class="flex-1">
-              <p class="font-nunito text-sm text-gray-600">Bác sĩ phụ trách</p>
-              <div class="flex items-center gap-2 mt-1">
-                <div
-                  class="w-8 h-8 rounded-full bg-[#009689] flex items-center justify-center"
-                >
-                  <span class="font-nunito font-semibold text-sm text-white">
-                    {{ appointment.nhan_vien.full_name?.charAt(0) || "BS" }}
-                  </span>
-                </div>
-                <div class="flex flex-col">
-                  <p class="font-nunito font-semibold text-base text-gray-900">
-                    {{ appointment.nhan_vien.full_name }}
-                  </p>
-                  <p class="font-nunito text-xs text-gray-500">
-                    {{ appointment.nhan_vien.vai_tro || "Bác sĩ" }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            v-else
-            class="flex items-start gap-3 pt-2 border-t border-blue-200"
-          >
-            <svg
-              class="w-5 h-5 text-amber-500 mt-0.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
-            <div class="flex-1">
-              <p class="font-nunito text-sm text-gray-600">Bác sĩ phụ trách</p>
-              <p class="font-nunito text-sm text-amber-600 italic mt-1">
-                Chưa được phân công bác sĩ
-              </p>
+              <p class="font-nunito text-sm text-gray-600 mb-2">Bác sĩ phụ trách</p>
+              <select
+                v-model="selectedDoctor"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#009689] focus:border-transparent font-nunito text-sm"
+                :disabled="loading"
+              >
+                <option value="">-- Vui lòng chọn bác sĩ --</option>
+                <option v-for="bs in doctors" :key="bs.id" :value="bs.id">
+                  {{ bs.full_name }}
+                </option>
+              </select>
             </div>
           </div>
         </div>
@@ -286,6 +252,7 @@
 import { ref, computed, watch, onUnmounted } from "vue";
 import { checkInAppointment } from "@/services/lichHenService";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import api from "@/utils/api";
 
 const props = defineProps({
   isOpen: {
@@ -303,6 +270,20 @@ const emit = defineEmits(["close", "success"]);
 const loading = ref(false);
 const currentTime = ref("");
 let timeInterval = null;
+
+const doctors = ref([]);
+const selectedDoctor = ref("");
+
+const fetchDoctors = async () => {
+  try {
+    const res = await api.get('/nhan-vien?vai_tro=bac_si');
+    if (res.data && res.data.status) {
+      doctors.value = res.data.data;
+    }
+  } catch (error) {
+    console.error("Failed to fetch doctors:", error);
+  }
+};
 
 // Update current time every second
 const updateCurrentTime = () => {
@@ -325,6 +306,8 @@ watch(
     if (newVal) {
       updateCurrentTime();
       timeInterval = setInterval(updateCurrentTime, 1000);
+      selectedDoctor.value = props.appointment?.nhan_vien_id || "";
+      if (doctors.value.length === 0) fetchDoctors();
     } else {
       if (timeInterval) {
         clearInterval(timeInterval);
@@ -374,7 +357,12 @@ const handleCheckIn = async () => {
   loading.value = true;
 
   try {
-    const response = await checkInAppointment(props.appointment.id);
+    const payload = {};
+    if (selectedDoctor.value) {
+      payload.nhan_vien_id = selectedDoctor.value;
+    }
+    
+    const response = await checkInAppointment(props.appointment.id, payload);
 
     if (response.status) {
       showSuccessToast(response.message || "Check-in thành công");

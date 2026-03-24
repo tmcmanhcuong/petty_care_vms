@@ -26,11 +26,6 @@ export const menuConfig = {
             label: "Quản lý Dịch vụ",
             path: "/admin/quan-ly-dich-vu",
           },
-          {
-            key: "khoThuocVatTu",
-            label: "Kho thuốc & Vật tư",
-            path: "/admin/kho-thuoc-vat-tu",
-          },
         ],
       },
       {
@@ -52,24 +47,6 @@ export const menuConfig = {
         ],
       },
       {
-        key: "vanHanh",
-        label: "Vận hành",
-        icon: "https://www.figma.com/api/mcp/asset/6413c5d7-d9de-47f7-adb1-60d9c6fc64f0",
-        type: "group",
-        children: [
-          {
-            key: "vanHanh_Item1",
-            label: "Quản lý lịch hẹn",
-            path: "/admin/quan-ly-lich-hen",
-          },
-          {
-            key: "vanHanh_Item2",
-            label: "Hồ sơ bệnh án",
-            path: "/admin/ho-so-benh-an",
-          },
-        ],
-      },
-      {
         key: "taiChinh",
         label: "Tài chính & Hóa đơn",
         icon: "https://www.figma.com/api/mcp/asset/78f6f448-fb75-4de8-a234-173bbebee868",
@@ -79,11 +56,6 @@ export const menuConfig = {
             key: "taiChinh_Item1",
             label: "Danh sách hóa đơn",
             path: "/admin/danh-sach-hoa-don",
-          },
-          {
-            key: "taiChinh_Item2",
-            label: "Phiếu chi",
-            path: "/admin/phieu-chi",
           },
         ],
       },
