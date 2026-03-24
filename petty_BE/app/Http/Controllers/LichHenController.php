@@ -16,7 +16,7 @@ class LichHenController extends Controller
     /**
      * Transform a single LichHen model to an array replacing khach_hang_id with khach_hang (full name).
      */
-    
+
     /**
      * Store a newly created appointment in storage.
      */
@@ -35,6 +35,7 @@ class LichHenController extends Controller
             // Nếu là khách hàng đặt lịch
             if ($user instanceof \App\Models\KhachHang) {
                 $data['khach_hang_id'] = $user->id;
+                $data['nguon_goc'] = 'online'; // Explicitly mark as online booking
 
                 // owner-check: ensure the pet belongs to the authenticated customer
                 $owns = ThuCung::where('id', $data['thu_cung_id'])
@@ -49,6 +50,7 @@ class LichHenController extends Controller
             }
             // Nếu là Admin/NhanVien tạo lịch hẹn (khach_hang_id phải có trong request)
             elseif ($user instanceof \App\Models\Admin || $user instanceof \App\Models\NhanVien) {
+                $data['nguon_goc'] = $data['nguon_goc'] ?? 'walk-in'; // Default to walk-in if not provided
                 if (empty($data['khach_hang_id'])) {
                     throw ValidationException::withMessages([
                         'khach_hang_id' => ['Vui lòng chọn khách hàng'],
@@ -432,7 +434,10 @@ class LichHenController extends Controller
             $lichHen->trang_thai = 'in-progress'; // Chuyển sang trạng thái chờ bác sĩ khám
             $lichHen->y_ta_checkin_id = $user->id; // Lưu ID y tá thực hiện check-in
 
-            // Không gán nhan_vien_id ở đây vì đó là ID bác sĩ, sẽ được gán khi bác sĩ bắt đầu khám
+            // Gán bác sĩ nếu được chọn
+            if ($request->has('nhan_vien_id')) {
+                $lichHen->nhan_vien_id = $request->nhan_vien_id;
+            }
 
             $lichHen->save();
 
@@ -633,8 +638,9 @@ class LichHenController extends Controller
                 $query->whereDate('thoi_gian_checkin', today());
             }
 
-            // Sắp xếp theo thời gian check-in (ai check-in trước khám trước)
-            $query->orderBy('thoi_gian_checkin', 'asc');
+            // Sắp xếp ưu tiên online trước, sau đó theo thời gian check-in ai check-in trước khám trước
+            $query->orderByRaw("CASE WHEN nguon_goc = 'online' THEN 1 ELSE 2 END")
+                  ->orderBy('thoi_gian_checkin', 'asc');
 
             // Pagination
             $perPage = (int) $request->get('per_page', 15);

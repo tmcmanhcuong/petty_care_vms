@@ -45,10 +45,8 @@
                 placeholder="Tên dịch vụ..."
                 class="w-full h-9 bg-[#f3f3f5] border !border-transparent rounded-lg pl-10 pr-3 py-1 text-sm text-[#717182] tracking-[-0.15px] focus:outline-none focus:ring-2 focus:ring-[#009689]"
               />
-              <img
-                src="https://www.figma.com/api/mcp/asset/92ec6ace-0d8c-427d-aacd-085d1827b45d"
-                alt="Search"
-                class="absolute left-3 top-2.5 w-4 h-4"
+              <Search
+                class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"
               />
             </div>
           </div>
@@ -207,10 +205,8 @@
                 {{ service.price }}
               </p>
               <div class="flex items-center gap-2 mb-4">
-                <img
-                  src="https://www.figma.com/api/mcp/asset/c030fbab-5df3-4c87-ba6f-0d643555cb35"
-                  alt="Clock"
-                  class="w-4 h-4"
+                <Clock
+                  class="w-4 h-4 text-green-600"
                 />
                 <span
                   class="text-sm text-[#4a5565] leading-5 tracking-[-0.15px]"
@@ -222,9 +218,7 @@
                 class="w-full h-9 bg-[#009689] text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 hover:bg-[#00897b] transition-colors"
                 @click="bookService(service)"
               >
-                <img
-                  src="https://www.figma.com/api/mcp/asset/ee60b6c3-a604-4e54-9faa-1a83b4d0a3eb"
-                  alt="Calendar"
+                <Calendar
                   class="w-4 h-4"
                 />
                 Đặt Lịch
@@ -250,10 +244,8 @@
               ]"
               @click="currentPage--"
             >
-              <img
-                src="https://www.figma.com/api/mcp/asset/2c4d9fc2-a1b7-4362-a80a-14e238d162d8"
-                alt="Previous"
-                class="w-4 h-4"
+              <ChevronLeft
+                class="w-4 h-4 text-gray-600"
               />
             </button>
 
@@ -281,10 +273,8 @@
               ]"
               @click="currentPage++"
             >
-              <img
-                src="https://www.figma.com/api/mcp/asset/5c0db1e8-f384-448d-ad40-1481c2e60e4b"
-                alt="Next"
-                class="w-4 h-4"
+              <ChevronRight
+                class="w-4 h-4 text-gray-600"
               />
             </button>
           </div>
@@ -295,8 +285,17 @@
 </template>
 
 <script>
+import { Search, Clock, Calendar, ChevronLeft, ChevronRight } from 'lucide-vue-next';
+
 export default {
   name: "DichVu",
+  components: {
+    Search,
+    Clock,
+    Calendar,
+    ChevronLeft,
+    ChevronRight
+  },
   data() {
     return {
       searchQuery: "",

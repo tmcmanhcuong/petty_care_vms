@@ -33,10 +33,11 @@
 
     <!-- Navigation Section -->
     <div class="flex-1 w-64 min-h-0 pt-4 overflow-y-auto" data-simplebar>
-      <template v-for="item in menuData.menuItems" :key="item.key">
+      <template v-for="item in menuData.menuItems">
         <!-- Single Menu Item (no children) -->
         <router-link
           v-if="item.type === 'single'"
+          :key="`single-${item.key}`"
           :to="item.path"
           class="flex h-12 items-center justify-between pl-2 pr-6 cursor-pointer transition-colors"
           :class="
@@ -78,6 +79,7 @@
         <!-- Group Menu Item (with children) -->
         <template v-else-if="item.type === 'group'">
           <div
+            :key="`group-header-${item.key}`"
             class="flex h-12 items-center justify-between pl-2 pr-6 cursor-pointer hover:bg-[#3a6664] transition-colors"
             :class="{ 'bg-[#3a6664]': openSubmenus[item.key] }"
             @click="toggleSubmenu(item.key)"
@@ -111,6 +113,7 @@
           <!-- Submenu Items -->
           <div
             v-show="openSubmenus[item.key]"
+            :key="`group-submenu-${item.key}`"
             class="flex flex-col bg-[#264a48] w-full transition-all duration-300 ease-in-out"
           >
             <router-link

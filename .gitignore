@@ -55,6 +55,9 @@ petty_FE/*.sln
 petty_FE/*.sw?
 
 # Extra configuration & tools
-.agent/
+.agents/
 .github/
+.gemini/
 openspec/
+GEMINI.md
+skills-lock.json

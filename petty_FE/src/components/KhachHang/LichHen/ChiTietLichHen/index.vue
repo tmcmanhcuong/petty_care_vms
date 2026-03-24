@@ -90,33 +90,6 @@
           </div>
         </section>
 
-        <!-- Bác sĩ -->
-        <section>
-          <div class="flex items-center gap-3 mb-3">
-            <svg class="w-5 h-5" viewBox="0 0 20 20" fill="none">
-              <path
-                d="M16 18v-1a4 4 0 00-4-4H8a4 4 0 00-4 4v1M12 6a4 4 0 11-8 0 4 4 0 018 0z"
-                stroke="#12a594"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <h3 class="font-semibold">Bác sĩ phụ trách</h3>
-          </div>
-          <div class="bg-white rounded-xl p-4 flex items-center gap-4">
-            <div
-              class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 font-semibold text-xl"
-            >
-              {{ selectedAppt.doctor.split(" ").pop()[0] }}
-            </div>
-            <div>
-              <p class="font-medium">{{ selectedAppt.doctor }}</p>
-              <p class="text-gray-500 font-medium">Nội khoa thú y</p>
-            </div>
-          </div>
-        </section>
-
         <!-- Ngày giờ khám -->
         <section>
           <div class="flex items-center gap-3 mb-3">

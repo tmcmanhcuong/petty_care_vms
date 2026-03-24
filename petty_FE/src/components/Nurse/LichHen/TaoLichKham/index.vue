@@ -75,15 +75,15 @@
                   </label>
                   <span class="text-sm font-medium text-red-600"> * </span>
                 </div>
-                <button
-                  class="bg-white border !border-gray-300 rounded-lg px-3 py-2.5 h-11 flex items-center justify-between hover:border-[#009689] transition-colors"
-                  @click="toggleDoctorDropdown"
+                <select
+                  v-model="selectedDoctor"
+                  class="bg-white border !border-gray-300 rounded-lg px-3 py-2.5 h-11 focus:outline-none focus:ring-2 focus:ring-[#009689] focus:border-transparent text-sm w-full"
                 >
-                  <span class="text-sm text-black">
-                    {{ selectedDoctor || "BS. Hùng - P.102" }}
-                  </span>
-                  <!-- <img :src="iconChevronDown" alt="Dropdown" class="w-4 h-4" /> -->
-                </button>
+                  <option value="">-- Vui lòng chọn Bác sĩ --</option>
+                  <option v-for="bs in doctors" :key="bs.id" :value="bs.id">
+                    {{ bs.full_name }}
+                  </option>
+                </select>
                 <div class="flex items-center gap-1">
                   <!-- <img :src="iconInfo" alt="Info" class="w-3 h-3" /> -->
                   <p class="text-xs text-gray-600">
@@ -120,6 +120,7 @@
 
 <script setup>
 import { ref, watch, nextTick } from "vue";
+import api from "@/utils/api";
 
 // Props
 const props = defineProps({
@@ -148,13 +149,26 @@ const iconCheck =
 const searchInput = ref(null);
 const searchQuery = ref("");
 const selectedService = ref("Khám tổng quát");
-const selectedDoctor = ref("BS. Hùng - P.102");
+const selectedDoctor = ref("");
+const doctors = ref([]);
+
+const fetchDoctors = async () => {
+  try {
+    const res = await api.get('/nhan-vien?vai_tro=bac_si');
+    if (res.data && res.data.status) {
+      doctors.value = res.data.data;
+    }
+  } catch (error) {
+    console.error("Failed to fetch doctors:", error);
+  }
+};
 
 // Watch for modal open to auto-focus
 watch(
   () => props.isOpen,
   (newVal) => {
     if (newVal) {
+      if (doctors.value.length === 0) fetchDoctors();
       nextTick(() => {
         searchInput.value?.focus();
       });
@@ -162,7 +176,7 @@ watch(
       // Reset form when modal closes
       searchQuery.value = "";
       selectedService.value = "Khám tổng quát";
-      selectedDoctor.value = "BS. Hùng - P.102";
+      selectedDoctor.value = "";
     }
   }
 );
@@ -183,8 +197,7 @@ const toggleServiceDropdown = () => {
 };
 
 const toggleDoctorDropdown = () => {
-  console.log("Toggle doctor dropdown");
-  // TODO: Implement doctor/room selection dropdown
+  // Deprecated since we use native select
 };
 
 const handleSubmit = () => {
@@ -196,7 +209,7 @@ const handleSubmit = () => {
   const appointmentData = {
     searchQuery: searchQuery.value,
     service: selectedService.value,
-    doctor: selectedDoctor.value,
+    nhan_vien_id: selectedDoctor.value, // Passed to server to assign to doctor
   };
 
   console.log("Submit appointment:", appointmentData);

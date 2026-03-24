@@ -19,10 +19,14 @@ class NhanVienController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
         // Return all employees. Consider adding pagination if dataset grows.
-        $nhanViens = NhanVien::all();
+        $query = NhanVien::query();
+        if ($request->has('vai_tro')) {
+            $query->where('vai_tro', $request->vai_tro);
+        }
+        $nhanViens = $query->get();
 
         return response()->json([
             'status' => true,
