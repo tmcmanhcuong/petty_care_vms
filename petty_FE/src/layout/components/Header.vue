@@ -119,7 +119,7 @@ const route = useRoute();
 const props = defineProps({
   title: {
     type: String,
-    default: "Dashboard",
+    default: "dashboard",
   },
   // Optional user prop; if not provided we'll prefer the stored auth_user
   user: {
