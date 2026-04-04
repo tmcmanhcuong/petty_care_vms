@@ -33,7 +33,7 @@
 
       <!-- Dịch Vụ -->
       <router-link
-        to="/dich-vu"
+        to="/services"
         class="flex items-center px-2.5 py-1.5 font-['Nunito_Sans'] font-bold text-base leading-5 text-gray-500 rounded-md transition-all duration-200 hover:text-black whitespace-nowrap"
         active-class="!text-[#222831] !font-black"
       >
@@ -51,7 +51,7 @@
 
       <!-- Liên Hệ -->
       <router-link
-        to="/lien-he"
+        to="/contact"
         class="flex items-center px-2.5 py-1.5 font-['Nunito_Sans'] font-bold text-base leading-5 text-gray-500 rounded-md transition-all duration-200 hover:text-black whitespace-nowrap"
         active-class="!text-[#222831] !font-black"
       >
@@ -202,7 +202,7 @@
             <ul class="divide-y">
               <li
                 class="px-3 py-2 hover:bg-gray-50 cursor-pointer"
-                @click="navigateTo('/khach-hang/trang-cua-toi')"
+                @click="navigateTo('/customer/my-account')"
               >
                 <div class="flex items-center gap-3">
                   <div
@@ -215,7 +215,7 @@
               </li>
               <li
                 class="px-3 py-2 hover:bg-gray-50 cursor-pointer"
-                @click="navigateTo('/khach-hang/quan-ly-thong-tin-ca-nhan')"
+                @click="navigateTo('/customer/personal-info')"
               >
                 <div class="flex items-center gap-3">
                   <div
@@ -228,7 +228,7 @@
               </li>
               <li
                 class="px-3 py-2 hover:bg-gray-50 cursor-pointer"
-                @click="navigateTo('/khach-hang/thu-cung-cua-toi')"
+                @click="navigateTo('/customer/my-pets')"
               >
                 <div class="flex items-center gap-3">
                   <div
@@ -241,7 +241,7 @@
               </li>
               <li
                 class="px-3 py-2 hover:bg-gray-50 cursor-pointer"
-                @click="navigateTo('/khach-hang/lich-hen')"
+                @click="navigateTo('/customer/appointments')"
               >
                 <div class="flex items-center gap-3">
                   <div
@@ -254,7 +254,7 @@
               </li>
               <li
                 class="px-3 py-2 hover:bg-gray-50 cursor-pointer"
-                @click="navigateTo('/khach-hang/thanh-toan')"
+                @click="navigateTo('/customer/payment')"
               >
                 <div class="flex items-center gap-3">
                   <div
@@ -269,7 +269,7 @@
               </li>
               <li
                 class="px-3 py-2 hover:bg-gray-50 cursor-pointer"
-                @click="navigateTo('/khach-hang/tro-giup-lien-he')"
+                @click="navigateTo('/customer/help-contact')"
               >
                 <div class="flex items-center gap-3">
                   <div
@@ -299,13 +299,13 @@
       </template>
       <template v-else>
         <!-- Đăng Ký Button -->
-        <router-link to="/khach-hang/dang-ky" v-slot="{ isActive }" custom>
+        <router-link to="/customer/register" v-slot="{ isActive }" custom>
           <div
             :class="[
               'flex items-center gap-1.5 p-1.5 font-[\'Nunito Sans\'] font-bold text-sm leading-5 rounded-md transition-all duration-200 hover:bg-slate-50 hover:text-black cursor-pointer group',
               isActive ? '!bg-white !text-black' : 'text-gray-500',
             ]"
-            @click="$router.push('/khach-hang/dang-ky')"
+            @click="$router.push('/customer/register')"
           >
             <Register
               :class="[
@@ -320,13 +320,13 @@
         </router-link>
 
         <!-- Đăng Nhập Button -->
-        <router-link to="/khach-hang/dang-nhap" v-slot="{ isActive }" custom>
+        <router-link to="/customer/login" v-slot="{ isActive }" custom>
           <div
             :class="[
               'flex items-center gap-1.5 p-1.5 font-[\'Nunito Sans\'] font-bold text-sm leading-5 rounded-md transition-all duration-200 hover:bg-slate-50 hover:text-black cursor-pointer group',
               isActive ? '!bg-white !text-black' : 'text-gray-500',
             ]"
-            @click="$router.push('/khach-hang/dang-nhap')"
+            @click="$router.push('/customer/login')"
           >
             <LogIn
               :class="[
@@ -357,7 +357,7 @@
           Trang Chủ
         </router-link>
         <router-link
-          to="/dich-vu"
+          to="/services"
           class="px-4 py-3 font-['Nunito_Sans'] font-bold text-base text-gray-700 rounded-md transition-colors hover:bg-[#d4d4d8]"
           @click="mobileMenuOpen = false"
         >
@@ -371,7 +371,7 @@
           Giới Thiệu
         </router-link>
         <router-link
-          to="/lien-he"
+          to="/contact"
           class="px-4 py-3 font-['Nunito_Sans'] font-bold text-base text-gray-700 rounded-md transition-colors hover:bg-[#d4d4d8]"
           @click="mobileMenuOpen = false"
         >
@@ -400,13 +400,13 @@
           </template>
           <template v-else>
             <router-link
-              to="/khach-hang/dang-ky"
+              to="/customer/register"
               class="flex items-center gap-2 px-4 py-3 font-['DM_Sans'] font-semibold text-sm text-gray-600 transition-colors rounded-md hover:bg-[#d4d4d8]"
               @click="mobileMenuOpen = false"
               >Đăng Ký</router-link
             >
             <router-link
-              to="/khach-hang/dang-nhap"
+              to="/customer/login"
               class="flex items-center gap-2 px-4 py-3 font-['DM_Sans'] font-semibold text-sm text-gray-600 transition-colors rounded-md hover:bg-[#d4d4d8]"
               @click="mobileMenuOpen = false"
               >Đăng Nhập</router-link
@@ -455,7 +455,7 @@ onUnmounted(() => {
 
 // --- auth-aware UI ---
 import { useRouter } from "vue-router";
-import { getUser, logout } from "../../utils/auth";
+import { getUser, clearAuth } from "../../utils/auth";
 
 const router = useRouter();
 
@@ -604,12 +604,17 @@ const navigateTo = (path) => {
 };
 
 const handleLogout = () => {
-  logout(router);
+  clearAuth();
+  user.value = null;
+  dropdownOpen.value = false;
+  router.replace("/");
 };
 
 const handleMobileLogout = () => {
-  handleLogout();
+  clearAuth();
+  user.value = null;
   mobileMenuOpen.value = false;
+  router.replace("/");
 };
 
 const onBellClick = () => {
