@@ -1,20 +1,20 @@
-import { createRouter, createWebHistory } from "vue-router"; // cài vue-router: npm install vue-router@next --save
+import { createRouter, createWebHistory } from "vue-router";
 import { getToken } from "../utils/auth";
 
 const routes = [
-  /********************** Trang Chủ ************************* */
+  /********************** Home ************************* */
   {
     path: "/",
     component: () => import("../components/trangchu/index.vue"),
     meta: { layout: "trangchu" },
   },
   {
-    path: "/dich-vu",
+    path: "/services",
     component: () => import("../components/trangchu/dichvu/index.vue"),
     meta: { layout: "main" },
   },
   {
-    path: "/lien-he",
+    path: "/contact",
     component: () => import("../components/trangchu/Contact/index.vue"),
     meta: { layout: "main" },
   },
@@ -23,15 +23,16 @@ const routes = [
     component: () => import("../components/trangchu/AboutUs/index.vue"),
     meta: { layout: "main" },
   },
-  /********************** Khách Hàng ************************* */
+
+  /********************** Customer ************************* */
   {
-    path: "/khach-hang/dang-ky",
-    component: () => import("../components/KhachHang/DangKi/index.vue"),
+    path: "/customer/register",
+    component: () => import("../views/customer/register/index.vue"),
     meta: { layout: "dangki_dangnhap" },
   },
   {
-    path: "/khach-hang/dang-nhap",
-    component: () => import("../components/KhachHang/DangNhap/index.vue"),
+    path: "/customer/login",
+    component: () => import("../views/customer/login/index.vue"),
     meta: { layout: "dangki_dangnhap" },
   },
   {
@@ -40,156 +41,141 @@ const routes = [
     meta: { layout: "dangki_dangnhap" },
   },
   {
-    path: "/khach-hang/trang-cua-toi",
-    component: () => import("../components/KhachHang/QuanLyTaiKhoan/index.vue"),
+    path: "/customer/my-account",
+    component: () => import("../views/customer/account-management/index.vue"),
     meta: { layout: "dangki_dangnhap", requiresAuth: true },
   },
   {
-    path: "/khach-hang/quan-ly-thong-tin-ca-nhan",
-    component: () =>
-      import("../components/KhachHang/QuanLyThongTinCaNhan/index.vue"),
+    path: "/customer/personal-info",
+    component: () => import("../views/customer/personal-info/index.vue"),
     meta: { layout: "dangki_dangnhap", requiresAuth: true },
   },
   {
-    path: "/khach-hang/tro-giup-lien-he",
-    component: () => import("../components/KhachHang/TroGiupLienHe/index.vue"),
+    path: "/customer/help-contact",
+    component: () => import("../views/customer/help-contact/index.vue"),
     meta: { layout: "dangki_dangnhap", requiresAuth: true },
   },
   {
-    path: "/khach-hang/thanh-toan",
-    component: () => import("../components/KhachHang/ThanhToan/index.vue"),
+    path: "/customer/payment",
+    component: () => import("../views/customer/payment/index.vue"),
     meta: { layout: "dangki_dangnhap", requiresAuth: true },
   },
   {
-    path: "/khach-hang/lich-hen",
-    component: () => import("../components/KhachHang/LichHen/index.vue"),
+    path: "/customer/appointments",
+    component: () => import("../views/customer/appointment/index.vue"),
     meta: { layout: "dangki_dangnhap", requiresAuth: true },
   },
   {
-    path: "/khach-hang/thu-cung-cua-toi",
-    component: () => import("../components/KhachHang/ThuCungCuaToi/index.vue"),
+    path: "/customer/my-pets",
+    component: () => import("../views/customer/my-pets/index.vue"),
     meta: { layout: "dangki_dangnhap", requiresAuth: true },
   },
 
-  //********************** Admin ************************* */
+  /********************** Admin ************************* */
   {
-    path: "/admin/dang-nhap",
-    component: () => import("../components/Admin/DangNhap/index.vue"),
+    path: "/admin/login",
+    component: () => import("../views/admin/login/index.vue"),
     meta: { layout: "dangki_dangnhap" },
   },
 
-  //********************** Nhân Viên ************************* */
+  /********************** Staff ************************* */
   {
-    path: "/nhan-vien/dang-nhap",
-    component: () => import("../components/NhanVien/DangNhap/index.vue"),
+    path: "/staff/login",
+    component: () => import("../views/staff/login/index.vue"),
     meta: { layout: "dangki_dangnhap" },
   },
 
   {
     path: "/admin",
     component: () => import("../layout/wrapper/AdminLayout.vue"),
-    // Require auth for admin area so we redirect to admin login before components mount
     meta: { requiresAuth: true, adminOnly: true },
     children: [
       {
         path: "dashboard",
-        component: () => import("../components/Admin/Dashboard/index.vue"),
+        component: () => import("../views/admin/dashboard/index.vue"),
       },
       {
-        path: "quan-ly-dich-vu",
+        path: "service-management",
         component: () =>
-          import("../components/Admin/TaiNguyen/QuanLyDichVu/index.vue"),
+          import("../views/admin/resource/service-management/index.vue"),
       },
       {
-        path: "tai-khoan",
+        path: "account-management",
         component: () =>
-          import("../components/Admin/NhanSu/QuanLyTaiKhoan/index.vue"),
+          import("../views/admin/personnel/account-management/index.vue"),
       },
       {
-        path: "lich-lam-viec",
+        path: "schedule-management",
         component: () =>
-          import("../components/Admin/NhanSu/QuanLyLichLamViec/index.vue"),
+          import("../views/admin/personnel/schedule-management/index.vue"),
       },
       {
-        path: "danh-sach-hoa-don",
+        path: "invoice-list",
         component: () =>
-          import("../components/Admin/TaiChinhHoaDon/DanhSachHoaDon/index.vue"),
+          import("../views/admin/finance-invoice/invoice-list/index.vue"),
       },
       {
-        path: "bai-viet",
+        path: "posts",
         component: () =>
-          import("../components/Admin/TruyenThong/BaiViet/index.vue"),
+          import("../views/admin/communication/post/index.vue"),
       },
       {
-        path: "bai-viet/them-moi",
+        path: "posts/create",
         component: () =>
-          import(
-            "../components/Admin/TruyenThong/BaiViet/ThemBaiMoi/index.vue"
-          ),
+          import("../views/admin/communication/post/add-new-post/index.vue"),
       },
       {
-        path: "bai-viet/chinh-sua/:id",
+        path: "posts/edit/:id",
         component: () =>
-          import(
-            "../components/Admin/TruyenThong/BaiViet/ChinhSuaBaiViet/index.vue"
-          ),
+          import("../views/admin/communication/post/edit-post/index.vue"),
       },
       {
-        path: "khuyen-mai",
+        path: "promotions",
         component: () =>
-          import("../components/Admin/TruyenThong/KhuyenMai/index.vue"),
+          import("../views/admin/communication/promotion/index.vue"),
       },
       {
-        path: "khuyen-mai/them-moi",
+        path: "promotions/create",
         component: () =>
-          import(
-            "../components/Admin/TruyenThong/KhuyenMai/TaoKhuyenMai/index.vue"
-          ),
+          import("../views/admin/communication/promotion/create-promotion/index.vue"),
       },
       {
-        path: "khuyen-mai/chinh-sua/:id",
+        path: "promotions/edit/:id",
         component: () =>
-          import(
-            "../components/Admin/TruyenThong/KhuyenMai/ChinhSuaKhuyenMai/index.vue"
-          ),
+          import("../views/admin/communication/promotion/edit-promotion/index.vue"),
       },
       {
-        path: "bao-cao-doanh-thu",
+        path: "report/revenue",
         component: () =>
-          import("../components/Admin/BaoCao/DoanhThu/index.vue"),
+          import("../views/admin/report/revenue/index.vue"),
       },
       {
-        path: "bao-cao-hieu-suat",
+        path: "report/performance",
         component: () =>
-          import("../components/Admin/BaoCao/HieuSuat/index.vue"),
+          import("../views/admin/report/performance/index.vue"),
       },
       {
-        path: "bao-cao-thuoc-vat-tu",
+        path: "report/inventory",
         component: () =>
-          import("../components/Admin/BaoCao/KhoThuoc&VatTu/index.vue"),
+          import("../views/admin/report/inventory/index.vue"),
       },
       {
-        path: "cau-hinh",
-        component: () => import("../components/Admin/CauHinh/index.vue"),
+        path: "configuration",
+        component: () => import("../views/admin/configuration/index.vue"),
       },
       {
-        path: "phan-quyen",
+        path: "permissions",
         component: () =>
-          import("../components/Admin/CauHinh/PhanQuyen/index.vue"),
+          import("../views/admin/configuration/permissions/index.vue"),
       },
       {
-        path: "trang-ca-nhan",
-        component: () => import("../components/Admin/TrangCaNhan/index.vue"),
+        path: "profile",
+        component: () => import("../views/admin/profile/index.vue"),
       },
     ],
   },
 
-  //********************** Bác Sĩ ************************* */
-  // {
-  //   path: "/doctor/dang-nhap",
-  //   component: () => import("../components/Admin/DangNhap/index.vue"),
-  //   meta: { layout: "dangki_dangnhap" },
-  // },
+  /********************** Doctor ************************* */
   {
     path: "/doctor",
     component: () => import("../layout/wrapper/DoctorLayout.vue"),
@@ -197,48 +183,47 @@ const routes = [
     children: [
       {
         path: "dashboard",
-        component: () => import("../components/Doctor/Dashboard/index.vue"),
+        component: () => import("../views/doctor/dashboard/index.vue"),
       },
       {
-        path: "lich-kham",
-        component: () => import("../components/Doctor/LichKham/index.vue"),
+        path: "appointments",
+        component: () => import("../views/doctor/appointment/index.vue"),
       },
       {
-        path: "lich-kham/phieu-kham/:id",
+        path: "appointments/examination/:id",
         component: () =>
-          import("../components/Doctor/LichKham/PhieuKhamBenh/index.vue"),
+          import("../views/doctor/appointment/examination-form/index.vue"),
         props: true,
       },
       {
-        path: "benh-an",
-        component: () => import("../components/Doctor/HoSoBenhAn/index.vue"),
+        path: "medical-records",
+        component: () => import("../views/doctor/medical-record/index.vue"),
       },
       {
-        path: "benh-an/chi-tiet",
+        path: "medical-records/detail",
         component: () =>
-          import("../components/Doctor/HoSoBenhAn/ChiTietHoSoBA/index.vue"),
+          import("../views/doctor/medical-record/medical-record-detail/index.vue"),
       },
       {
-        path: "can-lam-sang",
-        component: () => import("../components/Doctor/CanLamSang/index.vue"),
+        path: "clinical-testing",
+        component: () => import("../views/doctor/clinical-testing/index.vue"),
       },
       {
-        path: "kho-thuoc",
-        component: () => import("../components/Doctor/KhoThuoc/index.vue"),
+        path: "pharmacy",
+        component: () => import("../views/doctor/pharmacy/index.vue"),
       },
       {
-        path: "trang-ca-nhan",
-        component: () => import("../components/Doctor/TrangCaNhan/index.vue"),
+        path: "profile",
+        component: () => import("../views/doctor/profile/index.vue"),
       },
       {
-        path: "lich-lam-viec",
-        component: () => import("../components/Doctor/LichLamViec/index.vue"),
+        path: "schedule",
+        component: () => import("../views/doctor/schedule/index.vue"),
       },
     ],
   },
-  //********************** Bác Sĩ ************************* */s
 
-  //********************** Y Tá ************************* */
+  /********************** Nurse ************************* */
   {
     path: "/nurse",
     component: () => import("../layout/wrapper/NurseLayout.vue"),
@@ -246,35 +231,35 @@ const routes = [
     children: [
       {
         path: "dashboard",
-        component: () => import("../components/Nurse/Dashboard/index.vue"),
+        component: () => import("../views/nurse/dashboard/index.vue"),
       },
       {
-        path: "lich-hen",
-        component: () => import("../components/Nurse/LichHen/index.vue"),
+        path: "appointments",
+        component: () => import("../views/nurse/appointment/index.vue"),
       },
       {
-        path: "khach-hang",
-        component: () => import("../components/Nurse/KhachHang/index.vue"),
+        path: "customers",
+        component: () => import("../views/nurse/customer/index.vue"),
       },
       {
-        path: "hoa-don",
-        component: () => import("../components/Nurse/HoaDon/index.vue"),
+        path: "invoices",
+        component: () => import("../views/nurse/invoice/index.vue"),
       },
       {
-        path: "lich-lam-viec",
-        component: () => import("../components/Nurse/LichLamViec/index.vue"),
+        path: "schedule",
+        component: () => import("../views/nurse/schedule/index.vue"),
       },
       {
-        path: "kho-thuoc-vat-tu",
-        component: () => import("../components/Nurse/KhoThuocVatTu/index.vue"),
+        path: "inventory",
+        component: () => import("../views/nurse/inventory/index.vue"),
       },
       {
-        path: "trang-ca-nhan",
-        component: () => import("../components/Nurse/TrangCaNhan/index.vue"),
+        path: "profile",
+        component: () => import("../views/nurse/profile/index.vue"),
       },
       {
-        path: "phieu-chi",
-        component: () => import("../components/Nurse/PhieuChi/index.vue"),
+        path: "expense-vouchers",
+        component: () => import("../views/nurse/expense-voucher/index.vue"),
       },
     ],
   },
@@ -285,35 +270,20 @@ const router = createRouter({
   routes: routes,
 });
 
-// Global navigation guard: redirect to login when a route requires auth
-// router.beforeEach((to, from, next) => {
-//   const token = getToken();
-//   const requiresAuth = to.matched.some(
-//     (record) => record.meta && record.meta.requiresAuth
-//   );
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth) {
+    let role = "customer";
+    if (to.path.startsWith("/admin")) role = "admin";
+    else if (to.path.startsWith("/doctor") || to.path.startsWith("/nurse") || to.path.startsWith("/staff") || to.path.startsWith("/receptionist") || to.path.startsWith("/assistant")) role = "staff";
 
-//   if (requiresAuth && !token) {
-//     // If any matched record is admin-only, redirect to admin login first
-//     const isAdminRoute = to.matched.some(
-//       (record) => record.meta && record.meta.adminOnly
-//     );
-
-//     if (isAdminRoute) {
-//       next({ path: "/admin/dang-nhap", query: { redirect: to.fullPath } });
-//       return;
-//     }
-
-//     // If route is for employees (doctor, nurse), redirect to employee login
-//     if (to.path.startsWith("/doctor") || to.path.startsWith("/nurse")) {
-//       next({ path: "/nhan-vien/dang-nhap", query: { redirect: to.fullPath } });
-//       return;
-//     }
-
-//     // Default: redirect to customer login
-//     next({ path: "/khach-hang/dang-nhap", query: { redirect: to.fullPath } });
-//     return;
-//   }
-//   next();
-// });
+    const token = getToken(role);
+    if (!token) {
+      if (role === "admin") return next({ path: "/admin/login", query: { redirect: to.fullPath } });
+      if (role === "staff") return next({ path: "/staff/login", query: { redirect: to.fullPath } });
+      return next({ path: "/customer/login", query: { redirect: to.fullPath } });
+    }
+  }
+  next();
+});
 
 export default router;
