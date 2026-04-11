@@ -57,43 +57,136 @@ class LichHenSeeder extends Seeder
         $lichHenInserts  = [];
         $phieuKhamInserts = [];
 
-        $trangThais = ['completed', 'completed', 'completed', 'confirmed', 'pending'];
-
         foreach ($thuCungs as $i => $pet) {
             $kh        = $pet->khach_hang_id;
             $nhanVien  = $nhanViens[$i % count($nhanViens)];
             $ngayKham1 = Carbon::now()->subDays(rand(5, 60));
             $ngayKham2 = Carbon::now()->subDays(rand(1, 4));
 
-            // Lịch hẹn 1 (cũ hơn)
+            // Lấy giá dịch vụ
+            $dichVu = DichVu::find($dichVuId);
+            $giaCoSo = $dichVu && $dichVu->gia ? $dichVu->gia : 200000;
+            $giaDichVu1 = $giaCoSo + rand(-50000, 50000);
+            $giaDichVu2 = $giaCoSo + rand(-30000, 100000);
+
+            // Lịch hẹn 1 (cũ hơn) - Đã hoàn thành và đã thanh toán
             $lichHenInserts[] = [
                 'ngay_gio'               => $ngayKham1,
-                'trang_thai'             => 'completed',
+                'trang_thai'             => 'hoan_thanh',
                 'khach_hang_id'          => $kh,
                 'thu_cung_id'            => $pet->id,
                 'nhan_vien_id'           => $nhanVien,
                 'dich_vu_id'             => $dichVuId,
                 'thoi_gian_hoan_thanh'   => $ngayKham1->copy()->addHour(),
+                'tong_tien'              => $giaDichVu1,
+                'da_thanh_toan'          => true,
+                'phuong_thuc_thanh_toan' => 'cash',
+                'thoi_gian_thanh_toan'   => $ngayKham1->copy()->addHours(2),
                 'ghi_chu'                => null,
                 'nguon_goc'              => 'online',
                 'created_at'             => $ngayKham1,
                 'updated_at'             => $ngayKham1,
             ];
 
-            // Lịch hẹn 2 (gần đây)
+            // Lịch hẹn 2 (gần đây) - Đã xác nhận, đã thanh toán trước
             $lichHenInserts[] = [
                 'ngay_gio'               => $ngayKham2,
-                'trang_thai'             => 'completed',
+                'trang_thai'             => 'da_xac_nhan',
                 'khach_hang_id'          => $kh,
                 'thu_cung_id'            => $pet->id,
                 'nhan_vien_id'           => $nhanVien,
                 'dich_vu_id'             => $dichVuId,
-                'thoi_gian_hoan_thanh'   => $ngayKham2->copy()->addHour(),
+                'thoi_gian_hoan_thanh'   => null,
+                'tong_tien'              => $giaDichVu2,
+                'da_thanh_toan'          => true,
+                'phuong_thuc_thanh_toan' => 'momo',
+                'thoi_gian_thanh_toan'   => $ngayKham2->copy()->subHours(2),
                 'ghi_chu'                => null,
                 'nguon_goc'              => 'online',
                 'created_at'             => $ngayKham2,
                 'updated_at'             => $ngayKham2,
             ];
+        }
+
+        // Thêm một vài lịch hẹn chưa thanh toán cho khách hàng đầu tiên
+        if (!empty($khachHangs) && !empty($thuCungs)) {
+            $firstCustomer = $khachHangs[0];
+            $firstPet = $thuCungs->first();
+            $dichVu = DichVu::find($dichVuId);
+            $giaDichVu = $dichVu && $dichVu->gia ? $dichVu->gia : 250000;
+
+            // Lịch hẹn chờ xác nhận - chưa thanh toán
+            $lichHenInserts[] = [
+                'ngay_gio'               => Carbon::now()->addDays(3),
+                'trang_thai'             => 'cho_xac_nhan',
+                'khach_hang_id'          => $firstCustomer,
+                'thu_cung_id'            => $firstPet->id,
+                'nhan_vien_id'           => $nhanViens[0],
+                'dich_vu_id'             => $dichVuId,
+                'thoi_gian_hoan_thanh'   => null,
+                'tong_tien'              => $giaDichVu,
+                'da_thanh_toan'          => false,
+                'phuong_thuc_thanh_toan' => null,
+                'thoi_gian_thanh_toan'   => null,
+                'ghi_chu'                => 'Cần thanh toán trước khi khám',
+                'nguon_goc'              => 'online',
+                'created_at'             => Carbon::now(),
+                'updated_at'             => Carbon::now(),
+            ];
+
+            // Thêm thêm lịch hẹn cho tất cả khách hàng để đảm bảo mọi người đều có dữ liệu
+            foreach ($khachHangs as $khId) {
+                $petForKh = ThuCung::where('khach_hang_id', $khId)->first();
+                if (!$petForKh) {
+                    // Tạo thú cưng mới nếu khách hàng chưa có
+                    $petForKh = ThuCung::create([
+                        'ten_thu_cung' => 'Pet_' . $khId,
+                        'loai' => 'cho',
+                        'giong' => 'Mixed',
+                        'tuoi' => rand(1, 10),
+                        'can_nang' => rand(5, 30),
+                        'gioi_tinh' => rand(0, 1) ? 'duc' : 'cai',
+                        'khach_hang_id' => $khId,
+                    ]);
+                }
+
+                // Tạo 2 lịch hẹn cho mỗi khách hàng
+                $lichHenInserts[] = [
+                    'ngay_gio'               => Carbon::now()->subDays(rand(10, 30)),
+                    'trang_thai'             => 'hoan_thanh',
+                    'khach_hang_id'          => $khId,
+                    'thu_cung_id'            => $petForKh->id,
+                    'nhan_vien_id'           => $nhanViens[0],
+                    'dich_vu_id'             => $dichVuId,
+                    'thoi_gian_hoan_thanh'   => Carbon::now()->subDays(rand(10, 30))->addHour(),
+                    'tong_tien'              => rand(150000, 400000),
+                    'da_thanh_toan'          => true,
+                    'phuong_thuc_thanh_toan' => 'cash',
+                    'thoi_gian_thanh_toan'   => Carbon::now()->subDays(rand(10, 30))->addHours(2),
+                    'ghi_chu'                => null,
+                    'nguon_goc'              => 'online',
+                    'created_at'             => Carbon::now()->subDays(rand(10, 30)),
+                    'updated_at'             => Carbon::now()->subDays(rand(10, 30)),
+                ];
+
+                $lichHenInserts[] = [
+                    'ngay_gio'               => Carbon::now()->addDays(rand(1, 5)),
+                    'trang_thai'             => 'cho_xac_nhan',
+                    'khach_hang_id'          => $khId,
+                    'thu_cung_id'            => $petForKh->id,
+                    'nhan_vien_id'           => $nhanViens[0],
+                    'dich_vu_id'             => $dichVuId,
+                    'thoi_gian_hoan_thanh'   => null,
+                    'tong_tien'              => rand(200000, 500000),
+                    'da_thanh_toan'          => false,
+                    'phuong_thuc_thanh_toan' => null,
+                    'thoi_gian_thanh_toan'   => null,
+                    'ghi_chu'                => 'Cần thanh toán',
+                    'nguon_goc'              => 'online',
+                    'created_at'             => Carbon::now(),
+                    'updated_at'             => Carbon::now(),
+                ];
+            }
         }
 
         // Insert lich_hens

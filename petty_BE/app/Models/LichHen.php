@@ -26,6 +26,10 @@ class LichHen extends Model
         'dich_vu_id',
         'thanh_toan_id',
         'nhan_vien_id',
+        'tong_tien',
+        'da_thanh_toan',
+        'phuong_thuc_thanh_toan',
+        'thoi_gian_thanh_toan',
     ];
 
     protected $casts = [

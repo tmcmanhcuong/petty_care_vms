@@ -19,10 +19,11 @@ class MoMoService
         $accessKey = config('momo.access_key');
         $secretKey = config('momo.secret_key');
         $endpoint = config('momo.endpoint');
+        $requestType = config('momo.request_type', 'payWithMethod');
 
         // MoMo yêu cầu request id phải là duy nhất mỗi lần gọi API
-        $requestId = time() . "_" . $orderId; 
-        
+        $requestId = time() . "_" . $orderId;
+
         // Dữ liệu thô dùng để tạo chữ ký (phải nối chuỗi đúng thứ tự MoMo yêu cầu)
         $rawHash = "accessKey=" . $accessKey .
             "&amount=" . $amount .
@@ -33,7 +34,7 @@ class MoMoService
             "&partnerCode=" . $partnerCode .
             "&redirectUrl=" . config('momo.return_url') .
             "&requestId=" . $requestId .
-            "&requestType=captureWallet";
+            "&requestType=" . $requestType;
 
         // Tạo chữ ký bảo mật HMAC SHA256
         $signature = hash_hmac("sha256", $rawHash, $secretKey);
@@ -51,7 +52,7 @@ class MoMoService
             'ipnUrl' => config('momo.notify_url'),
             'lang' => 'vi',
             'extraData' => "",
-            'requestType' => 'captureWallet',
+            'requestType' => $requestType,
             'signature' => $signature
         ];
 

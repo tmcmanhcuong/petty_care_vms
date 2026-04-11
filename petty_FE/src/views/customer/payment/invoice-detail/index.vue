@@ -656,19 +656,38 @@ const goBack = () => {
   currentStep.value = 'invoice';
 };
 
-const handlePayment = (method) => {
+const handlePayment = async (method) => {
   console.log('Payment method selected:', method);
-  
-  // Simulate payment processing
-  setTimeout(() => {
-    emit('payment-success', {
-      invoiceCode: props.invoiceData.invoiceCode,
-      paymentMethod: method,
-      amount: props.invoiceData.remainingAmount,
-      timestamp: new Date().toISOString()
-    });
-    closePopup();
-  }, 500);
+
+  if (method === 'momo') {
+    try {
+      // Import payment service
+      const { createMoMoPayment } = await import('@/utils/payment.js');
+
+      // Gọi API tạo thanh toán MoMo
+      const response = await createMoMoPayment({
+        order_id: props.invoiceData.invoiceCode,
+        amount: props.invoiceData.remainingAmount || props.invoiceData.totalAmount
+      });
+
+      console.log('MoMo API Response:', response);
+
+      if (response.success && response.payUrl) {
+        // Chuyển hướng đến trang thanh toán MoMo
+        window.location.href = response.payUrl;
+      } else {
+        console.error('MoMo response error:', response);
+        alert('Không thể tạo thanh toán MoMo. Vui lòng thử lại.');
+      }
+    } catch (error) {
+      console.error('Error creating MoMo payment:', error);
+      console.error('Error response:', error.response?.data);
+      alert(`Có lỗi xảy ra: ${error.response?.data?.message || error.message}`);
+    }
+  } else {
+    // Các phương thức thanh toán khác (VNPay, Techcombank)
+    alert(`Phương thức thanh toán ${method} đang được phát triển.`);
+  }
 };
 </script>
 

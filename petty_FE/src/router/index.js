@@ -61,6 +61,11 @@ const routes = [
     meta: { layout: "dangki_dangnhap", requiresAuth: true },
   },
   {
+    path: "/payment/success",
+    component: () => import("../views/customer/payment/success/index.vue"),
+    meta: { layout: "dangki_dangnhap" },
+  },
+  {
     path: "/customer/appointments",
     component: () => import("../views/customer/appointment/index.vue"),
     meta: { layout: "dangki_dangnhap", requiresAuth: true },

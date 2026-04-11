@@ -158,7 +158,20 @@
 
           <!-- Payments Table -->
           <div class="flex flex-col gap-4">
-            <div class="flex flex-col overflow-hidden w-full">
+            <!-- Empty State -->
+            <div v-if="payments.length === 0 && !isLoading" class="flex flex-col items-center justify-center py-12 gap-4">
+              <div class="text-gray-400 text-6xl">📋</div>
+              <p class="font-medium text-lg text-gray-600">Chưa có lịch hẹn nào</p>
+              <p class="font-normal text-sm text-gray-500">Các hóa đơn thanh toán sẽ hiển thị tại đây sau khi bạn đặt lịch khám</p>
+            </div>
+
+            <!-- Loading State -->
+            <div v-else-if="isLoading" class="flex items-center justify-center py-12">
+              <p class="font-medium text-lg text-gray-600">Đang tải dữ liệu...</p>
+            </div>
+
+            <!-- Table with Data -->
+            <div v-else class="flex flex-col overflow-hidden w-full">
               <!-- Table Header -->
               <div class="border-b border-black/15 h-10 flex items-center">
                 <div class="w-[126.688px] px-2">
@@ -566,9 +579,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import ChiTietHoaDon from "./invoice-detail/index.vue";
 import BienLaiThanhToan from "./payment-receipt/index.vue";
+import { getPaymentInvoices } from "@/utils/payment.js";
 // Icon
 import Calendar from "@/assets/svg/calendar.svg";
 import ChevronDownIcon from "@/assets/svg/chevron-down.svg";
@@ -580,12 +594,13 @@ import WalletIcon from "@/assets/svg/wallet.svg";
 import ClockIcon from "@/assets/svg/clock.svg";
 
 // Statistics data
-const totalPaid = ref(700000);
-const paidInvoiceCount = ref(3);
-const totalDebt = ref(500000);
-const debtInvoiceCount = ref(1);
-const totalSpending = ref(1200000);
-const currentYear = ref(2025);
+const totalPaid = ref(0);
+const paidInvoiceCount = ref(0);
+const totalDebt = ref(0);
+const debtInvoiceCount = ref(0);
+const totalSpending = ref(0);
+const currentYear = ref(new Date().getFullYear());
+const isLoading = ref(false);
 
 // Filter state
 const selectedService = ref("");
@@ -887,6 +902,113 @@ const handleViewRefundStatus = (payment) => {
 
   showPaymentPopup.value = true;
 };
+
+// Load payment data from backend
+const loadPaymentData = async () => {
+  try {
+    isLoading.value = true;
+    const response = await getPaymentInvoices();
+
+    console.log('API Response:', response);
+
+    if (response && response.data && response.data.length > 0) {
+      // Map backend data to frontend format
+      payments.value = response.data.map(lichHen => {
+        const tongTien = parseFloat(lichHen.tong_tien) || 0;
+        const ngayGio = lichHen.ngay_gio;
+
+        return {
+          id: lichHen.id,
+          invoiceCode: `HD${String(lichHen.id).padStart(6, '0')}`,
+          service: lichHen.dich_vu?.ten || lichHen.dich_vu?.ten_dich_vu || 'Dịch vụ',
+          date: ngayGio ? new Date(ngayGio).toLocaleDateString('vi-VN') : 'N/A',
+          status: mapTrangThaiToStatus(lichHen.trang_thai),
+          statusText: getStatusText(lichHen.trang_thai, tongTien),
+          amountText: getAmountText(lichHen.trang_thai, tongTien),
+          totalAmount: tongTien,
+          paidAmount: lichHen.da_thanh_toan ? tongTien : 0,
+        };
+      });
+
+      // Calculate statistics
+      calculateStatistics();
+      console.log('Loaded payments:', payments.value);
+    } else {
+      // Nếu không có dữ liệu từ API, xóa dữ liệu mẫu
+      payments.value = [];
+      calculateStatistics();
+      console.log('No appointments found for this customer');
+    }
+  } catch (error) {
+    console.error('Error loading payment data:', error);
+    console.error('Error details:', error.response?.data);
+    // Xóa dữ liệu nếu có lỗi
+    payments.value = [];
+    calculateStatistics();
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Map trạng thái from backend to frontend status
+const mapTrangThaiToStatus = (trangThai) => {
+  const statusMap = {
+    'cho_xac_nhan': 'pending',
+    'da_xac_nhan': 'prepaid',
+    'hoan_thanh': 'completed',
+    'da_huy': 'refunded',
+  };
+  return statusMap[trangThai] || 'pending';
+};
+
+// Get status text based on trạng thái
+const getStatusText = (trangThai, tongTien) => {
+  const statusTextMap = {
+    'cho_xac_nhan': `Cần thanh toán: ${formatCurrency(tongTien)}`,
+    'da_xac_nhan': 'Đã thanh toán trước',
+    'hoan_thanh': 'Đã hoàn thành',
+    'da_huy': 'Đã hoàn tiền',
+  };
+  return statusTextMap[trangThai] || 'Chưa xác định';
+};
+
+// Get amount text based on trạng thái
+const getAmountText = (trangThai, tongTien) => {
+  const amountTextMap = {
+    'cho_xac_nhan': `(Tổng: ${formatCurrency(tongTien)})`,
+    'da_xac_nhan': `(Đã trả: ${formatCurrency(tongTien)})`,
+    'hoan_thanh': `(Tổng: ${formatCurrency(tongTien)})`,
+    'da_huy': `(+ ${formatCurrency(tongTien)})`,
+  };
+  return amountTextMap[trangThai] || '';
+};
+
+// Calculate statistics from payments
+const calculateStatistics = () => {
+  totalPaid.value = 0;
+  paidInvoiceCount.value = 0;
+  totalDebt.value = 0;
+  debtInvoiceCount.value = 0;
+  totalSpending.value = 0;
+
+  payments.value.forEach(payment => {
+    if (payment.status === 'completed' || payment.status === 'prepaid') {
+      totalPaid.value += payment.paidAmount;
+      paidInvoiceCount.value++;
+    }
+    if (payment.status === 'pending') {
+      totalDebt.value += (payment.totalAmount - payment.paidAmount);
+      debtInvoiceCount.value++;
+    }
+    totalSpending.value += payment.totalAmount;
+  });
+};
+
+// Load data on component mount
+onMounted(() => {
+  // Bỏ comment để kết nối backend
+  loadPaymentData();
+});
 </script>
 
 <style scoped>

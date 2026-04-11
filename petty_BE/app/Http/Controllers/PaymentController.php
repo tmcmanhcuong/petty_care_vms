@@ -21,28 +21,54 @@ class PaymentController extends Controller
      */
     public function createMoMoPayment(Request $request)
     {
-        // 1. Nhận dữ liệu từ Frontend gửi lên (Ví dụ: ID lịch hẹn, số tiền)
-        // Dùng tạm time() làm mã đơn hàng ngẫu nhiên nếu bạn chưa truyền order_id
-        $orderId = $request->input('order_id', time()); 
-        $amount = $request->input('amount', 50000); // Mặc định test 50.000đ
-        $orderInfo = "Thanh toán hóa đơn #" . $orderId;
+        // Log request để debug
+        Log::info('MoMo Payment Request:', $request->all());
 
-        // 2. Gọi MoMoService để tạo request
-        $response = $this->momoService->createPayment($orderId, $amount, $orderInfo);
+        // 1. Nhận dữ liệu từ Frontend gửi lên
+        $baseOrderId = $request->input('order_id', time());
+        // Thêm timestamp để đảm bảo order_id luôn unique
+        $orderId = $baseOrderId . '_' . time();
+        $amount = $request->input('amount', 50000);
+        $orderInfo = "Thanh toán hóa đơn #" . $baseOrderId;
 
-        // 3. Trả về kết quả cho Frontend
-        if (isset($response['payUrl'])) {
+        // Validate amount
+        if (!is_numeric($amount) || $amount <= 0) {
             return response()->json([
-                'success' => true,
-                'payUrl' => $response['payUrl'] // Đây là link để Vue chuyển hướng khách hàng tới
-            ]);
+                'success' => false,
+                'message' => 'Số tiền không hợp lệ',
+            ], 400);
         }
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Lỗi tạo thanh toán MoMo',
-            'data' => $response
-        ], 400);
+        // 2. Gọi MoMoService để tạo request
+        try {
+            $response = $this->momoService->createPayment($orderId, $amount, $orderInfo);
+
+            Log::info('MoMo API Response:', $response);
+
+            // 3. Trả về kết quả cho Frontend
+            if (isset($response['payUrl'])) {
+                return response()->json([
+                    'success' => true,
+                    'payUrl' => $response['payUrl']
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $response['message'] ?? 'Lỗi tạo thanh toán MoMo',
+                'data' => $response
+            ], 400);
+        } catch (\Exception $e) {
+            Log::error('MoMo Payment Error:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi hệ thống: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

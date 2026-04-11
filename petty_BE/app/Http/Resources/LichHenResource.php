@@ -25,6 +25,10 @@ class LichHenResource extends JsonResource
             'thoi_gian_checkin' => $this->thoi_gian_checkin ? $this->thoi_gian_checkin->format('Y-m-d H:i:s') : null,
             'thoi_gian_bat_dau_kham' => $this->thoi_gian_bat_dau_kham ? $this->thoi_gian_bat_dau_kham->format('Y-m-d H:i:s') : null,
             'thoi_gian_hoan_thanh' => $this->thoi_gian_hoan_thanh ? $this->thoi_gian_hoan_thanh->format('Y-m-d H:i:s') : null,
+            'tong_tien' => $this->tong_tien,
+            'da_thanh_toan' => $this->da_thanh_toan,
+            'phuong_thuc_thanh_toan' => $this->phuong_thuc_thanh_toan,
+            'thoi_gian_thanh_toan' => $this->thoi_gian_thanh_toan,
             'khach_hang' => $this->whenLoaded('khachHang', function () {
                 return [
                     'id' => $this->khachHang->id,
@@ -44,6 +48,7 @@ class LichHenResource extends JsonResource
                 return [
                     'id' => $this->dichVu->id,
                     'ten_dich_vu' => $this->dichVu->ten_dich_vu ?? $this->dichVu->ten,
+                    'ten' => $this->dichVu->ten,
                 ];
             }),
             'nhan_vien' => $this->whenLoaded('nhanVien', function () {
