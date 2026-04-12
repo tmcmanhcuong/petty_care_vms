@@ -49,15 +49,15 @@ export async function getPaymentInvoices(params = {}) {
 }
 
 /**
- * Lấy chi tiết hóa đơn
- * @param {number} id - ID của hóa đơn
+ * Cập nhật trạng thái thanh toán sau khi thanh toán thành công
+ * @param {Object} data - Dữ liệu thanh toán { order_id, result_code }
  */
-export async function getInvoiceDetail(id) {
+export async function updatePaymentStatus(data) {
   try {
-    const response = await client.get(`/lich-hen/${id}`);
+    const response = await client.post("/payment/update-status", data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching invoice detail:", error);
+    console.error("Error updating payment status:", error);
     throw error;
   }
 }

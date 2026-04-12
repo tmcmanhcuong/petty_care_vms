@@ -579,7 +579,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 import ChiTietHoaDon from "./invoice-detail/index.vue";
 import BienLaiThanhToan from "./payment-receipt/index.vue";
 import { getPaymentInvoices } from "@/utils/payment.js";
@@ -1008,6 +1009,14 @@ const calculateStatistics = () => {
 onMounted(() => {
   // Bỏ comment để kết nối backend
   loadPaymentData();
+});
+
+// Watch for route changes to reload data when coming back from payment
+const route = useRoute();
+watch(() => route.query.refresh, (newVal) => {
+  if (newVal === 'true') {
+    loadPaymentData();
+  }
 });
 </script>
 

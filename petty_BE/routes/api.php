@@ -200,6 +200,7 @@ Route::post('/admin/dang-nhap', [AdminController::class, 'dangNhap']);
 // route cho momo
     Route::post('/payment/momo/create', [PaymentController::class, 'createMoMoPayment']);
     Route::post('/payment/momo/ipn', [PaymentController::class, 'momoIPN']);
+    Route::post('/payment/update-status', [PaymentController::class, 'updatePaymentStatus']);
 // Admin authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/admin/dang-xuat', [AdminController::class, 'dangXuat']);

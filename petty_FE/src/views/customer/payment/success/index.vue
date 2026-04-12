@@ -78,7 +78,7 @@ const amount = ref(0);
 const paymentMethod = ref('');
 const paymentTime = ref('');
 
-onMounted(() => {
+onMounted(async () => {
   // Parse query parameters from MoMo callback
   const resultCode = route.query.resultCode;
   const message = route.query.message;
@@ -106,6 +106,20 @@ onMounted(() => {
   }
 
   console.log('Payment callback:', route.query);
+
+  // Cập nhật trạng thái thanh toán nếu thành công
+  if (isSuccess.value && orderId.value) {
+    try {
+      const { updatePaymentStatus } = await import('@/utils/payment.js');
+      await updatePaymentStatus({
+        order_id: orderId.value,
+        result_code: resultCode
+      });
+      console.log('Payment status updated successfully');
+    } catch (error) {
+      console.error('Error updating payment status:', error);
+    }
+  }
 });
 
 const formatCurrency = (value) => {
@@ -116,7 +130,7 @@ const formatCurrency = (value) => {
 };
 
 const goToPaymentHistory = () => {
-  router.push('/customer/payment');
+  router.push('/customer/payment?refresh=true');
 };
 
 const goToHome = () => {
