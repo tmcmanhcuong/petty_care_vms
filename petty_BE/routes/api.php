@@ -323,3 +323,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/ho-so-benh-an/thu-cung/{thuCungId}', [HoSoBenhAnController::class, 'lichSuKham'])->middleware('staff.only');   
 });
 
+
+Route::get('/run-migration-data', function () {
+    $path = base_path('petty_vms_backup.sql');
+    if (!file_exists($path)) {
+        return 'File backup không tồn tại: ' . $path;
+    }
+    $sql = file_get_contents($path);
+    \Illuminate\Support\Facades\DB::unprepared($sql);
+    return 'Import thành công 100%! Data đã lên mây!';
+});
