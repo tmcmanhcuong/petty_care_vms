@@ -1,0 +1,25 @@
+# Node modules — npm ci will install fresh inside container
+node_modules
+
+# Build output — CI creates this inside container from source
+dist
+
+# Local environment files — never bake into image
+.env.local
+.env.*.local
+.env
+
+# Git
+.git
+.gitignore
+
+# Editor/IDE
+.vscode
+.DS_Store
+
+# Docs and example files
+*.md
+design-system/
+COMPLETE_EXAMPLE_*.vue
+EXAMPLE_*.vue
+PDF_VIEW_*.blade.php

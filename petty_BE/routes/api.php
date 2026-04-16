@@ -31,6 +31,11 @@ use App\Http\Controllers\HoSoBenhAnController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\PaymentController;
 
+// Health check — ALB uses this to verify ECS task is healthy (no auth required)
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok']);
+});
+
 Route::post('/khach-hang/dang-ki', [KhachHangController::class, 'dangKi']);
 Route::post('/khach-hang/dang-nhap', [KhachHangController::class, 'dangNhap']);
 Route::post('/khach-hang/gui-lai-xac-nhan', [KhachHangController::class, 'guiLaiXacNhan']);

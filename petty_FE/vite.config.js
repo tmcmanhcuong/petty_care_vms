@@ -4,6 +4,8 @@ import svgLoader from "vite-svg-loader";
 import { fileURLToPath, URL } from "node:url";
 
 export default defineConfig({
+  // base: '/' ensures root-relative asset paths for S3+CloudFront SPA hosting
+  base: '/',
   plugins: [
     vue(),
     svgLoader(), // Cho phép import SVG như component
