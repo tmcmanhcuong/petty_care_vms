@@ -324,17 +324,3 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-Route::get('/run-migration-data', function () {
-    try {
-        $path = base_path('petty_vms_backup.sql');
-        if (!file_exists($path)) {
-            return 'File backup không tồn tại: ' . $path;
-        }
-        $sql = file_get_contents($path);
-        config(['database.default' => 'mysql']);
-        \Illuminate\Support\Facades\DB::connection('mysql')->unprepared($sql);
-        return 'Import thành công 100%! Data đã lên mây!';
-    } catch (\Exception $e) {
-        return 'LỖI DB: ' . $e->getMessage();
-    }
-});
