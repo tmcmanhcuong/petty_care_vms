@@ -56,7 +56,6 @@ petty_FE/*.sw?
 
 # Extra configuration & tools
 .agents/
-.github/
 .gemini/
 openspec/
 GEMINI.md
