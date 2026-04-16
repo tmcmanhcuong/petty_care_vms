@@ -1,0 +1,46 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Environment files — NEVER bake secrets into image
+.env
+.env.*
+!.env.example
+
+# Node / local dev artifacts
+node_modules
+package-lock.json
+
+# Storage dirs (created at runtime)
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Tests — not needed in production image
+tests/
+phpunit.xml
+.phpunit.result.cache
+
+# Local debug/dev scripts
+test-*.php
+check-*.php
+fix-*.php
+debug-*.php
+auto-grant-*.php
+grant-*.php
+patch_*.php
+update-*.php
+delete_*.php
+
+# Docs / IDE
+README.md
+*.md
+.vscode
+.editorconfig
+_ide_helper.php
+
+# NOTE: docker/ folder and Dockerfile are NOT excluded here
+# because they are needed during 'docker build' (COPY docker/nginx.conf etc.)
+
