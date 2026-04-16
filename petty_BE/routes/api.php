@@ -325,11 +325,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 Route::get('/run-migration-data', function () {
-    $path = base_path('petty_vms_backup.sql');
-    if (!file_exists($path)) {
-        return 'File backup không tồn tại: ' . $path;
+    try {
+        $path = base_path('petty_vms_backup.sql');
+        if (!file_exists($path)) {
+            return 'File backup không tồn tại: ' . $path;
+        }
+        $sql = file_get_contents($path);
+        \Illuminate\Support\Facades\DB::unprepared($sql);
+        return 'Import thành công 100%! Data đã lên mây!';
+    } catch (\Exception $e) {
+        return 'LỖI DB: ' . $e->getMessage();
     }
-    $sql = file_get_contents($path);
-    \Illuminate\Support\Facades\DB::unprepared($sql);
-    return 'Import thành công 100%! Data đã lên mây!';
 });
