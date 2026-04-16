@@ -31,7 +31,7 @@
 
         <div class="w-full relative h-[300px] md:h-[450px] lg:h-[500px] rounded-[24px] overflow-hidden shadow-2xl group z-0">
           <div class="absolute inset-0 bg-gradient-to-tr from-[#5A9690]/20 to-transparent z-10"></div>
-          <img src="/src/assets/img_imports/public_img/hp-pic4.png" alt="Petty Clinic Team" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          <img src="/src_assets/img_imports/public_img/hp-pic4.png" alt="Petty Clinic Team" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
         </div>
 
       </div>
@@ -93,7 +93,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
            <div class="flex flex-col items-center gap-4 group cursor-pointer">
              <div class="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-white shadow-lg relative bg-white">
-                <img src="/src/assets/img_imports/public_img/hp-pic11.jpg" alt="Team Member" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
+                <img src="/src_assets/img_imports/public_img/hp-pic11.jpg" alt="Team Member" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
                 <div class="absolute inset-0 bg-[#5A9690]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
              </div>
              <div class="text-center">
@@ -104,7 +104,7 @@
            
            <div class="flex flex-col items-center gap-4 group cursor-pointer">
              <div class="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-white shadow-lg relative bg-white">
-                <img src="/src/assets/img_imports/public_img/hp-pic12.jpg" alt="Team Member" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
+                <img src="/src_assets/img_imports/public_img/hp-pic12.jpg" alt="Team Member" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
                 <div class="absolute inset-0 bg-[#5A9690]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
              </div>
              <div class="text-center">
@@ -115,7 +115,7 @@
 
            <div class="flex flex-col items-center gap-4 group cursor-pointer">
              <div class="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-white shadow-lg relative bg-white">
-                <img src="/src/assets/img_imports/public_img/hp-pic13.jpg" alt="Team Member" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
+                <img src="/src_assets/img_imports/public_img/hp-pic13.jpg" alt="Team Member" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
                 <div class="absolute inset-0 bg-[#5A9690]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
              </div>
              <div class="text-center">
@@ -126,7 +126,7 @@
 
            <div class="flex flex-col items-center gap-4 group cursor-pointer">
              <div class="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-white shadow-lg relative bg-white">
-                <img src="/src/assets/img_imports/public_img/hp-pic14.jpg" alt="Team Member" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
+                <img src="/src_assets/img_imports/public_img/hp-pic14.jpg" alt="Team Member" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
                 <div class="absolute inset-0 bg-[#5A9690]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
              </div>
              <div class="text-center">

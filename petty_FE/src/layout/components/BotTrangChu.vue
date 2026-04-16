@@ -37,7 +37,7 @@
         <!-- Brand Section -->
         <div class="flex flex-col gap-8">
           <div class="w-52 bg-white/95 p-4 rounded-2xl shadow-lg">
-            <img src="/src/assets/img_imports/Petty Logo.png" alt="Petty Logo" class="w-full" loading="lazy" />
+            <img src="/src_assets/img_imports/Petty Logo.png" alt="Petty Logo" class="w-full" loading="lazy" />
           </div>
           <p class="font-nunitoSans text-sm leading-relaxed text-white/80">
             Sứ mệnh của chúng tôi là mang lại trải nghiệm chăm sóc thú cưng toàn diện và hiện đại nhất cho mọi chủ nuôi.

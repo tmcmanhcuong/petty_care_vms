@@ -6,7 +6,7 @@
         <!-- Background Image with Overlay -->
         <div class="absolute h-full left-0 top-0 w-full overflow-hidden">
           <img
-            src="/src/assets/img_imports/public_img/hp-pic16.png"
+            src="/src_assets/img_imports/public_img/hp-pic16.png"
             alt="Pet Care Background"
             class="absolute w-full h-full object-cover mix-blend-multiply"
           />

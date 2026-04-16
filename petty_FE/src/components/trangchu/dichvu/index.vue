@@ -5,7 +5,7 @@
     <div class="h-[580px] relative w-full overflow-hidden">
       <!-- Background Image with Overlay -->
       <img
-        src="/src/assets/img_imports/public_img/hp-pic15.png"
+        src="/src_assets/img_imports/public_img/hp-pic15.png"
         alt="Pet Care Background"
         class="absolute w-full h-full object-cover mix-blend-multiply"
       />

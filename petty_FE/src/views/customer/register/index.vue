@@ -23,7 +23,7 @@
 
             <div class="mb-8 lg:mb-28 rounded-xl overflow-hidden">
               <img
-                src="/src/assets/img_imports/sign_in_up_img/sign-img2.png"
+                src="/src_assets/img_imports/sign_in_up_img/sign-img2.png"
                 alt="Veterinarian with pet"
                 class="w-full h-48 lg:h-80 object-cover rounded-lg"
               />

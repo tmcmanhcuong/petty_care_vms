@@ -13,7 +13,7 @@
       <!-- Petty Icon -->
       <div class="w-32 h-8 relative">
         <img
-          src="/src/assets/img_imports/Petty Logo.png"
+          src="/src_assets/img_imports/Petty Logo.png"
           alt="Petty Icon"
           class="w-full h-full object-contain"
         />
@@ -492,9 +492,9 @@ const displayName = computed(() => {
   return nice || email;
 });
 const userAvatar = computed(() => {
-  if (!user.value) return "/src/assets/images/avatars/default.png";
+  if (!user.value) return "/src_assets/images/avatars/default.png";
   const src = user.value.anh_dai_dien || user.value.avatar || user.value.photo;
-  return src || "/src/assets/images/avatars/default.png";
+  return src || "/src_assets/images/avatars/default.png";
 });
 
 // split full name into "họ lót" (family + middle) and "tên" (given name)
