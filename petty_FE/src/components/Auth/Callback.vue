@@ -51,7 +51,7 @@ onMounted(async () => {
       // Gọi API để lấy thông tin người dùng (tùy chọn: auth framework auto handles headers in api instances, but we'll manually set initially via setAuth)
       // Actually we need to set token FIRST for the GET request if not handled globally, but api reqs use defaults.
       // Wait, we can just fetch first using explicit header:
-      const response = await axios.get("http://127.0.0.1:8000/api/user", {
+      const response = await axios.get(import.meta.env.VITE_API_BASE_URL + "/user", {
         headers: { Authorization: `Bearer ${token}` }
       });
       

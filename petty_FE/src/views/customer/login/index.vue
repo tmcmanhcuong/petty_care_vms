@@ -306,7 +306,7 @@ const handleLogin = async () => {
       password: form.value.password,
     };
     const res = await axios.post(
-      "http://127.0.0.1:8000/api/khach-hang/dang-nhap",
+      import.meta.env.VITE_API_BASE_URL + "/khach-hang/dang-nhap",
       payload
     );
     if (res.data && res.data.status) {
@@ -366,12 +366,12 @@ watch(
 
 // Xử lý đăng nhập Google
 const handleGoogleLogin = () => {
-  window.location.href = "http://127.0.0.1:8000/api/auth/google";
+  window.location.href = import.meta.env.VITE_API_BASE_URL + "/auth/google";
 };
 
 // Xử lý đăng nhập Facebook
 const handleFacebookLogin = () => {
-  window.location.href = "http://127.0.0.1:8000/api/auth/facebook";
+  window.location.href = import.meta.env.VITE_API_BASE_URL + "/auth/facebook";
 };
 </script>
 
