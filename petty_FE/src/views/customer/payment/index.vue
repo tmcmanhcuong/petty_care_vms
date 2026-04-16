@@ -404,7 +404,7 @@
               <div class="flex items-center gap-3">
                 <div class="rounded-[10px] shadow-md w-12 h-12">
                   <img
-                    src="/src/assets/img_imports/public_img/vnpay.png"
+                    src="/src_assets/img_imports/public_img/vnpay.png"
                     alt="VNPay"
                     class="w-full h-full rounded-[10px] object-contain"
                   />
@@ -444,7 +444,7 @@
               <div class="flex items-center gap-3">
                 <div class="rounded-[10px] shadow-md w-12 h-12">
                   <img
-                    src="/src/assets/img_imports/public_img/momo.png"
+                    src="/src_assets/img_imports/public_img/momo.png"
                     alt="MoMo"
                     class="w-full h-full rounded-[10px] object-contain"
                   />

@@ -171,7 +171,7 @@
             class="relative w-full aspect-[4/3] cursor-pointer group hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden"
           >
             <img
-              src="/src/assets/img_imports/public_img/hp-pic7.png"
+              src="/src_assets/img_imports/public_img/hp-pic7.png"
               alt="Dịch vụ"
               class="absolute inset-0 w-full h-full object-cover"
             />
@@ -208,7 +208,7 @@
             class="relative w-full aspect-[4/3] cursor-pointer group hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden"
           >
             <img
-              src="/src/assets/img_imports/public_img/hp-pic2.png"
+              src="/src_assets/img_imports/public_img/hp-pic2.png"
               alt="Dịch vụ"
               class="absolute inset-0 w-full h-full object-cover"
             />
@@ -245,7 +245,7 @@
             class="relative w-full aspect-[4/3] cursor-pointer group hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden"
           >
             <img
-              src="/src/assets/img_imports/public_img/hp-pic3.png"
+              src="/src_assets/img_imports/public_img/hp-pic3.png"
               alt="Dịch vụ"
               class="absolute inset-0 w-full h-full object-cover"
             />
@@ -310,7 +310,7 @@
             class="lg:col-span-7 h-[300px] md:h-[414px] w-full rounded-[24px] overflow-hidden shadow-2xl relative lg:-mr-12 z-10"
           >
             <img
-              src="/src/assets/img_imports/public_img/hp-pic4.png"
+              src="/src_assets/img_imports/public_img/hp-pic4.png"
               alt="About PETTY"
               class="w-full h-full object-cover"
             />
@@ -504,7 +504,7 @@
 
         <div class="row-span-2 rounded-2xl overflow-hidden shadow-xl">
           <img
-            src="/src/assets/img_imports/public_img/hp-pic5.png"
+            src="/src_assets/img_imports/public_img/hp-pic5.png"
             alt="PETTY Services"
             class="w-full h-full object-cover"
           />
@@ -763,7 +763,7 @@
                 <div class="mt-8 space-y-6">
                   <div class="flex items-center gap-4">
                     <img
-                      src="/src/assets/img_imports/public_img/hp-pic12.jpg"
+                      src="/src_assets/img_imports/public_img/hp-pic12.jpg"
                       alt=""
                       class="w-14 h-14 rounded-full object-cover ring-4 ring-white/20"
                     />
@@ -946,13 +946,13 @@ onMounted(async () => {
 });
 
 const avatarImages = [
-  "./src/assets/img_imports/public_img/hp-pic13.jpg",
-  "./src/assets/img_imports/public_img/hp-pic14.jpg",
-  "./src/assets/img_imports/public_img/hp-pic12.jpg",
-  "./src/assets/img_imports/public_img/hp-pic11.jpg",
+  "/src_assets/img_imports/public_img/hp-pic13.jpg",
+  "/src_assets/img_imports/public_img/hp-pic14.jpg",
+  "/src_assets/img_imports/public_img/hp-pic12.jpg",
+  "/src_assets/img_imports/public_img/hp-pic11.jpg",
 ];
 
-const heroImage = "/src/assets/img_imports/public_img/hp-pic6.png";
+const heroImage = "/src_assets/img_imports/public_img/hp-pic6.png";
 const trustItems = [
   { icon: HospitalCircleIcon, label: "Bệnh Viện" },
   { icon: UsersIcon, label: "Khách Hàng" },
@@ -962,32 +962,32 @@ const trustItems = [
 
 const expertiseCards = [
   {
-    icon: "/src/assets/svg/book-plus.svg",
+    icon: "/src_assets/svg/book-plus.svg",
     title: "Kinh nghiệm chuyên sâu trong ngành thú y",
     desc: "Hơn 10 năm kinh nghiệm vận hành và đồng hành cùng hàng chục phòng khám trên toàn quốc",
   },
   {
-    icon: "/src/assets/svg/prong.svg",
+    icon: "/src_assets/svg/prong.svg",
     title: "Giải pháp quản lý tối ưu",
     desc: "Tự động hóa quy trình khám, đặt lịch và hồ sơ bệnh án – giúp đội ngũ làm việc nhanh hơn, chính xác hơn",
   },
   {
-    icon: "/src/assets/svg/database-cog.svg",
+    icon: "/src_assets/svg/database-cog.svg",
     title: "Dữ liệu và phân tích chuyên sâu",
     desc: "Theo dõi, đánh giá và tối ưu hiệu quả điều trị dựa trên dữ liệu thực tế.",
   },
   {
-    icon: "/src/assets/svg/user-up.svg",
+    icon: "/src_assets/svg/user-up.svg",
     title: "Lấy khách hàng làm trung tâm",
     desc: "Lắng nghe nhu cầu, tối ưu trải nghiệm – vì mỗi thú cưng đều xứng đáng được chăm sóc tốt nhất",
   },
   {
-    icon: "/src/assets/svg/brand-apple-news.svg",
+    icon: "/src_assets/svg/brand-apple-news.svg",
     title: "Đổi mới và phát triển liên tục",
     desc: "Ứng dụng công nghệ mới, cập nhật quy trình khám và điều trị chuẩn quốc tế",
   },
   {
-    icon: "/src/assets/svg/plug-connected.svg",
+    icon: "/src_assets/svg/plug-connected.svg",
     title: "Kết nối toàn diện – từ phòng khám đến chủ nuôi",
     desc: "Tạo nên hệ sinh thái thú y hiện đại, giúp mọi bên cùng đồng hành vì sức khỏe thú cưng",
   },
@@ -996,14 +996,14 @@ const expertiseCards = [
 const blogPosts = [
   {
     id: 1,
-    image: "/src/assets/img_imports/public_img/hp-pic10.png",
+    image: "/src_assets/img_imports/public_img/hp-pic10.png",
     badge: "Tối ưu vận hành phòng khám với hệ thống VCMS",
     date: "Ngày: 25/09/2025",
     title: "Tối ưu vận hành phòng khám với hệ thống VCMS",
   },
   {
     id: 2,
-    image: "/src/assets/img_imports/public_img/hp-pic9.png",
+    image: "/src_assets/img_imports/public_img/hp-pic9.png",
     badge: "Chuyển đổi số trong chăm sóc thú y",
     date: "Ngày: 10/09/2025",
     title:
@@ -1012,7 +1012,7 @@ const blogPosts = [
   {
     id: 3,
     image:
-      "/src/assets/img_imports/public_img/hp-pic9.png",
+      "/src_assets/img_imports/public_img/hp-pic9.png",
     badge: "Xây dựng niềm tin với chủ nuôi",
     date: "Ngày: 02/09/2025",
     title: "Xây dựng niềm tin với chủ nuôi qua trải nghiệm kỹ thuật số",

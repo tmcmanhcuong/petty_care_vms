@@ -185,7 +185,7 @@
           <div class="space-y-5">
             <div class="rounded-2xl overflow-hidden h-64">
               <img
-                src="/src/assets/img_imports/public_img/im-address.png"
+                src="/src_assets/img_imports/public_img/im-address.png"
                 alt="Clinic"
                 class="w-full h-full object-cover"
               />
