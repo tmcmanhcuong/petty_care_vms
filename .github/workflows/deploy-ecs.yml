@@ -19,7 +19,7 @@ env:
   AWS_REGION: ap-southeast-1
   ECR_REPOSITORY: petty-be
   ECS_CLUSTER: petty-cluster
-  ECS_SERVICE: petty-be-service
+  ECS_SERVICE: petty-be-task-service-k1id98re
   TASK_DEFINITION: petty-be-task
   CONTAINER_NAME: petty-be
 
