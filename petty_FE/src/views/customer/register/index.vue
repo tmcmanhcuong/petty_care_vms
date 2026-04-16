@@ -392,7 +392,7 @@ const handleSubmit = async () => {
 
   try {
     const res = await axios.post(
-      "http://127.0.0.1:8000/api/khach-hang/dang-ki",
+      import.meta.env.VITE_API_BASE_URL + "/khach-hang/dang-ki",
       payload
     );
 
@@ -427,7 +427,7 @@ const handleGoogleLogin = () => {
 
   // Mở popup đăng nhập Google
   const popup = window.open(
-    "http://127.0.0.1:8000/api/auth/google",
+    import.meta.env.VITE_API_BASE_URL + "/auth/google",
     "Google Login",
     `width=${width},height=${height},left=${left},top=${top}`
   );
@@ -435,7 +435,7 @@ const handleGoogleLogin = () => {
   // Lắng nghe thông điệp từ cửa sổ popup
   const messageHandler = (event) => {
     // Kiểm tra nguồn gốc để đảm bảo bảo mật
-    if (event.origin !== "http://127.0.0.1:8000") return;
+    if (event.origin !== import.meta.env.VITE_API_BASE_URL.replace("/api", "") + "") return;
 
     const authData = event.data;
 
@@ -475,14 +475,14 @@ const handleFacebookLogin = () => {
 
   // Mở popup đăng nhập Facebook
   const popup = window.open(
-    "http://127.0.0.1:8000/api/auth/facebook",
+    import.meta.env.VITE_API_BASE_URL + "/auth/facebook",
     "Facebook Login",
     `width=${width},height=${height},left=${left},top=${top}`
   );
 
   // Lắng nghe message từ popup
   const messageHandler = (event) => {
-    if (event.origin !== "http://127.0.0.1:8000") return;
+    if (event.origin !== import.meta.env.VITE_API_BASE_URL.replace("/api", "") + "") return;
 
     const authData = event.data;
 

@@ -366,7 +366,7 @@ import ThemThuCung from "../my-pets/add-pet/index.vue";
 import DatLichKham from "../appointment/book-appointment/index.vue";
 import ChiTietLichHen from "../appointment/appointment-detail/index.vue";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL + "";
 
 const upcomingAppointments = ref([]);
 const pastAppointments = ref([]);

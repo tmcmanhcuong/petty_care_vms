@@ -476,7 +476,7 @@ const handleSubmit = async () => {
         }
         if (avatarPath && !/^https?:\/\//i.test(avatarPath)) {
           const API_BASE =
-            import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000/api";
+            import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL + "";
           const API_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
           if (!avatarPath.startsWith("/")) avatarPath = "/" + avatarPath;
           avatarPath = API_ORIGIN + avatarPath;
@@ -507,7 +507,7 @@ const handleSubmit = async () => {
             null;
         if (pPath && !/^https?:\/\//i.test(pPath)) {
           const API_BASE =
-            import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000/api";
+            import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL + "";
           const API_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
           if (!pPath.startsWith("/")) pPath = "/" + pPath;
           pPath = API_ORIGIN + pPath;
@@ -538,7 +538,7 @@ const handleSubmit = async () => {
             null;
         if (dPath && !/^https?:\/\//i.test(dPath)) {
           const API_BASE =
-            import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000/api";
+            import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL + "";
           const API_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
           if (!dPath.startsWith("/")) dPath = "/" + dPath;
           dPath = API_ORIGIN + dPath;

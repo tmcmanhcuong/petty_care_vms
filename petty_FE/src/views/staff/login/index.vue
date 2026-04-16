@@ -177,7 +177,7 @@ const handleLogin = async () => {
 
     // API endpoint for employee login
     const res = await axios.post(
-      "http://127.0.0.1:8000/api/nhan-vien/dang-nhap",
+      import.meta.env.VITE_API_BASE_URL + "/nhan-vien/dang-nhap",
       payload
     );
 

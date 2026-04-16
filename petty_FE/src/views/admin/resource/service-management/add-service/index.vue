@@ -292,7 +292,7 @@
 import { ref, reactive, computed } from "vue";
 import api, { attachToken } from "@/utils/api";
 // API origin (strip trailing /api) so we can build absolute URLs for uploaded files
-const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL + "";
 const API_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 // Icon SVG

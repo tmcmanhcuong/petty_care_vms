@@ -176,7 +176,7 @@ const handleLogin = async () => {
 
     // Adjust base URL if your API runs elsewhere. Using the same host from other login forms.
     const res = await axios.post(
-      "http://127.0.0.1:8000/api/admin/dang-nhap",
+      import.meta.env.VITE_API_BASE_URL + "/admin/dang-nhap",
       payload
     );
 
