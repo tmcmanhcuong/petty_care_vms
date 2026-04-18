@@ -359,7 +359,8 @@ const handleDeletePet = async (pet) => {
       const t = (await import("@/utils/auth")).getToken();
       if (t) axios.defaults.headers.common["Authorization"] = `Bearer ${t}`;
     } catch (e) {}
-    await axios.delete(`${API_BASE}/thu-cung/${target.id}`);
+    
+    const response = await axios.delete(`${API_BASE}/thu-cung/${target.id}`);
 
     // remove from local list
     pets.value = pets.value.filter((p) => p.id !== target.id);
@@ -368,12 +369,24 @@ const handleDeletePet = async (pet) => {
 
     showSuccessToast(
       "Xóa thành công",
-      `Đã xóa thú cưng ${target.name} khỏi danh sách`
+      `Đã xóa thú cưng ${target.ten_thu_cung || target.name} khỏi danh sách`
     );
   } catch (err) {
     console.error("Lỗi khi xóa thú cưng:", err);
+    
+    // Hiển thị thông báo lỗi chi tiết từ server
+    let errorMessage = "Không thể xóa thú cưng. Vui lòng thử lại.";
+    
+    if (err.response?.data?.message) {
+      errorMessage = err.response.data.message;
+    } else if (err.response?.status === 403) {
+      errorMessage = "Bạn không có quyền xóa thú cưng này.";
+    } else if (err.response?.status === 400) {
+      errorMessage = err.response.data.message || "Không thể xóa thú cưng vì còn lịch hẹn đang hoạt động.";
+    }
+    
+    alert(errorMessage);
     // keep popup open so user can retry or cancel
-    alert("Không thể xóa thú cưng. Vui lòng thử lại.");
   }
 };
 

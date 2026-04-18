@@ -22,7 +22,7 @@
             <div class="flex gap-2 items-center justify-center py-0.5 px-4">
               <p class="text-sm font-semibold text-gray-500 text-center">
                 Bạn có chắc chắn muốn xóa 
-                <span class="text-base font-extrabold">{{ petData.name }}</span> 
+                <span class="text-base font-extrabold">{{ petData.ten_thu_cung || petData.name }}</span> 
                 không?
               </p>
             </div>
@@ -30,7 +30,7 @@
             <!-- Warning details -->
             <div class="flex gap-2 items-center justify-center py-0.5 px-4">
               <p class="text-sm font-semibold text-gray-500 text-center leading-5">
-                Hành động này không thể hoàn tác. Toàn bộ lịch sử khám bệnh và hồ sơ tiêm phòng liên quan đến {{ petData.name }} sẽ bị xóa vĩnh viễn
+                Hành động này không thể hoàn tác. Toàn bộ lịch sử khám bệnh và hồ sơ tiêm phòng liên quan đến {{ petData.ten_thu_cung || petData.name }} sẽ bị xóa vĩnh viễn
               </p>
             </div>
           </div>
@@ -62,7 +62,8 @@ const props = defineProps({
     type: Object,
     default: () => ({
       id: null,
-      name: ''
+      ten_thu_cung: '',
+      name: '' // fallback
     })
   }
 });

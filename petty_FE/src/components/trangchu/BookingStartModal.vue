@@ -89,7 +89,7 @@
               >
                 <!-- Avatar placeholder -->
                 <div class="w-14 h-14 bg-[#5a9690]/20 rounded-full flex items-center justify-center shrink-0 border-2 border-white shadow-sm overflow-hidden">
-                  <img v-if="pet.image" :src="pet.image" alt="Avatar" class="w-full h-full object-cover" />
+                  <img v-if="pet.anh_dai_dien_url" :src="pet.anh_dai_dien_url" alt="Avatar" class="w-full h-full object-cover" />
                   <svg v-else class="w-7 h-7 text-[#2f5755]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>

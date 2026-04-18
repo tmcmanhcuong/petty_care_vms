@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ThuCung;
+use App\Helpers\PetImageHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -126,6 +127,13 @@ class ThuCungController extends Controller
             } else {
                 $data['anh_dai_dien'] = $val;
             }
+        }
+
+        // Nếu không có ảnh, gán ảnh mặc định dựa trên loại và giới tính
+        if (empty($data['anh_dai_dien'])) {
+            $loai = $data['loai_thu_cung'] ?? 'khac';
+            $gioiTinh = $data['gioi_tinh'] ?? null;
+            $data['anh_dai_dien'] = PetImageHelper::getDefaultImage($loai, $gioiTinh);
         }
 
         // assign to authenticated customer if available and the column exists
@@ -283,21 +291,41 @@ class ThuCungController extends Controller
             }
         }
 
-        // delete stored image if exists and it's a storage path
-        $img = $thuCung->anh_dai_dien ?? null;
-        if ($img && ! preg_match('#^https?://#i', $img)) {
-            // assume path like 'thu_cungs/file.jpg'
-            if (Storage::disk('public')->exists($img)) {
-                Storage::disk('public')->delete($img);
+        try {
+            // Kiểm tra xem thú cưng có lịch hẹn đang hoạt động không
+            $activeLichHens = $thuCung->lichHens()
+                ->whereIn('trang_thai', ['cho_xac_nhan', 'da_xac_nhan', 'da_check_in', 'dang_kham'])
+                ->count();
+
+            if ($activeLichHens > 0) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không thể xóa thú cưng vì còn lịch hẹn đang hoạt động. Vui lòng hủy các lịch hẹn trước.'
+                ], 400);
             }
+
+            // delete stored image if exists and it's a storage path (not default image)
+            $img = $thuCung->anh_dai_dien ?? null;
+            if ($img && ! preg_match('#^https?://#i', $img) && ! PetImageHelper::isDefaultImage($img)) {
+                // assume path like 'thu_cungs/file.jpg'
+                if (Storage::disk('public')->exists($img)) {
+                    Storage::disk('public')->delete($img);
+                }
+            }
+
+            $thuCung->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => \Illuminate\Support\Facades\Lang::get('messages.pet_deleted')
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('ThuCung delete error: ' . $e->getMessage(), ['exception' => $e, 'id' => $thuCung->id]);
+            return response()->json([
+                'status' => false,
+                'message' => 'Không thể xóa thú cưng. Vui lòng thử lại sau.'
+            ], 500);
         }
-
-        $thuCung->delete();
-
-        return response()->json([
-            'status' => true,
-            'message' => \Illuminate\Support\Facades\Lang::get('messages.pet_deleted')
-        ]);
     }
 
     /**
@@ -335,7 +363,10 @@ class ThuCungController extends Controller
                 $data['anh_dai_dien_url'] = url(Storage::url($img));
             }
         } else {
-            $data['anh_dai_dien_url'] = null;
+            // Nếu không có ảnh, trả về ảnh mặc định
+            $loai = $thuCung->loai_thu_cung ?? 'khac';
+            $gioiTinh = $thuCung->gioi_tinh ?? null;
+            $data['anh_dai_dien_url'] = PetImageHelper::getDefaultImage($loai, $gioiTinh);
         }
 
         return $data;
