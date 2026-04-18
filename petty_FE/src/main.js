@@ -37,7 +37,14 @@ app.use(Toast, {
 });
 
 const existingToken =
-  localStorage.getItem("auth_token") || sessionStorage.getItem("auth_token");
+  localStorage.getItem("auth_token_customer") || 
+  sessionStorage.getItem("auth_token_customer") ||
+  localStorage.getItem("auth_token_staff") || 
+  sessionStorage.getItem("auth_token_staff") ||
+  localStorage.getItem("auth_token_admin") || 
+  sessionStorage.getItem("auth_token_admin") ||
+  localStorage.getItem("auth_token") || 
+  sessionStorage.getItem("auth_token");
 if (existingToken) {
   axios.defaults.headers.common["Authorization"] = `Bearer ${existingToken}`;
 }

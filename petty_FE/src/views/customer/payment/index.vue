@@ -899,12 +899,15 @@ const getStatusText = (trangThai, tongTien, daThanhToan) => {
   }
   const statusTextMap = {
     'pending': `Cần thanh toán: ${formatCurrency(tongTien)}`,
+    'cho_xac_nhan': `Cần thanh toán: ${formatCurrency(tongTien)}`,
     'confirmed': `Cần thanh toán: ${formatCurrency(tongTien)}`,
+    'confirmed_by_staff': `Cần thanh toán: ${formatCurrency(tongTien)}`,
     'in-progress': `Cần thanh toán: ${formatCurrency(tongTien)}`,
     'completed': 'Đã hoàn thành',
     'cancelled': 'Đã hoàn tiền',
   };
-  return statusTextMap[trangThai] || 'Chưa xác định';
+  // Nếu không tìm thấy trạng thái, vẫn hiển thị số tiền
+  return statusTextMap[trangThai] || `Cần thanh toán: ${formatCurrency(tongTien)}`;
 };
 
 // Get amount text based on trạng thái
@@ -914,12 +917,15 @@ const getAmountText = (trangThai, tongTien, daThanhToan) => {
   }
   const amountTextMap = {
     'pending': `(Tổng: ${formatCurrency(tongTien)})`,
+    'cho_xac_nhan': `(Tổng: ${formatCurrency(tongTien)})`,
     'confirmed': `(Tổng: ${formatCurrency(tongTien)})`,
+    'confirmed_by_staff': `(Tổng: ${formatCurrency(tongTien)})`,
     'in-progress': `(Tổng: ${formatCurrency(tongTien)})`,
     'completed': `(Tổng: ${formatCurrency(tongTien)})`,
     'cancelled': `(+ ${formatCurrency(tongTien)})`,
   };
-  return amountTextMap[trangThai] || '';
+  // Nếu không tìm thấy trạng thái, vẫn hiển thị tổng tiền
+  return amountTextMap[trangThai] || `(Tổng: ${formatCurrency(tongTien)})`;
 };
 
 // Calculate statistics from payments

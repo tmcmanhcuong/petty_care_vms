@@ -421,7 +421,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import client from "@/utils/api";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import AddIcon from "@/assets/svg/add.svg";
 
@@ -437,8 +437,6 @@ const activeTab = ref("upcoming");
 const upcomingAppointments = ref([]);
 const pastAppointments = ref([]);
 const loading = ref(false);
-
-const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000/api";
 
 const mapAppointment = (item) => {
   // item: LichHen with relations thuCung, dichVu, nhanVien, thanhToan
@@ -533,7 +531,12 @@ const statusClass = (s) => {
 const fetchAppointments = async (filters = {}) => {
   loading.value = true;
   try {
-    const res = await axios.get(`${API_BASE}/lich-hen`, { params: filters });
+    console.log('Fetching appointments with filters:', filters);
+    console.log('Token:', localStorage.getItem('auth_token_customer'));
+    
+    const res = await client.get(`/lich-hen`, { params: filters });
+    console.log('Appointments API Response:', res);
+    
     let list = [];
     if (res.data && res.data.data) {
       // handle paginated or plain array
@@ -541,6 +544,8 @@ const fetchAppointments = async (filters = {}) => {
       else if (Array.isArray(res.data.data.data)) list = res.data.data.data;
       else if (Array.isArray(res.data)) list = res.data;
     }
+    
+    console.log('Parsed appointments list:', list);
 
     const today = new Date();
     const upcoming = [];
@@ -606,8 +611,8 @@ const dateRangeLabel = computed(() => {
 const fetchFilterOptions = async () => {
   try {
     const [pRes, sRes] = await Promise.all([
-      axios.get(`${API_BASE}/thu-cung?all=1`).catch(() => ({ data: [] })),
-      axios.get(`${API_BASE}/dich-vu`).catch(() => ({ data: [] })),
+      client.get(`/thu-cung?all=1`).catch(() => ({ data: [] })),
+      client.get(`/dich-vu`).catch(() => ({ data: [] })),
     ]);
     pets.value = Array.isArray(pRes.data) ? pRes.data : pRes.data?.data || [];
     services.value = Array.isArray(sRes.data)
@@ -747,7 +752,7 @@ const handleRescheduleConfirm = async (data) => {
     const ngayGio = `${year}-${month}-${day} ${data.newTime}:00`;
 
     // send PATCH to update ngay_gio
-    const res = await axios.patch(`${API_BASE}/lich-hen/${apptId}/ngay-gio`, {
+    const res = await client.patch(`/lich-hen/${apptId}/ngay-gio`, {
       ngay_gio: ngayGio,
     });
 
@@ -795,7 +800,7 @@ const handleCancelConfirm = async (data) => {
     const id = data?.appointmentId || data?.id;
     if (!id) throw new Error("Không xác định được lịch hẹn để hủy.");
 
-    const res = await axios.delete(`${API_BASE}/lich-hen/${id}`);
+    const res = await client.delete(`/lich-hen/${id}`);
     if (res.data && res.data.status) {
       showSuccessToast("Hủy hẹn", "Lịch hẹn đã được hủy");
       // refresh list
