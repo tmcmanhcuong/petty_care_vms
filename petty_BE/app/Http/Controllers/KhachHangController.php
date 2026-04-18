@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\KhachHang;
+use App\Helpers\UserImageHelper;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
@@ -41,6 +42,7 @@ class KhachHangController extends Controller
                 'full_name' => $item->full_name,
                 'so_dien_thoai' => $item->phone,
                 'email' => $item->email,
+                'anh_dai_dien' => UserImageHelper::getAvatarUrl($item->anh_dai_dien),
                 'thu_cung' => $item->thuCungs->map(function ($pet) {
                     return [
                         'id' => $pet->id,
@@ -235,10 +237,14 @@ class KhachHangController extends Controller
             $customer->makeHidden(['password']);
         }
 
+        // Thêm URL ảnh đại diện đầy đủ
+        $customerData = $customer->toArray();
+        $customerData['anh_dai_dien_url'] = UserImageHelper::getAvatarUrl($customer->anh_dai_dien);
+
         return response()->json([
             'status' => true,
             'message' => Lang::get('messages.login_success'),
-            'data' => $customer,
+            'data' => $customerData,
             'token' => $token,
         ], 200);
     }
@@ -299,7 +305,11 @@ class KhachHangController extends Controller
 
         $user->refresh();
 
-        return response()->json(['status' => true, 'message' => Lang::get('messages.update_success'), 'user' => $user], 200);
+        // Thêm URL ảnh đại diện đầy đủ
+        $userData = $user->toArray();
+        $userData['anh_dai_dien_url'] = UserImageHelper::getAvatarUrl($user->anh_dai_dien);
+
+        return response()->json(['status' => true, 'message' => Lang::get('messages.update_success'), 'user' => $userData], 200);
     }
 
     public function update(Request $request, $id): JsonResponse

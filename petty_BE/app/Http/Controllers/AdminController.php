@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\Admin;
+use App\Helpers\UserImageHelper;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
@@ -52,10 +53,14 @@ class AdminController extends Controller
         // Load thông tin vai trò và quyền
         $admin->load('phanQuyen');
 
+        // Thêm URL ảnh đại diện đầy đủ
+        $adminData = $admin->toArray();
+        $adminData['anh_dai_dien_url'] = UserImageHelper::getAvatarUrl($admin->anh_dai_dien ?? null);
+
         return response()->json([
             'status' => true,
             'message' => Lang::get('messages.login_success'),
-            'data' => $admin,
+            'data' => $adminData,
             'token' => $token,
             'redirect_url' => '/admin/dashboard',
         ], 200);

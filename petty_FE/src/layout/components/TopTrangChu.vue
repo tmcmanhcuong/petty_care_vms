@@ -178,6 +178,7 @@
               :src="userAvatar"
               alt="avatar"
               class="w-7 h-7 rounded-full object-cover"
+              @error="handleAvatarError"
             />
             <span class="text-sm font-semibold text-gray-700">{{ ten }}</span>
             <svg
@@ -492,10 +493,15 @@ const displayName = computed(() => {
   return nice || email;
 });
 const userAvatar = computed(() => {
-  if (!user.value) return "/src/assets/images/avatars/default.png";
-  const src = user.value.anh_dai_dien || user.value.avatar || user.value.photo;
-  return src || "/src/assets/images/avatars/default.png";
+  if (!user.value) return "/avatar.png";
+  const src = user.value.anh_dai_dien_url || user.value.anh_dai_dien || user.value.avatar || user.value.photo;
+  return src || "/avatar.png";
 });
+
+function handleAvatarError(e) {
+  // Nếu ảnh lỗi, fallback sang avatar.png
+  e.target.src = '/avatar.png';
+}
 
 // split full name into "họ lót" (family + middle) and "tên" (given name)
 const hoLot = computed(() => {

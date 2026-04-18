@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\NhanVien;
 use App\Models\Admin;
+use App\Helpers\UserImageHelper;
 use App\Http\Requests\NhanVienRequest;
 use App\Notifications\NhanVienCreatedNotification;
 use Illuminate\Http\Request;
@@ -28,9 +29,16 @@ class NhanVienController extends Controller
         }
         $nhanViens = $query->get();
 
+        // Thêm URL ảnh đại diện đầy đủ
+        $data = $nhanViens->map(function ($nhanVien) {
+            $item = $nhanVien->toArray();
+            $item['anh_dai_dien_url'] = UserImageHelper::getAvatarUrl($nhanVien->anh_dai_dien);
+            return $item;
+        });
+
         return response()->json([
             'status' => true,
-            'data' => $nhanViens,
+            'data' => $data,
         ]);
     }
 
@@ -233,13 +241,17 @@ class NhanVienController extends Controller
             $nhanVien->makeHidden(['password']);
         }
 
+        // Thêm URL ảnh đại diện đầy đủ
+        $nhanVienData = $nhanVien->toArray();
+        $nhanVienData['anh_dai_dien_url'] = UserImageHelper::getAvatarUrl($nhanVien->anh_dai_dien);
+
         // Xác định đường dẫn redirect dựa trên vai trò
         $redirectUrl = $this->getRedirectUrlByRole($nhanVien->vai_tro);
 
         return response()->json([
             'status' => true,
             'message' => 'Đăng nhập thành công.',
-            'data' => $nhanVien,
+            'data' => $nhanVienData,
             'token' => $token,
             'redirect_url' => $redirectUrl,
             'vai_tro_debug' => $nhanVien->vai_tro, // Thêm để debug

@@ -14,16 +14,12 @@
             <div
               class="w-32 h-32 bg-teal-200 rounded-full flex items-center justify-center text-2xl font-semibold text-[#2f5755] overflow-hidden"
             >
-              <template v-if="avatarPreview">
-                <img
-                  :src="avatarPreview"
-                  alt="avatar"
-                  class="w-full h-full object-cover"
-                />
-              </template>
-              <template v-else>
-                <span>{{ initials }}</span>
-              </template>
+              <img
+                :src="avatarPreview || '/avatar.png'"
+                alt="avatar"
+                class="w-full h-full object-cover"
+                @error="handleImageError"
+              />
             </div>
 
             <div class="flex items-center gap-2">
@@ -432,9 +428,14 @@ const emailRef = ref(null);
 const addressRef = ref(null);
 const fileInputRef = ref(null);
 const avatarFile = ref(null);
-const avatarPreview = ref(user.value?.anh_dai_dien || null);
+const avatarPreview = ref(user.value?.anh_dai_dien_url || user.value?.anh_dai_dien || null);
 const avatarLocalUrl = ref(null); // object URL created for preview
 const avatarUploading = ref(false);
+
+function handleImageError(e) {
+  // Nếu ảnh lỗi, fallback sang avatar.png
+  e.target.src = '/avatar.png';
+}
 
 function focusFirstError(errs) {
   const order = ["ho_ten", "email", "so_dien_thoai", "dia_chi"];
@@ -525,7 +526,9 @@ async function uploadAvatar() {
     const updatedUser = res?.data?.user || res?.data?.data || res?.data;
     if (updatedUser) {
       user.value = updatedUser;
-      if (updatedUser.anh_dai_dien) {
+      if (updatedUser.anh_dai_dien_url) {
+        avatarPreview.value = updatedUser.anh_dai_dien_url;
+      } else if (updatedUser.anh_dai_dien) {
         avatarPreview.value = updatedUser.anh_dai_dien;
       }
       try {
