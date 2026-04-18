@@ -321,4 +321,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Lịch sử khám của 1 thú cưng
     Route::get('/ho-so-benh-an/thu-cung/{thuCungId}', [HoSoBenhAnController::class, 'lichSuKham'])->middleware('staff.only');   
 });
+// Trong Route::middleware('auth:sanctum')->group(function () { ... })
+Route::get('/statistics/dashboard', [\App\Http\Controllers\Api\StatisticController::class, 'getDashboardData'])
+    ->middleware('staff.only');
 
