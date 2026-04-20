@@ -185,16 +185,16 @@ const handleLogin = async () => {
       toast.success(res.data.message || "Đăng nhập thành công");
       const token = res.data.token;
       if (token) {
-        // Save token & user via auth helper
-        setAuth(token, res.data.data || null, rememberMe.value, "staff");
+        // Lấy vai_trò từ response để lưu vào đúng slot
+        const vaiTro = res.data.data?.vai_tro || "staff";
+        // Save token & user via auth helper — dùng vai_tro cụ thể
+        setAuth(token, res.data.data || null, rememberMe.value, vaiTro);
 
-        // Save user data & role extra
+        // Save role for routing
         if (res.data.data) {
-          // Save role for routing
           const role =
             res.data.data.phan_quyen?.ma_vai_tro ||
-            res.data.data.vai_tro ||
-            "nhan_vien";
+            vaiTro;
           if (rememberMe.value) {
             localStorage.setItem("user_role", role);
           } else {

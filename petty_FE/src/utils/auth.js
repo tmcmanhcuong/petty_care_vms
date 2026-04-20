@@ -1,18 +1,34 @@
 import axios from "axios";
 
 export const ROLE_KEYS = {
-  customer: { token: "auth_token_customer", user: "auth_user_customer" },
-  staff: { token: "auth_token_staff", user: "auth_user_staff" },
-  admin: { token: "auth_token_admin", user: "auth_user_admin" },
+  customer:    { token: "auth_token_customer",    user: "auth_user_customer" },
+  admin:       { token: "auth_token_admin",       user: "auth_user_admin" },
+  // Per-role staff keys — each role has its own isolated storage slot
+  y_ta:        { token: "auth_token_y_ta",        user: "auth_user_y_ta" },
+  bac_si:      { token: "auth_token_bac_si",      user: "auth_user_bac_si" },
+  le_tan:      { token: "auth_token_le_tan",      user: "auth_user_le_tan" },
+  tro_ly:      { token: "auth_token_tro_ly",      user: "auth_user_tro_ly" },
+  // Legacy fallback — kept for the /staff/login page before role is known
+  staff:       { token: "auth_token_staff",       user: "auth_user_staff" },
 };
 
+/**
+ * Resolve which auth role key to use.
+ * - If an explicit role string is passed, use it directly.
+ * - Otherwise, derive from the current URL path.
+ */
 export function resolveRole(role) {
   if (role) return role;
   if (typeof window === "undefined" || !window.location) return "customer";
 
   const path = window.location.pathname;
-  if (path.startsWith("/admin")) return "admin";
-  if (path.startsWith("/nhan-vien") || path.startsWith("/doctor") || path.startsWith("/nurse") || path.startsWith("/receptionist") || path.startsWith("/assistant")) return "staff";
+  if (path.startsWith("/admin"))        return "admin";
+  if (path.startsWith("/nurse"))        return "y_ta";
+  if (path.startsWith("/doctor"))       return "bac_si";
+  if (path.startsWith("/receptionist")) return "le_tan";
+  if (path.startsWith("/assistant"))    return "tro_ly";
+  // /staff/login page or /nhan-vien/* — generic slot before role is known
+  if (path.startsWith("/staff") || path.startsWith("/nhan-vien")) return "staff";
   return "customer";
 }
 
@@ -53,11 +69,7 @@ export function clearAuth(role) {
     console.warn("auth: clear storage error", e);
   }
 
-  if (
-    axios.defaults &&
-    axios.defaults.headers &&
-    axios.defaults.headers.common
-  ) {
+  if (axios.defaults?.headers?.common) {
     delete axios.defaults.headers.common["Authorization"];
   }
 }
@@ -91,10 +103,16 @@ export function getUser(role) {
 export function logout(router, role) {
   const resolvedRole = resolveRole(role);
   clearAuth(resolvedRole);
-  
-  let target = "/customer/login";
-  if (resolvedRole === "admin") target = "/admin/login";
-  else if (resolvedRole === "staff") target = "/staff/login";
+
+  const loginPages = {
+    admin:  "/admin/login",
+    y_ta:   "/staff/login",
+    bac_si: "/staff/login",
+    le_tan: "/staff/login",
+    tro_ly: "/staff/login",
+    staff:  "/staff/login",
+  };
+  const target = loginPages[resolvedRole] || "/customer/login";
 
   try {
     if (router && typeof router.replace === "function") {
@@ -103,11 +121,7 @@ export function logout(router, role) {
       window.location.replace(target);
     }
   } catch (e) {
-    try {
-      window.location.replace(target);
-    } catch (ee) {
-      // give up
-    }
+    try { window.location.replace(target); } catch (ee) { /* give up */ }
   }
 }
 

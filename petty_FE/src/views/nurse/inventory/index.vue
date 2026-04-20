@@ -113,37 +113,76 @@
               </div>
 
               <!-- Category Filter -->
-              <button
-                class="bg-[#f3f3f5] border-none rounded-lg h-9 w-48 px-[13px] py-0.5 flex items-center justify-between hover:bg-gray-200 transition-colors"
-              >
-                <span
-                  class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight"
-                  >{{ filterCategory }}</span
+              <div class="relative">
+                <button
+                  class="bg-[#f3f3f5] border-none rounded-lg h-9 w-48 px-[13px] py-0.5 flex items-center justify-between hover:bg-gray-200 transition-colors"
+                  @click.stop="showCategoryDropdown = !showCategoryDropdown; showUnitDropdown = false; showStatusDropdown = false"
                 >
-                <ChevronDownIcon />
-              </button>
+                  <span class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight">{{ filterCategory }}</span>
+                  <ChevronDownIcon class="transition-transform" :class="showCategoryDropdown ? 'rotate-180' : ''" />
+                </button>
+                <div
+                  v-if="showCategoryDropdown"
+                  class="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
+                  @click.stop
+                >
+                  <button
+                    v-for="opt in categoryOptions"
+                    :key="opt"
+                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                    :class="filterCategory === opt ? 'text-[#0d9488] font-medium' : 'text-neutral-950'"
+                    @click="filterCategory = opt; showCategoryDropdown = false"
+                  >{{ opt }}</button>
+                </div>
+              </div>
 
               <!-- Unit Filter -->
-              <button
-                class="bg-[#f3f3f5] border-none rounded-lg h-9 w-48 px-[13px] py-0.5 flex items-center justify-between hover:bg-gray-200 transition-colors"
-              >
-                <span
-                  class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight"
-                  >{{ filterUnit }}</span
+              <div class="relative">
+                <button
+                  class="bg-[#f3f3f5] border-none rounded-lg h-9 w-48 px-[13px] py-0.5 flex items-center justify-between hover:bg-gray-200 transition-colors"
+                  @click.stop="showUnitDropdown = !showUnitDropdown; showCategoryDropdown = false; showStatusDropdown = false"
                 >
-                <ChevronDownIcon />
-              </button>
+                  <span class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight">{{ filterUnit }}</span>
+                  <ChevronDownIcon class="transition-transform" :class="showUnitDropdown ? 'rotate-180' : ''" />
+                </button>
+                <div
+                  v-if="showUnitDropdown"
+                  class="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
+                  @click.stop
+                >
+                  <button
+                    v-for="opt in unitOptions"
+                    :key="opt"
+                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                    :class="filterUnit === opt ? 'text-[#0d9488] font-medium' : 'text-neutral-950'"
+                    @click="filterUnit = opt; showUnitDropdown = false"
+                  >{{ opt }}</button>
+                </div>
+              </div>
 
               <!-- Status Filter -->
-              <button
-                class="bg-[#f3f3f5] border-none rounded-lg h-9 w-48 px-[13px] py-0.5 flex items-center justify-between hover:bg-gray-200 transition-colors"
-              >
-                <span
-                  class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight"
-                  >{{ filterStatus }}</span
+              <div class="relative">
+                <button
+                  class="bg-[#f3f3f5] border-none rounded-lg h-9 w-48 px-[13px] py-0.5 flex items-center justify-between hover:bg-gray-200 transition-colors"
+                  @click.stop="showStatusDropdown = !showStatusDropdown; showCategoryDropdown = false; showUnitDropdown = false"
                 >
-                <ChevronDownIcon />
-              </button>
+                  <span class="font-nunito text-sm leading-5 text-neutral-950 tracking-tight">{{ filterStatus }}</span>
+                  <ChevronDownIcon class="transition-transform" :class="showStatusDropdown ? 'rotate-180' : ''" />
+                </button>
+                <div
+                  v-if="showStatusDropdown"
+                  class="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
+                  @click.stop
+                >
+                  <button
+                    v-for="opt in statusOptions"
+                    :key="opt"
+                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                    :class="filterStatus === opt ? 'text-[#0d9488] font-medium' : 'text-neutral-950'"
+                    @click="filterStatus = opt; showStatusDropdown = false"
+                  >{{ opt }}</button>
+                </div>
+              </div>
             </div>
 
             <!-- Table -->
@@ -197,7 +236,7 @@
                 </thead>
                 <tbody>
                   <tr
-                    v-for="item in inventoryList"
+                    v-for="item in filteredInventory"
                     :key="item.id"
                     class="border-b border-gray-200/60"
                   >
@@ -316,33 +355,21 @@
 
             <!-- Pagination -->
             <div class="flex items-center justify-between h-10">
-              <p
-                class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight"
-              >
-                Hiển thị 1 - 4 của 4 hàng hóa
+              <p class="font-nunito text-sm leading-5 text-[#4a5565] tracking-tight">
+                <template v-if="filteredInventory.length > 0">
+                  Hiển thị {{ filteredInventory.length }} của {{ inventoryList.length }} hàng hóa
+                </template>
+                <template v-else>
+                  Không tìm thấy hàng hóa phù hợp
+                </template>
               </p>
-              <div class="flex items-center gap-1">
-                <button
-                  class="flex items-center gap-2 px-3 py-2 rounded-lg opacity-50"
-                  disabled
-                >
-                  <ChevronLeftIcon />
-                </button>
-                <button
-                  class="bg-white border !border-gray-300 rounded-lg w-9 h-9 flex items-center justify-center"
-                >
-                  <span
-                    class="font-nunito font-medium text-sm leading-5 text-neutral-950 tracking-tight"
-                    >1</span
-                  >
-                </button>
-                <button
-                  class="flex items-center gap-2 px-3 py-2 rounded-lg opacity-50"
-                  disabled
-                >
-                  <ChevronRightIcon />
-                </button>
-              </div>
+              <button
+                v-if="filterCategory !== 'Tất cả' || filterUnit !== 'Tất cả' || filterStatus !== 'Tất cả' || searchInventory"
+                class="text-sm text-[#0d9488] hover:underline transition-colors"
+                @click="filterCategory = 'Tất cả'; filterUnit = 'Tất cả'; filterStatus = 'Tất cả'; searchInventory = ''"
+              >
+                Xóa bộ lọc
+              </button>
             </div>
           </div>
         </div>
@@ -1034,6 +1061,11 @@ const isThemDoiTacModalOpen = ref(false);
 const isSuaNhaCungCapModalOpen = ref(false);
 const selectedSupplierForEdit = ref(null);
 
+// Dropdown open/close state for inventory filters
+const showCategoryDropdown = ref(false);
+const showUnitDropdown = ref(false);
+const showStatusDropdown = ref(false);
+
 // Pagination state for suppliers
 const currentPage = ref(1);
 const itemsPerPage = ref(5);
@@ -1048,8 +1080,57 @@ const tabs = [
   { id: "kiem-ke", name: "Kiểm kê" },
   { id: "nha-cung-cap", name: "Nhà cung cấp" },
 ];
+// Option lists for inventory filters (derived from live data)
+const categoryOptions = computed(() => {
+  const cats = [...new Set(inventoryList.map((i) => i.category).filter(Boolean))];
+  return ["Tất cả", ...cats.sort()];
+});
 
-// Sample Data - Danh sách & Tồn kho
+const unitOptions = computed(() => {
+  const units = [...new Set(inventoryList.map((i) => i.unit).filter(Boolean))];
+  return ["Tất cả", ...units.sort()];
+});
+
+const statusOptions = computed(() => [
+  "Tất cả",
+  "Hoạt động",
+  "Ngừng kinh doanh",
+]);
+
+// Filtered inventory list — chains: search → category → unit → status
+const filteredInventory = computed(() => {
+  let list = inventoryList;
+
+  const q = searchInventory.value.trim().toLowerCase();
+  if (q) {
+    list = list.filter(
+      (item) =>
+        item.name?.toLowerCase().includes(q) ||
+        item.code?.toLowerCase().includes(q) ||
+        item.category?.toLowerCase().includes(q)
+    );
+  }
+
+  if (filterCategory.value !== "Tất cả") {
+    list = list.filter((item) => item.category === filterCategory.value);
+  }
+
+  if (filterUnit.value !== "Tất cả") {
+    list = list.filter((item) => item.unit === filterUnit.value);
+  }
+
+  if (filterStatus.value !== "Tất cả") {
+    const isActive = filterStatus.value === "Hoạt động";
+    list = list.filter((item) =>
+      isActive
+        ? item.tinh_trang === "hoat_dong" || item.expiryStatus !== "expired"
+        : item.tinh_trang === "ngung_kinh_doanh" || item.expiryStatus === "expired"
+    );
+  }
+
+  return list;
+});
+
 // Computed properties for inventory statistics
 const inventoryStats = computed(() => {
   const outOfStock = inventoryList.filter(
@@ -1396,7 +1477,7 @@ const loadNhaCungCaps = async () => {
       suppliers.splice(0, suppliers.length);
 
       // Load phiếu chi để tính công nợ
-      let voucherData = [];
+      let phieuChiData = [];
       try {
         const voucherResponse = await getPhieuChis({ per_page: 9999 });
         console.log("📦 Response phiếu chi:", voucherResponse);
@@ -1427,11 +1508,11 @@ const loadNhaCungCaps = async () => {
         );
 
         console.log(
-          `💰 NCC [${item.ten_nha_cung_cap}] (ID: ${item.id}) có ${phieuChiFiltered.length} phiếu chi:`,
-          phieuChiFiltered
+          `💰 NCC [${item.ten_nha_cung_cap}] (ID: ${item.id}) có ${filteredVouchers.length} phiếu chi:`,
+          filteredVouchers
         );
 
-        const totalDebt = phieuChiFiltered.reduce((sum, phieu) => {
+        const totalDebt = filteredVouchers.reduce((sum, phieu) => {
           const debt = parseFloat(phieu.so_tien_con_no) || 0;
           console.log(
             `  - Phiếu ${phieu.ma_phieu_chi}: ${phieu.so_tien_con_no} => ${debt}đ (nha_cung_cap_id: ${phieu.nha_cung_cap_id})`
@@ -1468,8 +1549,11 @@ const loadNhaCungCaps = async () => {
       currentPage.value = 1;
     }
   } catch (error) {
-    console.error("Lỗi tải dữ liệu nhà cung cấp:", error);
-    showErrorToast("Không thể tải danh sách nhà cung cấp");
+    console.warn("Lỗi tải nhà cung cấp:", error?.response?.status, error?.message);
+    // 403: không hiển thị toast để tránh nhiễu khi token không phải y tá
+    if (error?.response?.status !== 403) {
+      showErrorToast("Không thể tải danh sách nhà cung cấp");
+    }
   }
 };
 
@@ -1501,12 +1585,11 @@ const loadPhieuNhapKhos = async () => {
       });
     }
   } catch (error) {
-    console.error("Lỗi tải dữ liệu phiếu nhập kho:", error);
-    // Không hiển thị toast error nếu là lỗi network (có thể backend chưa chạy)
-    if (error.code !== "ERR_NETWORK") {
+    console.warn("Lỗi tải phiếu nhập kho:", error?.response?.status, error?.message);
+    // 403: y tá chưa đăng nhập hoặc không có quyền — không hiển thị toast
+    if (error?.response?.status !== 403 && error.code !== "ERR_NETWORK") {
       showErrorToast("Không thể tải danh sách phiếu nhập kho");
     }
-    // Khởi tạo mảng rỗng nếu lỗi
     importRecords.value = [];
   }
 };
@@ -1538,10 +1621,14 @@ const handleClickOutside = (event) => {
   );
 
   if (!isClickInsideDropdown) {
-    // Đóng tất cả dropdown
+    // Đóng tất cả dropdown kiểm kê
     inventoryItems.forEach((item) => {
       item.showReasonDropdown = false;
     });
+    // Đóng filter dropdown của tab danh sách
+    showCategoryDropdown.value = false;
+    showUnitDropdown.value = false;
+    showStatusDropdown.value = false;
   }
 };
 

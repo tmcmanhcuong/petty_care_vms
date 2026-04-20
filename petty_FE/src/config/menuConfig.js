@@ -10,7 +10,7 @@ export const menuConfig = {
     menuItems: [
       {
         key: "dashboard",
-        label: "dashboard",
+        label: "Dashboard",
         icon: "https://www.figma.com/api/mcp/asset/de829f5f-9250-441a-a9ed-1d80054e1c1a",
         path: "/admin/dashboard",
         type: "single",
@@ -123,7 +123,7 @@ export const menuConfig = {
     menuItems: [
       {
         key: "dashboard",
-        label: "dashboard",
+        label: "Dashboard",
         icon: "https://www.figma.com/api/mcp/asset/7a583d8e-ed96-463a-ac5b-438fab8ba969",
         path: "/doctor/dashboard",
         type: "single",
@@ -172,7 +172,7 @@ export const menuConfig = {
     menuItems: [
       {
         key: "dashboard",
-        label: "dashboard",
+        label: "Dashboard",
         icon: "https://www.figma.com/api/mcp/asset/49fd7d49-99f7-4859-9ce2-4aa89c9f9eca",
         path: "/nurse/dashboard",
         type: "single",

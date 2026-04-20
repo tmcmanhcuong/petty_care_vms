@@ -308,13 +308,19 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
     let role = "customer";
-    if (to.path.startsWith("/admin")) role = "admin";
-    else if (to.path.startsWith("/doctor") || to.path.startsWith("/nurse") || to.path.startsWith("/staff") || to.path.startsWith("/receptionist") || to.path.startsWith("/assistant")) role = "staff";
+    if (to.path.startsWith("/admin"))        role = "admin";
+    else if (to.path.startsWith("/nurse"))        role = "y_ta";
+    else if (to.path.startsWith("/doctor"))       role = "bac_si";
+    else if (to.path.startsWith("/receptionist")) role = "le_tan";
+    else if (to.path.startsWith("/assistant"))    role = "tro_ly";
+    else if (to.path.startsWith("/staff") || to.path.startsWith("/nhan-vien")) role = "staff";
 
     const token = getToken(role);
     if (!token) {
-      if (role === "admin") return next({ path: "/admin/login", query: { redirect: to.fullPath } });
-      if (role === "staff") return next({ path: "/staff/login", query: { redirect: to.fullPath } });
+      if (role === "admin")
+        return next({ path: "/admin/login", query: { redirect: to.fullPath } });
+      if (["y_ta", "bac_si", "le_tan", "tro_ly", "staff"].includes(role))
+        return next({ path: "/staff/login", query: { redirect: to.fullPath } });
       return next({ path: "/customer/login", query: { redirect: to.fullPath } });
     }
   }
