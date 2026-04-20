@@ -198,6 +198,7 @@
           <input
             type="text"
             v-model="searchQuery"
+            @input="handleSearchInput"
             placeholder="Tìm theo Mã phiếu, Tên Nhà cung cấp, Nội dung chi..."
             class="w-full h-9 pl-10 pr-3 py-1 bg-[#f3f3f5] border-0 rounded-lg text-sm text-[#717182] focus:outline-none focus:ring-2 focus:ring-[#009689]"
           />
@@ -206,28 +207,82 @@
         <!-- Filters and Create Button -->
         <div class="grid grid-cols-4 gap-4">
           <!-- Time Filter -->
-          <button
-            class="bg-[#f3f3f5] border-0 rounded-lg px-3 py-1 flex items-center justify-between h-9 hover:bg-gray-200 transition-colors"
-          >
-            <span class="text-sm text-neutral-950">Tháng này</span>
-            <ChevronDownIcon />
-          </button>
+          <div class="relative filter-dropdown-time">
+            <button
+              @click.stop="toggleDropdown('time')"
+              class="w-full bg-[#f3f3f5] border-0 rounded-lg px-3 py-1 flex items-center justify-between h-9 hover:bg-gray-200 transition-colors"
+              :class="{ '!bg-[#e6f7f5] !ring-1 !ring-[#009689]': activeFilter.time !== 'all' }"
+            >
+              <span class="text-sm text-neutral-950">{{ timeFilterLabel }}</span>
+              <ChevronDownIcon />
+            </button>
+            <div
+              v-if="openDropdown === 'time'"
+              class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+            >
+              <button
+                v-for="opt in timeOptions"
+                :key="opt.value"
+                @click.stop="selectFilter('time', opt)"
+                class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 transition-colors"
+                :class="{ 'bg-[#e6f7f5] text-[#009689] font-medium': activeFilter.time === opt.value }"
+              >
+                {{ opt.label }}
+              </button>
+            </div>
+          </div>
 
           <!-- Category Filter -->
-          <button
-            class="bg-[#f3f3f5] border-0 rounded-lg px-3 py-1 flex items-center justify-between h-9 hover:bg-gray-200 transition-colors"
-          >
-            <span class="text-sm text-neutral-950">Tất cả</span>
-            <ChevronDownIcon />
-          </button>
+          <div class="relative filter-dropdown-category">
+            <button
+              @click.stop="toggleDropdown('category')"
+              class="w-full bg-[#f3f3f5] border-0 rounded-lg px-3 py-1 flex items-center justify-between h-9 hover:bg-gray-200 transition-colors"
+              :class="{ '!bg-[#e6f7f5] !ring-1 !ring-[#009689]': activeFilter.category !== 'all' }"
+            >
+              <span class="text-sm text-neutral-950">{{ categoryFilterLabel }}</span>
+              <ChevronDownIcon />
+            </button>
+            <div
+              v-if="openDropdown === 'category'"
+              class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+            >
+              <button
+                v-for="opt in categoryOptions"
+                :key="opt.value"
+                @click.stop="selectFilter('category', opt)"
+                class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 transition-colors"
+                :class="{ 'bg-[#e6f7f5] text-[#009689] font-medium': activeFilter.category === opt.value }"
+              >
+                {{ opt.label }}
+              </button>
+            </div>
+          </div>
 
           <!-- Status Filter -->
-          <button
-            class="bg-[#f3f3f5] border-0 rounded-lg px-3 py-1 flex items-center justify-between h-9 hover:bg-gray-200 transition-colors"
-          >
-            <span class="text-sm text-neutral-950">Tất cả</span>
-            <ChevronDownIcon />
-          </button>
+          <div class="relative filter-dropdown-status">
+            <button
+              @click.stop="toggleDropdown('status')"
+              class="w-full bg-[#f3f3f5] border-0 rounded-lg px-3 py-1 flex items-center justify-between h-9 hover:bg-gray-200 transition-colors"
+              :class="{ '!bg-[#e6f7f5] !ring-1 !ring-[#009689]': activeFilter.status !== 'all' }"
+            >
+              <span class="text-sm text-neutral-950">{{ statusFilterLabel }}</span>
+              <ChevronDownIcon />
+            </button>
+            <div
+              v-if="openDropdown === 'status'"
+              class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+            >
+              <button
+                v-for="opt in statusOptions"
+                :key="opt.value"
+                @click.stop="selectFilter('status', opt)"
+                class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 transition-colors"
+                :class="{ 'bg-[#e6f7f5] text-[#009689] font-medium': activeFilter.status === opt.value }"
+              >
+                {{ opt.label }}
+              </button>
+            </div>
+          </div>
 
           <!-- Create Button -->
           <button
@@ -495,7 +550,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, watch } from "vue";
 import { getPhieuChis, getPhieuChiById } from "@/utils/phieuChi";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import TaoPhieuChi from "./create-expense/index.vue";
@@ -580,11 +635,114 @@ const AUTO_REFRESH_INTERVAL = 30000; // 30 seconds
 // Filters
 const filters = ref({
   loai_phieu_chi: null, // 'chi_nhap_hang' hoặc 'chi_van_hanh'
-  trang_thai: null, // 'da_thanh_toan_du' hoặc 'chua_thanh_toan_du'
+  trang_thai: null, // 'da_hoan_thanh' hoặc 'con_no'
   tu_ngay: null,
   den_ngay: null,
   search: "",
 });
+
+// === FILTER DROPDOWN STATE ===
+const openDropdown = ref(null); // 'time' | 'category' | 'status' | null
+const activeFilter = ref({ time: 'all', category: 'all', status: 'all' });
+let searchTimer = null;
+
+// Dropdown options
+const timeOptions = [
+  { value: 'all', label: 'Tất cả thời gian' },
+  { value: 'this_month', label: 'Tháng này' },
+  { value: 'last_month', label: 'Tháng trước' },
+  { value: '3_months', label: '3 tháng gần đây' },
+];
+
+const categoryOptions = [
+  { value: 'all', label: 'Tất cả phân loại' },
+  { value: 'chi_nhap_hang', label: 'Chi nhập hàng' },
+  { value: 'chi_van_hanh', label: 'Chi vận hành' },
+];
+
+const statusOptions = [
+  { value: 'all', label: 'Tất cả trạng thái' },
+  { value: 'con_no', label: 'Còn nợ' },
+  { value: 'da_hoan_thanh', label: 'Đã hoàn thành' },
+];
+
+// Computed labels cho button
+const timeFilterLabel = computed(() =>
+  timeOptions.find(o => o.value === activeFilter.value.time)?.label || 'Tháng này'
+);
+const categoryFilterLabel = computed(() =>
+  categoryOptions.find(o => o.value === activeFilter.value.category)?.label || 'Tất cả'
+);
+const statusFilterLabel = computed(() =>
+  statusOptions.find(o => o.value === activeFilter.value.status)?.label || 'Tất cả'
+);
+
+// Build date range từ time filter
+const buildDateRange = (timeValue) => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+
+  if (timeValue === 'this_month') {
+    const firstDay = new Date(year, month, 1).toISOString().split('T')[0];
+    const lastDay = new Date(year, month + 1, 0).toISOString().split('T')[0];
+    return { tu_ngay: firstDay, den_ngay: lastDay };
+  } else if (timeValue === 'last_month') {
+    const firstDay = new Date(year, month - 1, 1).toISOString().split('T')[0];
+    const lastDay = new Date(year, month, 0).toISOString().split('T')[0];
+    return { tu_ngay: firstDay, den_ngay: lastDay };
+  } else if (timeValue === '3_months') {
+    const firstDay = new Date(year, month - 2, 1).toISOString().split('T')[0];
+    const lastDay = new Date(year, month + 1, 0).toISOString().split('T')[0];
+    return { tu_ngay: firstDay, den_ngay: lastDay };
+  }
+  return { tu_ngay: null, den_ngay: null };
+};
+
+// Toggle dropdown
+const toggleDropdown = (name) => {
+  openDropdown.value = openDropdown.value === name ? null : name;
+};
+
+// Select filter và apply
+const selectFilter = (type, opt) => {
+  activeFilter.value[type] = opt.value;
+  openDropdown.value = null;
+
+  // Reset pagination
+  pagination.value.current_page = 1;
+
+  // Apply vào filters ref
+  if (type === 'time') {
+    const dateRange = buildDateRange(opt.value);
+    filters.value.tu_ngay = dateRange.tu_ngay;
+    filters.value.den_ngay = dateRange.den_ngay;
+  } else if (type === 'category') {
+    filters.value.loai_phieu_chi = opt.value === 'all' ? null : opt.value;
+  } else if (type === 'status') {
+    filters.value.trang_thai = opt.value === 'all' ? null : opt.value;
+  }
+
+  loadPhieuChis();
+};
+
+// Search với debounce 400ms
+const handleSearchInput = () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    pagination.value.current_page = 1;
+    loadPhieuChis();
+  }, 400);
+};
+
+// Close dropdown khi click ra ngoài
+const handleFilterClickOutside = (e) => {
+  if (!e.target.closest('.filter-dropdown-time') &&
+      !e.target.closest('.filter-dropdown-category') &&
+      !e.target.closest('.filter-dropdown-status')) {
+    openDropdown.value = null;
+  }
+};
 
 // Load danh sách phiếu chi
 const loadPhieuChis = async () => {
@@ -876,8 +1034,8 @@ const getCategoryClass = (category) => {
 // Get status badge class
 const getStatusClass = (status) => {
   const classes = {
-    da_thanh_toan_du: "status-completed",
-    chua_thanh_toan_du: "status-debt",
+    da_hoan_thanh: "status-completed",
+    con_no: "status-debt",
   };
   return classes[status] || "bg-gray-100 text-gray-700";
 };
@@ -885,17 +1043,9 @@ const getStatusClass = (status) => {
 // Get status style (inline style để đảm bảo hiển thị màu)
 const getStatusStyle = (status) => {
   const styles = {
-    da_thanh_toan_du: {
+    da_hoan_thanh: {
       backgroundColor: "#d1fae5",
       color: "#059669",
-    },
-    hoan_thanh: {
-      backgroundColor: "#d1fae5",
-      color: "#059669",
-    },
-    chua_thanh_toan_du: {
-      backgroundColor: "#fee2e2",
-      color: "#dc2626",
     },
     con_no: {
       backgroundColor: "#fee2e2",
@@ -966,8 +1116,7 @@ const handlePaymentSubmit = async (data) => {
   const isFullyPaid =
     data.so_tien_con_no === 0 ||
     data.so_tien_con_no <= 0 ||
-    data.trang_thai === "da_thanh_toan_du" ||
-    data.trang_thai === "hoan_thanh";
+    data.trang_thai === "da_hoan_thanh";
 
   if (isFullyPaid) {
     showSuccessToast(
@@ -995,11 +1144,14 @@ const handlePaymentSubmit = async (data) => {
 onMounted(() => {
   loadPhieuChis();
   startAutoRefresh();
+  document.addEventListener("click", handleFilterClickOutside);
 });
 
 // Cleanup khi component unmount
 onUnmounted(() => {
   stopAutoRefresh();
+  document.removeEventListener("click", handleFilterClickOutside);
+  if (searchTimer) clearTimeout(searchTimer);
 });
 </script>
 

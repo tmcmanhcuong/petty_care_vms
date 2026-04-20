@@ -193,9 +193,18 @@ class PhanQuyenSeeder extends Seeder
             'kiem_ke_tao' => true,
             'kiem_ke_sua' => true,
             'kiem_ke_xoa' => false,
+            // Phiếu chi
+            'phieu_chi_xem' => true,
+            'phieu_chi_tao' => true,
+            'phieu_chi_sua' => false,
+            'phieu_chi_xoa' => false,
+            'phieu_chi_xuat_pdf' => true,
+            'phieu_chi_thanh_toan' => true,
             // Khách hàng
             'khach_hang_xem' => true,
             'khach_hang_sua' => false,
+            // Nhà cung cấp
+            'nha_cung_cap_xem' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

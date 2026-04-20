@@ -208,7 +208,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { updatePhieuChi, getPhieuChiById } from "@/utils/phieuChi";
+import { thanhToanThemPhieuChi, getPhieuChiById } from "@/utils/phieuChi";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 //Icon SVG
 import CloseIcon from "@/assets/svg/close.svg";
@@ -458,89 +458,42 @@ const handleSubmit = async () => {
   try {
     isSubmitting.value = true;
 
-    // Reload phiếu chi details to get latest data
-    console.log("🔄 Đang tải lại chi tiết phiếu chi...");
-    await loadPhieuChiDetails();
-
-    // Ensure phieuChiDetails is loaded
-    if (!voucherDetails.value) {
-      showErrorToast("Không thể tải thông tin phiếu chi. Vui lòng thử lại.");
-      return;
-    }
-
-    // Tính số tiền thanh toán thêm
     const additionalPayment = parseInt(formData.value.amount);
 
-    // Lấy thông tin hiện tại từ phieuChiDetails (dữ liệu mới nhất từ API)
-    const currentPaidAmount =
-      voucherDetails.value?.so_tien_thanh_toan_ngay || props.paidAmount;
-    const currentRemainingAmount =
-      voucherDetails.value?.so_tien_con_no || props.remainingAmount;
-    const totalAmount =
-      voucherDetails.value?.tong_so_tien || props.totalAmount;
+    // Map hình thức thanh toán theo enum backend: tien_mat / chuyen_khoan / ca_hai
+    const hinhThucMap = { cash: "tien_mat", transfer: "chuyen_khoan", both: "ca_hai" };
+    const hinhThucThanhToan = hinhThucMap[formData.value.paymentMethod] || "tien_mat";
 
-    // ✅ CÁCH TÍNH MỚI: Còn nợ mới = Còn nợ hiện tại - Thanh toán thêm
-    const newRemainingAmount = Math.max(
-      0,
-      currentRemainingAmount - additionalPayment
-    );
-
-    // Tính tổng đã trả mới = Tổng tiền - Còn nợ mới
-    const newTotalPaidAmount = totalAmount - newRemainingAmount;
-
-    // Tính tiền mặt và chuyển khoản hiện tại
-    let currentCashAmount = voucherDetails.value?.tien_mat || 0;
-    let currentTransferAmount = voucherDetails.value?.tien_chuyen_khoan || 0;
-
-    // Tính tiền mặt và chuyển khoản THÊM vào
-    let additionalCash = 0;
-    let additionalTransfer = 0;
-
+    let tienMat = 0;
+    let tienChuyenKhoan = 0;
     if (formData.value.paymentMethod === "cash") {
-      additionalCash = additionalPayment;
+      tienMat = additionalPayment;
     } else if (formData.value.paymentMethod === "transfer") {
-      additionalTransfer = additionalPayment;
-    } else if (formData.value.paymentMethod === "both") {
-      additionalCash = parseInt(formData.value.cashAmount) || 0;
-      additionalTransfer = parseInt(formData.value.transferAmount) || 0;
+      tienChuyenKhoan = additionalPayment;
+    } else {
+      tienMat = parseInt(formData.value.cashAmount) || 0;
+      tienChuyenKhoan = parseInt(formData.value.transferAmount) || 0;
     }
 
-    // Prepare update data - GỬI TỔNG ĐÃ TRẢ MỚI
-    const updateData = {
-      so_tien_thanh_toan_ngay: newTotalPaidAmount, // Backend sẽ tính: so_tien_con_no = tong_so_tien - so_tien_thanh_toan_ngay
-      tien_mat: currentCashAmount + additionalCash,
-      tien_chuyen_khoan: currentTransferAmount + additionalTransfer,
-      ghi_chu: formData.value.note
-        ? `${
-            voucherDetails.value?.ghi_chu || ""
-          }\n[Thanh toán thêm ${formatCurrency(
-            additionalPayment
-          )} vào ${new Date().toLocaleString("vi-VN")}]: ${
-            formData.value.note
-          }`.trim()
-        : voucherDetails.value?.ghi_chu,
+    // Payload đúng theo endpoint POST /phieu-chi/{id}/thanh-toan-them
+    const payload = {
+      so_tien_thanh_toan: additionalPayment,
+      hinh_thuc_thanh_toan: hinhThucThanhToan,
+      tien_mat: tienMat,
+      tien_chuyen_khoan: tienChuyenKhoan,
+      ghi_chu: formData.value.note || "Thanh toán thêm",
     };
 
-    console.log("📊 Thông tin thanh toán:");
-    console.log("  💰 Tổng giá trị:", formatCurrency(totalAmount));
-    console.log(
-      "  🔴 Còn nợ hiện tại:",
-      formatCurrency(currentRemainingAmount)
-    );
-    console.log("  💳 Thanh toán thêm:", formatCurrency(additionalPayment));
-    console.log("  🟢 Còn nợ mới:", formatCurrency(newRemainingAmount));
-    console.log("  ✅ Đã trả cũ:", formatCurrency(currentPaidAmount));
-    console.log("  🎯 Tổng đã trả mới:", formatCurrency(newTotalPaidAmount));
-    console.log("📤 Gửi dữ liệu lên backend:", updateData);
+    console.log("📤 Gửi thanh toán thêm:", payload);
 
-    // Call API to update
-    const response = await updatePhieuChi(props.expenseId, updateData);
+    // Gọi đúng endpoint dedicated (chỉ cần quyền phieu_chi_thanh_toan)
+    const response = await thanhToanThemPhieuChi(props.expenseId, payload);
 
     if (response && response.status) {
       console.log("📥 Response từ backend:", response.data);
 
-      // Backend đã tính toán lại: so_tien_con_no và trang_thai
-      const updatedData = response.data;
+      // Backend trả về response.data.phieu_chi
+      const updatedData = response.data?.phieu_chi || response.data;
       const updatedPaidAmount = updatedData.so_tien_thanh_toan_ngay;
       const updatedRemainingAmount = updatedData.so_tien_con_no;
       const updatedStatus = updatedData.trang_thai;
@@ -550,12 +503,11 @@ const handleSubmit = async () => {
       console.log("  🔴 Còn nợ:", formatCurrency(updatedRemainingAmount));
       console.log("  📊 Trạng thái:", updatedStatus);
 
-      // Kiểm tra đã thanh toán đủ chưa
+      // Kiểm tra đã thanh toán đủ chưa (enum mới: da_hoan_thanh)
       const isFullyPaid =
         updatedRemainingAmount === 0 ||
         updatedRemainingAmount <= 0 ||
-        updatedStatus === "da_thanh_toan_du" ||
-        updatedStatus === "hoan_thanh";
+        updatedStatus === "da_hoan_thanh";
 
       if (isFullyPaid) {
         showSuccessToast(

@@ -103,3 +103,18 @@ export async function getPhieuChiPaymentHistory(id) {
     throw error;
   }
 }
+
+/**
+ * Thanh toán thêm cho phiếu chi (dùng endpoint riêng, không cần quyền phieu_chi_sua)
+ * @param {number} id - ID của phiếu chi
+ * @param {Object} data - { so_tien_thanh_toan, hinh_thuc_thanh_toan, ghi_chu }
+ */
+export async function thanhToanThemPhieuChi(id, data) {
+  try {
+    const response = await client.post(`/phieu-chi/${id}/thanh-toan-them`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding payment to phieu chi:", error);
+    throw error;
+  }
+}

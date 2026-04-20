@@ -194,8 +194,17 @@ class NhanVienSeeder extends Seeder
             ],
         ];
 
+        // Mapping vai_tro → phan_quyen_id (phải khớp với thứ tự insert trong PhanQuyenSeeder)
+        $phanQuyenMap = [
+            'bac_si' => 2,    // Bac_si
+            'y_ta'   => 3,    // Dieu_duong (Y Tá dùng quyền Điều dưỡng)
+            'le_tan' => 4,    // Le_tan
+            'tro_ly' => 5,    // Tro_ly
+        ];
+
         // Use updateOrCreate to avoid FK/truncate issues and make seeder idempotent
         foreach ($samples as $item) {
+            $item['phan_quyen_id'] = $phanQuyenMap[$item['vai_tro']] ?? 2;
             NhanVien::updateOrCreate(
                 ['email' => $item['email']],
                 $item

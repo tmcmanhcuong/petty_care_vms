@@ -221,7 +221,7 @@ class PhieuChiController extends Controller
     {
         $phieuChi = PhieuChi::with([
             'nhaCungCap:id,ten_nha_cung_cap,ma_nha_cung_cap,so_dien_thoai,email,dia_chi',
-            'nhanVien:id,full_name,email,so_dien_thoai',
+            'nhanVien:id,full_name,email,phone',
             'admin:id,ho_ten,email',
         ])->find($id);
 
@@ -436,7 +436,7 @@ class PhieuChiController extends Controller
     {
         $phieuChi = PhieuChi::with([
             'nhaCungCap:id,ten_nha_cung_cap,ma_nha_cung_cap,so_dien_thoai,email,dia_chi',
-            'nhanVien:id,full_name,email,so_dien_thoai',
+            'nhanVien:id,full_name,email,phone',
             'admin:id,ho_ten,email',
             'lichSuThanhToan.admin:id,ho_ten,email',
             'lichSuThanhToan.nhanVien:id,full_name,email',
