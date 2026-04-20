@@ -15,8 +15,8 @@ class UploadController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'image' => 'sometimes|image|mimes:jpg,jpeg,png,gif,webp|max:5120', // 5MB
-            'file' => 'sometimes|image|mimes:jpg,jpeg,png,gif,webp|max:5120', // Fallback for 'file' field
+            'image' => 'sometimes|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'file'  => 'sometimes|mimes:jpg,jpeg,png,gif,webp,pdf|max:10240',
         ]);
 
         if ($validator->fails()) {
@@ -38,8 +38,8 @@ class UploadController extends Controller
                 ], 400);
             }
 
-            // Store in articles directory
-            $path = $file->store('articles/images', 'public');
+            $folder = ($file->getMimeType() === 'application/pdf') ? 'staff/documents' : 'staff/images';
+            $path = $file->store($folder, 'public');
 
             // Get full URL
             $publicUrl = url(Storage::url($path));

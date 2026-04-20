@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\NhanVien;
 use App\Models\Admin;
+use App\Models\PhanQuyen;
 use App\Helpers\UserImageHelper;
 use App\Http\Requests\NhanVienRequest;
 use App\Notifications\NhanVienCreatedNotification;
@@ -62,6 +63,19 @@ class NhanVienController extends Controller
         if (empty($data['password'])) {
             $plainPassword = Str::random(12);
             $data['password'] = $plainPassword;
+        }
+
+        // Map vai_tro to PhanQuyen and assign phan_quyen_id
+        $vaiTroMap = [
+            'bac_si' => PhanQuyen::VAI_TRO_BAC_SI,
+            'y_ta'   => PhanQuyen::VAI_TRO_DIEU_DUONG,
+        ];
+        $maVaiTro = $vaiTroMap[$data['vai_tro']] ?? null;
+        if ($maVaiTro) {
+            $phanQuyen = PhanQuyen::where('ma_vai_tro', $maVaiTro)->first();
+            if ($phanQuyen) {
+                $data['phan_quyen_id'] = $phanQuyen->id;
+            }
         }
 
         // Create the employee
