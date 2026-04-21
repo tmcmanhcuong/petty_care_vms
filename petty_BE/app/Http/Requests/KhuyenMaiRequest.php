@@ -22,7 +22,7 @@ class KhuyenMaiRequest extends FormRequest
      */
     public function rules(): array
     {
-        $khuyenMaiId = $this->route('khuyen_mai') ? $this->route('khuyen_mai')->id : null;
+        $khuyenMaiId = $this->route('id');
 
         return [
             'ten_khuyen_mai' => 'required|string|max:255',
@@ -44,15 +44,8 @@ class KhuyenMaiRequest extends FormRequest
             'loai_khach_hang' => ['required', Rule::in(['tat_ca', 'vip'])],
             'hinh_thuc_giam' => ['required', Rule::in(['phan_tram', 'so_tien'])],
 
-            // Giảm tối đa - required nếu giảm theo phần trăm
-            'giam_toi_da' => [
-                Rule::requiredIf(function () {
-                    return $this->input('hinh_thuc_giam') === 'phan_tram';
-                }),
-                'nullable',
-                'numeric',
-                'min:0',
-            ],
+            // Giảm tối đa - optional nhưng nên có khi giảm theo phần trăm
+            'giam_toi_da' => 'nullable|numeric|min:0',
 
             'gia_tri_giam' => 'required|numeric|min:0',
             'tu_ngay' => 'required|date',

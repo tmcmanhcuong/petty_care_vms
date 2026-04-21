@@ -21,7 +21,7 @@ class ThuCungUser8Seeder extends Seeder
                 'tuoi_thu_cung' => Carbon::now()->subYears(3)->format('Y-m-d'),
                 'gioi_tinh' => 'Đực',
                 'can_nang' => '28',
-                'anh_dai_dien' => 'default/dog-male.jpg',
+                'anh_dai_dien' => 'defaults/cho.jpg',
                 'khach_hang_id' => 8,
             ],
             [
@@ -31,7 +31,7 @@ class ThuCungUser8Seeder extends Seeder
                 'tuoi_thu_cung' => Carbon::now()->subYears(2)->format('Y-m-d'),
                 'gioi_tinh' => 'Cái',
                 'can_nang' => '4.5',
-                'anh_dai_dien' => 'default/cat-female.jpg',
+                'anh_dai_dien' => 'defaults/meo.jpg',
                 'khach_hang_id' => 8,
             ],
             [
@@ -41,7 +41,7 @@ class ThuCungUser8Seeder extends Seeder
                 'tuoi_thu_cung' => Carbon::now()->subYears(4)->format('Y-m-d'),
                 'gioi_tinh' => 'Đực',
                 'can_nang' => '25',
-                'anh_dai_dien' => 'default/dog-male.jpg',
+                'anh_dai_dien' => 'defaults/cho.jpg',
                 'khach_hang_id' => 8,
             ],
             [
@@ -51,7 +51,7 @@ class ThuCungUser8Seeder extends Seeder
                 'tuoi_thu_cung' => Carbon::now()->subMonths(8)->format('Y-m-d'),
                 'gioi_tinh' => 'Cái',
                 'can_nang' => '3.2',
-                'anh_dai_dien' => 'default/cat-female.jpg',
+                'anh_dai_dien' => 'defaults/meo.jpg',
                 'khach_hang_id' => 8,
             ],
             [
@@ -61,7 +61,7 @@ class ThuCungUser8Seeder extends Seeder
                 'tuoi_thu_cung' => Carbon::now()->subYears(1)->subMonths(6)->format('Y-m-d'),
                 'gioi_tinh' => 'Đực',
                 'can_nang' => '12',
-                'anh_dai_dien' => 'default/dog-male.jpg',
+                'anh_dai_dien' => 'defaults/chocai.jpg',
                 'khach_hang_id' => 8,
             ],
         ];

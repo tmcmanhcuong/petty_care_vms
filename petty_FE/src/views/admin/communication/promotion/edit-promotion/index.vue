@@ -749,8 +749,9 @@ const loadPromotion = async (id) => {
         : [];
       form.minOrderValue = data.gia_tri_don_toi_thieu || "";
       form.customerType = data.loai_khach_hang === "tat_ca" ? "all" : "vip";
-      form.startDate = data.tu_ngay;
-      form.endDate = data.den_ngay;
+      // Format dates to YYYY-MM-DD for date input
+      form.startDate = data.tu_ngay ? data.tu_ngay.split(' ')[0] : "";
+      form.endDate = data.den_ngay ? data.den_ngay.split(' ')[0] : "";
       form.totalQuantity = data.tong_so_luong;
       form.perCustomerLimit = data.gioi_han_moi_khach;
     }
@@ -809,17 +810,17 @@ const mapFormToAPI = () => {
   return {
     ten_khuyen_mai: form.name,
     mo_ta: form.description || null,
-    loai_khuyen_mai: form.type === "voucher" ? "ma_giam_gia" : "tu_dong",
+    loai_khuyen_mai: form.type === "voucher" ? "ma_giam_gia" : "chuong_trinh_tu_dong",
     ma_code: form.type === "voucher" ? form.code : null,
-    gia_tri_don_toi_thieu: form.minOrderValue || null,
+    gia_tri_don_toi_thieu: form.minOrderValue ? parseFloat(form.minOrderValue) : null,
     loai_khach_hang: form.customerType === "all" ? "tat_ca" : "vip",
-    hinh_thuc_giam: form.discountType === "percent" ? "phan_tram" : "tien_mat",
-    giam_toi_da: form.discountType === "percent" ? form.maxDiscount : null,
+    hinh_thuc_giam: form.discountType === "percent" ? "phan_tram" : "so_tien",
+    giam_toi_da: form.discountType === "percent" && form.maxDiscount ? parseFloat(form.maxDiscount) : null,
     gia_tri_giam: parseFloat(form.discountValue),
-    tu_ngay: form.startDate,
-    den_ngay: form.endDate,
-    tong_so_luong: parseInt(form.totalQuantity),
-    gioi_han_moi_khach: parseInt(form.perCustomerLimit),
+    tu_ngay: form.startDate ? `${form.startDate} 00:00:00` : null,
+    den_ngay: form.endDate ? `${form.endDate} 23:59:59` : null,
+    tong_so_luong: form.totalQuantity ? parseInt(form.totalQuantity) : null,
+    gioi_han_moi_khach: form.perCustomerLimit ? parseInt(form.perCustomerLimit) : null,
     dich_vu_ids: form.applyTo === "specific" ? form.selectedServices : [],
   };
 };

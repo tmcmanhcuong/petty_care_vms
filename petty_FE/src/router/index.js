@@ -150,17 +150,17 @@ const routes = [
           import("../views/admin/communication/post/edit-post/index.vue"),
       },
       {
-        path: "promotions",
+        path: "khuyen-mai",
         component: () =>
           import("../views/admin/communication/promotion/index.vue"),
       },
       {
-        path: "promotions/create",
+        path: "khuyen-mai/them-moi",
         component: () =>
           import("../views/admin/communication/promotion/create-promotion/index.vue"),
       },
       {
-        path: "promotions/edit/:id",
+        path: "khuyen-mai/chinh-sua/:id",
         component: () =>
           import("../views/admin/communication/promotion/edit-promotion/index.vue"),
       },

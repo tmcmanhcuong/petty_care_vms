@@ -73,7 +73,7 @@ export const menuConfig = {
           {
             key: "promotions",
             label: "Khuyến Mãi",
-            path: "/admin/promotions",
+            path: "/admin/khuyen-mai",
           },
         ],
       },
