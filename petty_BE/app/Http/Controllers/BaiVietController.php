@@ -15,10 +15,13 @@ class BaiVietController extends Controller
     public function index()
     {
         try {
-            $baiViets = BaiViet::with(['nhanVien', 'phanLoai'])->get();
+            $baiViets = BaiViet::with(['nhanVien', 'phanLoai', 'reactions', 'binhLuans'])->get();
 
             // Transform response to include phan_loai details
             $baiViets = $baiViets->map(function ($baiViet) {
+                $likes = $baiViet->reactions->where('loai', 'like')->count();
+                $dislikes = $baiViet->reactions->where('loai', 'dislike')->count();
+                
                 return [
                     'id' => $baiViet->id,
                     'ten_bai_viet' => $baiViet->ten_bai_viet,
@@ -36,6 +39,11 @@ class BaiVietController extends Controller
                         'slug' => $baiViet->phanLoai?->slug,
                         'mo_ta' => $baiViet->phanLoai?->mo_ta,
                     ],
+                    'reactions' => [
+                        'likes' => $likes,
+                        'dislikes' => $dislikes,
+                    ],
+                    'comments_count' => $baiViet->binhLuans->count(),
                     'created_at' => $baiViet->created_at,
                     'updated_at' => $baiViet->updated_at,
                 ];
@@ -128,7 +136,10 @@ class BaiVietController extends Controller
     public function show(BaiViet $baiViet)
     {
         try {
-            $baiViet->load(['nhanVien', 'phanLoai']);
+            $baiViet->load(['nhanVien', 'phanLoai', 'reactions', 'binhLuans']);
+
+            $likes = $baiViet->reactions->where('loai', 'like')->count();
+            $dislikes = $baiViet->reactions->where('loai', 'dislike')->count();
 
             $response = [
                 'id' => $baiViet->id,
@@ -147,6 +158,11 @@ class BaiVietController extends Controller
                     'slug' => $baiViet->phanLoai?->slug,
                     'mo_ta' => $baiViet->phanLoai?->mo_ta,
                 ],
+                'reactions' => [
+                    'likes' => $likes,
+                    'dislikes' => $dislikes,
+                ],
+                'comments_count' => $baiViet->binhLuans->count(),
                 'created_at' => $baiViet->created_at,
                 'updated_at' => $baiViet->updated_at,
             ];

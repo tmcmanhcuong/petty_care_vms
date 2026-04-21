@@ -17,6 +17,8 @@ use App\Http\Controllers\DanhMucHangHoaController;
 use App\Http\Controllers\HangHoaController;
 use App\Http\Controllers\PhanLoaiBaiVietController;
 use App\Http\Controllers\BaiVietController;
+use App\Http\Controllers\BinhLuanController;
+use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\NhaCungCapController;
 use App\Http\Controllers\PhieuNhapKhoController;
 use App\Http\Controllers\KiemKeController;
@@ -200,6 +202,12 @@ Route::get('/phan-loai-bai-viet/{phanLoaiBaiViet}', [PhanLoaiBaiVietController::
 Route::get('/bai-viet', [BaiVietController::class, 'index']);
 Route::get('/bai-viet/{baiViet}', [BaiVietController::class, 'show']);
 
+// Public: get comments for a post
+Route::get('/bai-viet/{baiVietId}/binh-luan', [BinhLuanController::class, 'index']);
+
+// Public: get reactions for a post or comment
+Route::get('/reactions', [ReactionController::class, 'index']);
+
 // Admin login route
 Route::post('/admin/dang-nhap', [AdminController::class, 'dangNhap']);
 // route cho momo webhook
@@ -253,6 +261,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/bai-viet', [BaiVietController::class, 'store'])->middleware('staff.only');
     Route::match(['put', 'patch'], '/bai-viet/{baiViet}', [BaiVietController::class, 'update'])->middleware('staff.only');
     Route::delete('/bai-viet/{baiViet}', [BaiVietController::class, 'destroy'])->middleware('staff.only');
+
+    // Bình luận: tạo, sửa, xóa (authenticated users)
+    Route::post('/bai-viet/{baiVietId}/binh-luan', [BinhLuanController::class, 'store']);
+    Route::match(['put', 'patch'], '/binh-luan/{id}', [BinhLuanController::class, 'update']);
+    Route::delete('/binh-luan/{id}', [BinhLuanController::class, 'destroy']);
+
+    // Reactions: toggle reaction (authenticated users)
+    Route::post('/reactions/toggle', [ReactionController::class, 'toggle']);
 
     // Nhà cung cấp: CRUD (staff only)
     Route::get('/nha-cung-cap', [NhaCungCapController::class, 'index'])->middleware('staff.only');

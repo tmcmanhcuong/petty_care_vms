@@ -29,4 +29,14 @@ class BaiViet extends Model
     {
         return $this->belongsTo(PhanLoaiBaiViet::class, 'phan_loai_bai_viet_id');
     }
+
+    public function binhLuans()
+    {
+        return $this->hasMany(BinhLuan::class, 'bai_viet_id')->whereNull('parent_id')->where('trang_thai', 'active');
+    }
+
+    public function reactions()
+    {
+        return $this->morphMany(Reaction::class, 'reactionable');
+    }
 }
