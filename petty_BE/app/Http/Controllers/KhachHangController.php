@@ -484,6 +484,7 @@ class KhachHangController extends Controller
         $token = $customer->createToken('api-token')->plainTextToken;
 
         // Chuyển hướng về Frontend kèm token
-        return redirect('http://localhost:5173/?token=' . $token . '&verified=true');
+        $frontendUrl = env('FRONTEND_URL', 'https://project2.hungtran.id.vn');
+        return redirect($frontendUrl . '/?token=' . $token . '&verified=true');
     }
 }
