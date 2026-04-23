@@ -164,8 +164,7 @@ Cần thấy: Trigger đang active (S3 event trigger hoặc API Gateway)
 
 ### 4.1 JOIN Query — Lịch hẹn + Thú cưng + Dịch vụ
 
-<img width="1079" height="115" alt="image" src="https://github.com/user-attachments/assets/0b34954a-bcfb-4adb-8068-b3911ac8eabe" />
-
+<img width="590" height="283" alt="image" src="https://github.com/user-attachments/assets/365b0c5d-5320-499e-9384-7cfca123a65c" />
 
 ```sql
 -- Pattern 1: Lấy lịch hẹn của khách hàng kèm thông tin thú cưng và dịch vụ
@@ -194,8 +193,7 @@ LIMIT 10;
 
 ### 4.2 Indexed Lookup — Tìm lịch hẹn theo trạng thái
 
-<img width="590" height="283" alt="image" src="https://github.com/user-attachments/assets/0f7bf45e-cc5f-4f0c-8590-8ca4cea210cf" />
-
+<img width="1079" height="115" alt="image" src="https://github.com/user-attachments/assets/73ebb3fb-6a13-4718-80d9-3d853dd9765c" />
 
 ```sql
 -- Indexed lookup: dùng index lich_hens_trang_thai_index
