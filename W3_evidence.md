@@ -91,8 +91,7 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 
 ### 3.3 RDS Instance — Multi-AZ
 
-📸 **[CHỤP ẢNH]** Vào: **AWS Console → RDS → Databases → petty-db → Configuration tab**  
-Cần thấy: Multi-AZ = **Yes**, Secondary Zone = AZ khác với Primary
+![RDS Multi-AZ](docs/screenshots/3.3-multi-az.png)
 
 > **Notes:** Multi-AZ enabled với synchronous standby ở AZ2. Standby không nhận read traffic — mục đích duy nhất là automatic failover khi Primary AZ có sự cố. RTO (Recovery Time Objective) với Multi-AZ là ~60-120 giây, phù hợp với SLA của phòng khám.
 
