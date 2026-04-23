@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|-------|
 | **Group** | Nhóm 10 |
-| **Members** | Nguyễn Thị Mến, Lê Trần Tuấn Khanh, Phan Đức Huy, Huỳnh Xuân Hậu, Lê Văn Hải, Trần Mạnh Trường, Trần Quốc Hùng, Lê Viết Quốc Hưng, Trần Mạnh Cường |
+| **Members** | Nguyễn Thị Mến, Lê Trần Tuấn Khanh, Phan Đức Huy, Huỳnh Xuân Hậu, Lê Văn Hải, Trần Mạnh Trường, Trần Quốc Hùng, Lê Viết Quốc Hưng, Trần Mạnh Cường, Nguyễn Đức Hảo |
 | **App** | Petty VMCS — Hệ thống Quản lý Phòng khám Thú y |
 | **Database path** | RDS MariaDB 11.5 / Relational |
 | **W2 Evidence link** | _(paste link commit W2 evidence ở đây)_ |
@@ -76,7 +76,7 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 
 ### 3.1 RDS Instance — Private Subnet
 
-![RDS Private Subnet](screenshots/3.1-rds-private-subnet.png)
+![RDS Private Subnet](docs/screenshots/3.1-rds-private-subnet.png)
 
 > **Notes:** RDS được đặt trong private subnet (`petty-db-1a`, `petty-db-1b`) — không có public IP, không thể truy cập từ internet. Chỉ ECS Security Group mới được phép kết nối vào port 3306. Đây là yêu cầu bắt buộc cho database tier trong 3-tier architecture.
 
