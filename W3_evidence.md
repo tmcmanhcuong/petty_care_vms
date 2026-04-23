@@ -295,27 +295,3 @@ aws cloudformation validate-template --template-body file://cfn-partial.yaml
 📸 **[CHỤP ẢNH]** Output của lệnh validate — cần thấy không có error
 
 ---
-
-## Checklist trước khi nộp
-
-- [ ] Section 1: Điền tên thành viên + link W2 evidence
-- [ ] Section 2: Part A, B, C đã viết đầy đủ
-- [ ] Section 3.1: Screenshot RDS private subnet
-- [ ] Section 3.2: Screenshot encryption at rest
-- [ ] Section 3.3: Screenshot Multi-AZ
-- [ ] Section 3.4: Screenshot automated backup
-- [ ] Section 3.5: Screenshot DB subnet group 2 AZ
-- [ ] Section 3.6: Screenshot DB SG inbound từ ECS SG ID
-- [ ] Section 3.7: Screenshot Lambda execution role (no wildcard)
-- [ ] Section 3.8: Screenshot Lambda trigger active
-- [ ] Section 3.9: Screenshot Bedrock KB sync complete
-- [ ] Section 3.10: Screenshot route table có S3 GW Endpoint
-- [ ] Section 4.1: Screenshot JOIN query với kết quả thực tế
-- [ ] Section 4.2: Screenshot EXPLAIN confirm index được dùng
-- [ ] Section 5.1: Screenshot CloudWatch log của Lambda
-- [ ] Section 5.2: Screenshot Bedrock API response (không phải Playground)
-- [ ] Section 6.1: Screenshot route table S3 endpoint
-- [ ] Section 6.2: Screenshot DB SG inbound rule
-- [ ] Section 7: Screenshot negative security test
-- [ ] Commit file này lên repo
-- [ ] Post commit link lên trainer Slack trước 17:00 thứ Năm
