@@ -76,8 +76,7 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 
 ### 3.1 RDS Instance — Private Subnet
 
-📸 **[CHỤP ẢNH]** Vào: **AWS Console → RDS → Databases → petty-db → Connectivity & security tab**  
-Cần thấy: Subnet group = `petty-db-subnet-group`, VPC = petty VPC, **không có** Public accessibility = Yes
+![RDS Private Subnet](screenshots/3.1-rds-private-subnet.png)
 
 > **Notes:** RDS được đặt trong private subnet (`petty-db-1a`, `petty-db-1b`) — không có public IP, không thể truy cập từ internet. Chỉ ECS Security Group mới được phép kết nối vào port 3306. Đây là yêu cầu bắt buộc cho database tier trong 3-tier architecture.
 
