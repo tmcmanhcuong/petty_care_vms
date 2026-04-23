@@ -99,8 +99,7 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 
 ### 3.4 RDS Instance — Automated Backups
 
-📸 **[CHỤP ẢNH]** Vào: **AWS Console → RDS → Databases → petty-db → Maintenance & backups tab**  
-Cần thấy: Backup retention period = **7 days**, Backup window
+![RDS Automated Backups](docs/screenshots/3.4-automated-backups.png)
 
 > **Notes:** Automated backup 7 ngày cho phép Point-in-Time Recovery (PITR) về bất kỳ thời điểm nào trong 7 ngày qua. Backup window được set vào giờ thấp điểm (ví dụ: 02:00-03:00 UTC+7) để tránh ảnh hưởng performance.
 
