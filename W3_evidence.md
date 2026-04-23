@@ -70,7 +70,6 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 
 ## Section 3 — Deployment Evidence
 
-> Mỗi entry = 1 screenshot + 1-2 dòng notes giải thích **tại sao** cấu hình như vậy
 
 ---
 
@@ -78,14 +77,13 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 
 ![RDS Private Subnet](docs/screenshots/3.1-rds-private-subnet.png)
 
-> **Notes:** RDS được đặt trong private subnet (`petty-db-1a`, `petty-db-1b`) — không có public IP, không thể truy cập từ internet. Chỉ ECS Security Group mới được phép kết nối vào port 3306. Đây là yêu cầu bắt buộc cho database tier trong 3-tier architecture.
+> **Notes:** RDS được đặt trong private subnet (`webapp-group10-database-subnet-2a`, `webapp-group10-database-subnet-2b`) — không có public IP, không thể truy cập từ internet. Chỉ ECS Security Group mới được phép kết nối vào port 3306. Đây là yêu cầu bắt buộc cho database tier trong 3-tier architecture.
 
 ---
 
 ### 3.2 RDS Instance — Encryption at Rest
 
-📸 **[CHỤP ẢNH]** Vào: **AWS Console → RDS → Databases → petty-db → Configuration tab**  
-Cần thấy: Storage encrypted = **Yes**, KMS key = `aws/rds`
+![RDS Encryption at Rest](docs/screenshots/3.2-encryption-at-rest.png)
 
 > **Notes:** Encryption at rest được bật với AWS-managed KMS key (`aws/rds`). Chọn AWS-managed thay vì customer CMK vì không có compliance mandate yêu cầu key rotation tự quản lý — AWS tự động rotate key hàng năm, giảm operational overhead.
 
