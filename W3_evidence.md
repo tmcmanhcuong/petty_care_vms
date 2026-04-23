@@ -107,8 +107,7 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 
 ### 3.5 DB Subnet Group — 2 AZ
 
-📸 **[CHỤP ẢNH]** Vào: **AWS Console → RDS → Subnet groups → petty-db-subnet-group**  
-Cần thấy: 2 subnets, mỗi subnet trong 1 AZ khác nhau (ví dụ: ap-southeast-1a và ap-southeast-1b)
+![DB Subnet Group 2 AZ](docs/screenshots/3.5-db-subnet-group.png)
 
 > **Notes:** DB Subnet Group span 2 AZ là điều kiện bắt buộc để enable Multi-AZ. AWS cần ít nhất 2 AZ để đặt Primary và Standby instance.
 
