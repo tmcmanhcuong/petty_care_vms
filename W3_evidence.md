@@ -150,8 +150,7 @@ Cần thấy: Sync status = **Complete**, số documents đã ingest ≥ 3
 
 ### 3.10 VPC — S3 Gateway Endpoint trong Route Table
 
-📸 **[CHỤP ẢNH]** Vào: **AWS Console → VPC → Route Tables → [private subnet route table] → Routes tab**  
-Cần thấy: Route với Destination = `pl-xxxxxxxx` (S3 prefix list), Target = `vpce-xxxxxxxx` (VPC Endpoint)
+![Route Table S3 Gateway Endpoint](docs/screenshots/3.10-route-table-s3-endpoint.png)
 
 > **Notes:** S3 Gateway Endpoint được thêm vào route table của private subnet để ECS task gọi S3 (kéo .env file, upload ảnh) không đi qua NAT Gateway. Điều này giảm chi phí NAT (~$0.045/GB) và tăng security vì traffic không ra internet.
 
