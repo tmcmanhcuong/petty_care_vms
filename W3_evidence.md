@@ -141,8 +141,8 @@ Cần thấy: Trigger đang active (S3 event trigger hoặc API Gateway)
 
 ### 3.9 Bedrock Knowledge Base — Sync Complete
 
-📸 **[CHỤP ẢNH]** Vào: **AWS Console → Amazon Bedrock → Knowledge bases → [tên KB] → Data sources**  
-Cần thấy: Sync status = **Complete**, số documents đã ingest ≥ 3
+<img width="1547" height="342" alt="image" src="https://github.com/user-attachments/assets/68bcc267-1e8e-451f-8fd7-34aedd06f992" />
+
 
 > **Notes:** Knowledge Base kết nối với S3 bucket từ W2. Embedding model: _(điền tên — ví dụ: Amazon Titan Embeddings G1 - Text)_. Vector store: _(điền — ví dụ: OpenSearch Serverless)_. Chunking strategy: default (300 tokens, 20% overlap).
 
