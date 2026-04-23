@@ -115,8 +115,7 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 
 ### 3.6 Security Group — DB SG inbound từ App-tier SG
 
-📸 **[CHỤP ẢNH]** Vào: **AWS Console → EC2 → Security Groups → [tên DB Security Group của petty-db]**  
-Cần thấy: Inbound rule: Port 3306, Source = **Security Group ID của ECS** (dạng `sg-xxxxxxxx`), **không phải CIDR**
+![DB Security Group Inbound Rule](docs/screenshots/3.6-db-sg-inbound.png)
 
 > **Notes:** DB Security Group chỉ cho phép inbound port 3306 từ ECS Security Group ID — không dùng CIDR (`10.0.0.0/16`) vì CIDR quá rộng, bất kỳ resource nào trong VPC đều có thể kết nối. Dùng SG reference đảm bảo chỉ ECS task mới vào được DB.
 
