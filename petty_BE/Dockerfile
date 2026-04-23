@@ -38,7 +38,9 @@ RUN apk add --no-cache \
     curl \
     # Required PHP extensions
     && docker-php-ext-install pdo pdo_mysql opcache \
-    && docker-php-ext-enable opcache
+    && docker-php-ext-enable opcache \
+    # Tải chứng chỉ bảo mật của AWS RDS
+    && curl -sS https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem -o /etc/ssl/certs/global-bundle.pem
 
 # Copy application from builder stage
 WORKDIR /var/www/html
