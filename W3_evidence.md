@@ -164,7 +164,8 @@ Cần thấy: Trigger đang active (S3 event trigger hoặc API Gateway)
 
 ### 4.1 JOIN Query — Lịch hẹn + Thú cưng + Dịch vụ
 
-📸 **[CHỤP ẢNH]** Chạy query sau trong MySQL Workbench / DBeaver / psql kết nối vào RDS (qua bastion hoặc ECS exec), chụp kết quả thực tế có rows trả về:
+<img width="1079" height="115" alt="image" src="https://github.com/user-attachments/assets/0b34954a-bcfb-4adb-8068-b3911ac8eabe" />
+
 
 ```sql
 -- Pattern 1: Lấy lịch hẹn của khách hàng kèm thông tin thú cưng và dịch vụ
@@ -193,7 +194,8 @@ LIMIT 10;
 
 ### 4.2 Indexed Lookup — Tìm lịch hẹn theo trạng thái
 
-📸 **[CHỤP ẢNH]** Chạy EXPLAIN để chứng minh index được dùng:
+<img width="590" height="283" alt="image" src="https://github.com/user-attachments/assets/0f7bf45e-cc5f-4f0c-8590-8ca4cea210cf" />
+
 
 ```sql
 -- Indexed lookup: dùng index lich_hens_trang_thai_index
