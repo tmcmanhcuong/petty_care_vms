@@ -262,7 +262,8 @@ Hoặc chụp CloudWatch log của Lambda function khi nó gọi Bedrock và tr�
 
 ![DB Security Group Inbound Rule](docs/screenshots/3.6-db-sg-inbound.png)
 
-<img width="1615" height="322" alt="image" src="https://github.com/user-attachments/assets/5ff4f2f4-a0a3-497e-8951-a154ebcae53a" />
+<img width="1583" height="257" alt="image" src="https://github.com/user-attachments/assets/e9c18b12-2838-4c0d-b349-7ae4e2661b4e" />
+
 
 
 > **Notes:** Inbound rule port 3306 source là ECS Security Group ID (`sg-xxxxxxxx`), không phải CIDR. Chỉ ECS task mới kết nối được vào DB.
