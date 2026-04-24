@@ -1,0 +1,186 @@
+[
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "webapp-group10"
+  },
+  {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue": "prod"
+  },
+  {
+    "ParameterKey": "BackendDesiredCount",
+    "ParameterValue": "2"
+  },
+  {
+    "ParameterKey": "DatabaseName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "AppName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "FrontendAppName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "AppEnvironment",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "AppDebug",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "AppTimezone",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "PublicAppUrl",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "FrontendUrl",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "AppKey",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "AppLocale",
+    "ParameterValue": "en"
+  },
+  {
+    "ParameterKey": "AppFallbackLocale",
+    "ParameterValue": "en"
+  },
+  {
+    "ParameterKey": "AppFakerLocale",
+    "ParameterValue": "en_US"
+  },
+  {
+    "ParameterKey": "AppMaintenanceDriver",
+    "ParameterValue": "file"
+  },
+  {
+    "ParameterKey": "AppMaintenanceStore",
+    "ParameterValue": "database"
+  },
+  {
+    "ParameterKey": "PhpCliServerWorkers",
+    "ParameterValue": "4"
+  },
+  {
+    "ParameterKey": "LogChannel",
+    "ParameterValue": "stack"
+  },
+  {
+    "ParameterKey": "LogStack",
+    "ParameterValue": "single"
+  },
+  {
+    "ParameterKey": "LogDeprecationsChannel",
+    "ParameterValue": "null"
+  },
+  {
+    "ParameterKey": "LogLevel",
+    "ParameterValue": "debug"
+  },
+  {
+    "ParameterKey": "SessionDriver",
+    "ParameterValue": "database"
+  },
+  {
+    "ParameterKey": "SessionLifetime",
+    "ParameterValue": "120"
+  },
+  {
+    "ParameterKey": "SessionEncrypt",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "SessionPath",
+    "ParameterValue": "/"
+  },
+  {
+    "ParameterKey": "SessionDomain",
+    "ParameterValue": "null"
+  },
+  {
+    "ParameterKey": "BroadcastConnection",
+    "ParameterValue": "log"
+  },
+  {
+    "ParameterKey": "FilesystemDisk",
+    "ParameterValue": "local"
+  },
+  {
+    "ParameterKey": "QueueConnection",
+    "ParameterValue": "database"
+  },
+  {
+    "ParameterKey": "CacheStore",
+    "ParameterValue": "database"
+  },
+  {
+    "ParameterKey": "CachePrefix",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "MailMailer",
+    "ParameterValue": "smtp"
+  },
+  {
+    "ParameterKey": "MailHost",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "MailPort",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "MailUsername",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "MailPassword",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "MailEncryption",
+    "ParameterValue": "tls"
+  },
+  {
+    "ParameterKey": "MailFromAddress",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "MailFromName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "GoogleClientId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "GoogleClientSecret",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "GoogleRedirectUri",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "FacebookClientId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "FacebookClientSecret",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "FacebookRedirectUri",
+    "ParameterValue": ""
+  }
+]
