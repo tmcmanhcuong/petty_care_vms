@@ -117,6 +117,9 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 
 ![DB Security Group Inbound Rule](docs/screenshots/3.6-db-sg-inbound.png)
 
+<img width="1583" height="257" alt="image" src="https://github.com/user-attachments/assets/0af4fe3b-a642-4917-b151-59f3cc0dc644" />
+
+
 > **Notes:** DB Security Group chỉ cho phép inbound port 3306 từ ECS Security Group ID — không dùng CIDR (`10.0.0.0/16`) vì CIDR quá rộng, bất kỳ resource nào trong VPC đều có thể kết nối. Dùng SG reference đảm bảo chỉ ECS task mới vào được DB.
 
 ---
