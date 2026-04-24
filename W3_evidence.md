@@ -214,8 +214,8 @@ Cần thấy trong kết quả EXPLAIN: cột `key` = `lich_hens_trang_thai_inde
 
 ### 5.1 CloudWatch Logs — Lambda được trigger
 
-📸 **[CHỤP ẢNH]** Vào: **AWS Console → CloudWatch → Log groups → /aws/lambda/[tên function] → [log stream mới nhất]**  
-Cần thấy: Log entries với timestamp, START/END/REPORT lines, và output của function
+<img width="1693" height="744" alt="image" src="https://github.com/user-attachments/assets/b3397499-72cf-4414-9edd-8434f13376c3" />
+
 
 > **Notes:** Log stream này được tạo sau khi trigger Lambda bằng _(S3 upload / API Gateway call — điền cụ thể)_. Timestamp trong log confirm function đã thực sự chạy, không chỉ deployed.
 
@@ -223,7 +223,8 @@ Cần thấy: Log entries với timestamp, START/END/REPORT lines, và output c�
 
 ### 5.2 Bedrock API Response — từ Lambda hoặc CLI
 
-📸 **[CHỤP ẢNH]** Chạy lệnh CLI sau (thay `YOUR_KB_ID` bằng Knowledge Base ID thực tế):
+<img width="1919" height="370" alt="image" src="https://github.com/user-attachments/assets/11ee06bf-4495-4772-a7ea-0d49e664193e" />
+
 
 ```bash
 aws bedrock-agent-runtime retrieve-and-generate \
