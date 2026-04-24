@@ -170,23 +170,25 @@ Cần thấy: Trigger đang active (S3 event trigger hoặc API Gateway)
 
 ```sql
 -- Pattern 1: Lấy lịch hẹn của khách hàng kèm thông tin thú cưng và dịch vụ
-SELECT 
-    lh.id AS lich_hen_id,
-    lh.ngay_gio,
-    lh.trang_thai,
-    lh.tong_tien,
-    kh.full_name AS ten_khach_hang,
-    tc.ten_thu_cung,
-    tc.loai_thu_cung,
-    dv.ten AS ten_dich_vu,
-    dv.gia_tien
-FROM lich_hens lh
-JOIN khach_hangs kh ON lh.khach_hang_id = kh.id
-JOIN thu_cungs tc ON lh.thu_cung_id = tc.id
-LEFT JOIN dich_vus dv ON lh.dich_vu_id = dv.id
-WHERE lh.trang_thai IN ('pending', 'confirmed')
-ORDER BY lh.ngay_gio ASC
-LIMIT 10;
+MariaDB [laravel]> SELECT
+    ->     lh.id,
+    ->     lh.ngay_gio,
+    ->     lh.trang_thai,
+    ->     dv.ten AS ten_dich_vu,
+    ->     dv.gia_tien
+    -> FROM lich_hens lh
+    -> JOIN dich_vus dv
+    ->     ON lh.dich_vu_id = dv.id
+    -> WHERE lh.trang_thai = 'pending'
+    -> ORDER BY lh.ngay_gio ASC;
++----+---------------------+------------+--------------+-----------+
+| id | ngay_gio            | trang_thai | ten_dich_vu  | gia_tien  |
++----+---------------------+------------+--------------+-----------+
+|  2 | 2026-03-27 11:00:00 | pending    | Cắt tỉa lông | 150000.00 |
+|  3 | 2026-04-02 13:30:00 | pending    | Cắt tỉa lông | 150000.00 |
+|  4 | 2026-04-24 11:00:00 | pending    | Cắt tỉa lông | 150000.00 |
++----+---------------------+------------+--------------+-----------+
+3 rows in set (0.001 sec)
 ```
 
 > **Notes:** Query này JOIN 4 bảng (`lich_hens`, `khach_hangs`, `thu_cungs`, `dich_vus`) thông qua FK relationships được định nghĩa trong schema. Đây là access pattern cốt lõi của hệ thống — staff cần xem đầy đủ thông tin lịch hẹn trong một query thay vì N+1 requests. Relational paradigm phù hợp vì data có FK relationships rõ ràng.
