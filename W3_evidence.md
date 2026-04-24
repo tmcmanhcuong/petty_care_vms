@@ -200,8 +200,10 @@ MariaDB [laravel]> SELECT
 <img width="1079" height="115" alt="image" src="https://github.com/user-attachments/assets/73ebb3fb-6a13-4718-80d9-3d853dd9765c" />
 
 ```sql
--- Indexed lookup: dùng index lich_hens_trang_thai_index
-EXPLAIN SELECT * FROM lich_hens WHERE trang_thai = 'pending';
+curl -X POST "https://8ibkjuuj8h.execute-api.us-west-2.amazonaws.com/prod/" ^
+-H "Content-Type: application/json" ^
+-H "apikey: hahahahuhuhuhehehe" ^
+-d "{\"question\":\"Bạn là ai ?\"}"
 ```
 
 Cần thấy trong kết quả EXPLAIN: cột `key` = `lich_hens_trang_thai_index` (không phải NULL), `type` không phải `ALL` (full scan)
