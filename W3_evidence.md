@@ -203,10 +203,8 @@ MariaDB [laravel]> SELECT
 <img width="1079" height="115" alt="image" src="https://github.com/user-attachments/assets/73ebb3fb-6a13-4718-80d9-3d853dd9765c" />
 
 ```sql
-curl -X POST "https://8ibkjuuj8h.execute-api.us-west-2.amazonaws.com/prod/" ^
--H "Content-Type: application/json" ^
--H "apikey: hahahahuhuhuhehehe" ^
--d "{\"question\":\"Bạn là ai ?\"}"
+-- Indexed lookup: dùng index lich_hens_trang_thai_index
+EXPLAIN SELECT * FROM lich_hens WHERE trang_thai = 'pending';
 ```
 
 Cần thấy trong kết quả EXPLAIN: cột `key` = `lich_hens_trang_thai_index` (không phải NULL), `type` không phải `ALL` (full scan)
@@ -234,15 +232,10 @@ Cần thấy trong kết quả EXPLAIN: cột `key` = `lich_hens_trang_thai_inde
 
 
 ```bash
-aws bedrock-agent-runtime retrieve-and-generate \
-  --input '{"text": "Triệu chứng chó bị sốt là gì?"}' \
-  --retrieve-and-generate-configuration '{
-    "type": "KNOWLEDGE_BASE",
-    "knowledgeBaseConfiguration": {
-      "knowledgeBaseId": "YOUR_KB_ID",
-      "modelArn": "arn:aws:bedrock:ap-southeast-1::foundation-model/amazon.titan-text-express-v1"
-    }
-  }'
+curl -X POST "https://8ibkjuuj8h.execute-api.us-west-2.amazonaws.com/prod/" ^
+-H "Content-Type: application/json" ^
+-H "apikey: hahahahuhuhuhehehe" ^
+-d "{\"question\":\"Bạn là ai ?\"}"
 ```
 
 Hoặc chụp CloudWatch log của Lambda function khi nó gọi Bedrock và trả về response.
