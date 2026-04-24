@@ -129,7 +129,7 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 <img width="1860" height="689" alt="image" src="https://github.com/user-attachments/assets/fc9d83c1-023d-496b-9c5b-626871dc1d94" />
 
 
-> **Notes:** Lambda execution role được scope về specific actions và specific resource ARNs theo principle of least privilege. Ví dụ: nếu Lambda cần gọi Bedrock, policy chỉ có `bedrock:InvokeModel` trên ARN của model cụ thể, không phải `bedrock:*` trên `*`.
+> **Notes:** Lambda execution role được scope về specific actions và specific resource ARNs theo principle of least privilege.
 
 ---
 
@@ -138,7 +138,7 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 <img width="1860" height="674" alt="image" src="https://github.com/user-attachments/assets/a2fed8cf-3777-4d89-ac3b-5b2f37c5458e" />
 
 
-> **Notes:** _(điền trigger đang dùng là gì — S3 upload hay API Gateway endpoint)_
+> **Notes:** Trigger đang dùng là API Gateway endpoint. API Gateway nhận request từ client qua HTTPS POST, sau đó kích hoạt Lambda Function để xử lý logic backend, ví dụ kiểm tra API key, gọi Bedrock Agent và trả response về cho client.
 
 ---
 
