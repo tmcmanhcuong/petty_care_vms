@@ -1,0 +1,1607 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Reusable infrastructure stack for the Petty web application. This template creates
+  a fresh VPC, subnets, routing, ECS, RDS, ALB, CloudFront, ECR, S3 buckets, and
+  application secrets so it can be deployed into a new environment without relying
+  on exported resource IDs from another account.
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: webapp-group10
+    AllowedPattern: '^[a-z0-9-]+$'
+    Description: Lowercase project slug used in resource names.
+  EnvironmentName:
+    Type: String
+    Default: dev
+    AllowedPattern: '^[a-z0-9-]+$'
+    Description: Lowercase environment slug used in resource names.
+  VpcCidr:
+    Type: String
+    Default: 10.0.0.0/16
+  PublicSubnetAz1Cidr:
+    Type: String
+    Default: 10.0.1.0/24
+  PublicSubnetAz2Cidr:
+    Type: String
+    Default: 10.0.2.0/24
+  PrivateSubnetAz1Cidr:
+    Type: String
+    Default: 10.0.3.0/24
+  PrivateSubnetAz2Cidr:
+    Type: String
+    Default: 10.0.4.0/24
+  DatabaseSubnetAz1Cidr:
+    Type: String
+    Default: 10.0.5.0/24
+  DatabaseSubnetAz2Cidr:
+    Type: String
+    Default: 10.0.6.0/24
+  BackendRepositoryName:
+    Type: String
+    Default: webapp-group10/backend
+    AllowedPattern: '^[a-z0-9._/-]+$'
+  BackendImageUri:
+    Type: String
+    Default: ''
+    Description: >
+      Optional full backend image URI. Leave empty to use the ECR repository created
+      by this stack together with BackendImageTag.
+  BackendImageTag:
+    Type: String
+    Default: latest
+  BackendDesiredCount:
+    Type: Number
+    Default: 0
+    MinValue: 0
+    Description: >
+      Default is 0 so the stack can create cleanly before an application image is
+      pushed and runtime configuration is finalized.
+  BackendCpu:
+    Type: String
+    Default: '1024'
+    AllowedValues:
+      - '256'
+      - '512'
+      - '1024'
+      - '2048'
+      - '4096'
+  BackendMemory:
+    Type: String
+    Default: '2048'
+    AllowedValues:
+      - '512'
+      - '1024'
+      - '2048'
+      - '3072'
+      - '4096'
+      - '5120'
+      - '6144'
+      - '7168'
+      - '8192'
+      - '16384'
+      - '30720'
+  BackendContainerPort:
+    Type: Number
+    Default: 80
+    MinValue: 1
+    MaxValue: 65535
+  DatabaseName:
+    Type: String
+    Default: petty_vms
+    AllowedPattern: '^[A-Za-z][A-Za-z0-9_]*$'
+  DatabaseMasterUsername:
+    Type: String
+    Default: admin
+    AllowedPattern: '^[A-Za-z][A-Za-z0-9_]*$'
+  DatabaseInstanceClass:
+    Type: String
+    Default: db.t4g.micro
+  DatabaseAllocatedStorage:
+    Type: Number
+    Default: 20
+    MinValue: 20
+  DatabaseMaxAllocatedStorage:
+    Type: Number
+    Default: 100
+    MinValue: 20
+  DatabasePort:
+    Type: Number
+    Default: 3306
+    MinValue: 1150
+    MaxValue: 65535
+  DatabaseMultiAz:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+  LogRetentionDays:
+    Type: Number
+    Default: 30
+    AllowedValues:
+      - 1
+      - 3
+      - 5
+      - 7
+      - 14
+      - 30
+      - 60
+      - 90
+      - 120
+      - 150
+      - 180
+      - 365
+      - 400
+      - 545
+      - 731
+      - 1096
+      - 1827
+      - 2192
+      - 2557
+      - 2922
+      - 3288
+      - 3653
+  CloudFrontPriceClass:
+    Type: String
+    Default: PriceClass_100
+    AllowedValues:
+      - PriceClass_100
+      - PriceClass_200
+      - PriceClass_All
+  CloudFrontCertificateArn:
+    Type: String
+    Default: ''
+    Description: Optional ACM certificate ARN in us-east-1 for a custom domain.
+  CustomDomainName:
+    Type: String
+    Default: ''
+    Description: Optional CloudFront alias. Requires CloudFrontCertificateArn.
+  CloudFrontWebAclArn:
+    Type: String
+    Default: ''
+    Description: Optional CloudFront-scope WAF Web ACL ARN.
+  CloudFrontPrefixListId:
+    Type: String
+    Default: ''
+    Description: >
+      Optional AWS-managed prefix list ID for CloudFront origin-facing traffic.
+  AlbCertificateArn:
+    Type: String
+    Default: ''
+    Description: >
+      Optional ACM certificate ARN in the same Region as the ALB to enable HTTPS
+      from CloudFront to the ALB.
+  FrontendAssetSourceBucket:
+    Type: String
+    Default: ''
+    Description: Optional S3 bucket containing a zipped frontend build artifact.
+  FrontendAssetSourceKey:
+    Type: String
+    Default: ''
+    Description: Optional S3 key for a zipped frontend build artifact.
+  FrontendAssetSourceObjectVersion:
+    Type: String
+    Default: ''
+    Description: Optional S3 object version for the zipped frontend build artifact.
+  RunDatabaseMigrations:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: >
+      When true, runs a one-off ECS task after infrastructure creation to execute
+      Laravel database migrations.
+  DatabaseMigrationCommand:
+    Type: String
+    Default: php artisan migrate --force
+    Description: Shell command executed inside the migration task container.
+  AppName:
+    Type: String
+    Default: PETTY
+  FrontendAppName:
+    Type: String
+    Default: Petty App
+  AppEnvironment:
+    Type: String
+    Default: production
+  AppDebug:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+  AppTimezone:
+    Type: String
+    Default: UTC
+  AppLocale:
+    Type: String
+    Default: en
+  AppFallbackLocale:
+    Type: String
+    Default: en
+  AppFakerLocale:
+    Type: String
+    Default: en_US
+  PublicAppUrl:
+    Type: String
+    Default: http://localhost
+    Description: Public backend/base URL exposed to the application at runtime.
+  FrontendUrl:
+    Type: String
+    Default: http://localhost
+    Description: Public frontend URL exposed to the application at runtime.
+  AppKey:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: Optional existing Laravel APP_KEY. Leave empty to generate a new one.
+  SessionDriver:
+    Type: String
+    Default: database
+  SessionLifetime:
+    Type: String
+    Default: '120'
+  SessionEncrypt:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+  SessionPath:
+    Type: String
+    Default: /
+  SessionDomain:
+    Type: String
+    Default: ''
+  CacheStore:
+    Type: String
+    Default: database
+  CachePrefix:
+    Type: String
+    Default: ''
+  QueueConnection:
+    Type: String
+    Default: database
+  BroadcastConnection:
+    Type: String
+    Default: log
+  FilesystemDisk:
+    Type: String
+    Default: local
+  LogChannel:
+    Type: String
+    Default: stack
+  LogLevel:
+    Type: String
+    Default: info
+  LogDeprecationsChannel:
+    Type: String
+    Default: ''
+  LogStack:
+    Type: String
+    Default: single
+  AppMaintenanceDriver:
+    Type: String
+    Default: file
+  AppMaintenanceStore:
+    Type: String
+    Default: database
+  PhpCliServerWorkers:
+    Type: String
+    Default: '4'
+  MailHost:
+    Type: String
+    Default: ''
+  MailMailer:
+    Type: String
+    Default: smtp
+  MailPort:
+    Type: String
+    Default: '587'
+  MailUsername:
+    Type: String
+    Default: ''
+    NoEcho: true
+  MailPassword:
+    Type: String
+    Default: ''
+    NoEcho: true
+  MailEncryption:
+    Type: String
+    Default: tls
+  MailFromAddress:
+    Type: String
+    Default: ''
+    NoEcho: true
+  MailFromName:
+    Type: String
+    Default: PETTY
+  GoogleClientId:
+    Type: String
+    Default: ''
+    NoEcho: true
+  GoogleClientSecret:
+    Type: String
+    Default: ''
+    NoEcho: true
+  GoogleRedirectUri:
+    Type: String
+    Default: ''
+  FacebookClientId:
+    Type: String
+    Default: ''
+    NoEcho: true
+  FacebookClientSecret:
+    Type: String
+    Default: ''
+    NoEcho: true
+  FacebookRedirectUri:
+    Type: String
+    Default: ''
+
+Conditions:
+  UseCustomDomain: !And
+    - !Not [!Equals [!Ref CustomDomainName, '']]
+    - !Not [!Equals [!Ref CloudFrontCertificateArn, '']]
+  UseCloudFrontWebAcl: !Not [!Equals [!Ref CloudFrontWebAclArn, '']]
+  UseExplicitBackendImageUri: !Not [!Equals [!Ref BackendImageUri, '']]
+  UseMultiAzDatabase: !Equals [!Ref DatabaseMultiAz, 'true']
+  HasCloudFrontPrefixList: !Not [!Equals [!Ref CloudFrontPrefixListId, '']]
+  UseAlbTls: !Not [!Equals [!Ref AlbCertificateArn, '']]
+  EnableFrontendAssetSync: !And
+    - !Not [!Equals [!Ref FrontendAssetSourceBucket, '']]
+    - !Not [!Equals [!Ref FrontendAssetSourceKey, '']]
+  EnableDatabaseMigrations: !Equals [!Ref RunDatabaseMigrations, 'true']
+  HasProvidedAppKey: !Not [!Equals [!Ref AppKey, '']]
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-vpc'
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-igw'
+
+  VpcGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnetAz1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PublicSubnetAz1Cidr
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-public-az1'
+
+  PublicSubnetAz2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PublicSubnetAz2Cidr
+      AvailabilityZone: !Select [1, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-public-az2'
+
+  PrivateSubnetAz1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PrivateSubnetAz1Cidr
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-private-az1'
+
+  PrivateSubnetAz2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PrivateSubnetAz2Cidr
+      AvailabilityZone: !Select [1, !GetAZs '']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-private-az2'
+
+  DatabaseSubnetAz1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref DatabaseSubnetAz1Cidr
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-database-az1'
+
+  DatabaseSubnetAz2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref DatabaseSubnetAz2Cidr
+      AvailabilityZone: !Select [1, !GetAZs '']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-database-az2'
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-public-rt'
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-private-rt'
+
+  DatabaseRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-database-rt'
+
+  PublicDefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VpcGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  NatEip:
+    Type: AWS::EC2::EIP
+    DependsOn: VpcGatewayAttachment
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-nat-eip'
+
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatEip.AllocationId
+      SubnetId: !Ref PublicSubnetAz1
+      ConnectivityType: public
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-nat'
+
+  PrivateDefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+
+  PublicSubnetAz1Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetAz1
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnetAz2Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetAz2
+      RouteTableId: !Ref PublicRouteTable
+
+  PrivateSubnetAz1Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetAz1
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateSubnetAz2Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetAz2
+      RouteTableId: !Ref PrivateRouteTable
+
+  DatabaseSubnetAz1Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref DatabaseSubnetAz1
+      RouteTableId: !Ref DatabaseRouteTable
+
+  DatabaseSubnetAz2Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref DatabaseSubnetAz2
+      RouteTableId: !Ref DatabaseRouteTable
+
+  AlbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ALB security group
+      VpcId: !Ref VPC
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-alb-sg'
+
+  AlbIngressFromCloudFrontPrefixList:
+    Type: AWS::EC2::SecurityGroupIngress
+    Condition: HasCloudFrontPrefixList
+    Properties:
+      GroupId: !Ref AlbSecurityGroup
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      SourcePrefixListId: !Ref CloudFrontPrefixListId
+      Description: Allow HTTP traffic from CloudFront origin-facing prefix list
+
+  AlbIngressTlsFromCloudFrontPrefixList:
+    Type: AWS::EC2::SecurityGroupIngress
+    Condition: HasCloudFrontPrefixList
+    Properties:
+      GroupId: !Ref AlbSecurityGroup
+      IpProtocol: tcp
+      FromPort: 443
+      ToPort: 443
+      SourcePrefixListId: !Ref CloudFrontPrefixListId
+      Description: Allow HTTPS traffic from CloudFront origin-facing prefix list
+
+  EcsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ECS task security group
+      VpcId: !Ref VPC
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-ecs-sg'
+
+  EcsIngressFromAlb:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref EcsSecurityGroup
+      IpProtocol: tcp
+      FromPort: !Ref BackendContainerPort
+      ToPort: !Ref BackendContainerPort
+      SourceSecurityGroupId: !Ref AlbSecurityGroup
+      Description: Allow traffic from the ALB to ECS tasks
+
+  RdsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: RDS security group
+      VpcId: !Ref VPC
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${EnvironmentName}-rds-sg'
+
+  RdsIngressFromEcs:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref RdsSecurityGroup
+      IpProtocol: tcp
+      FromPort: !Ref DatabasePort
+      ToPort: !Ref DatabasePort
+      SourceSecurityGroupId: !Ref EcsSecurityGroup
+      Description: Allow database access from ECS tasks
+
+  BackendRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Ref BackendRepositoryName
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      ImageTagMutability: MUTABLE
+
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${ProjectName}-${EnvironmentName}-frontend-${AWS::AccountId}-${AWS::Region}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+
+  MediaBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${ProjectName}-${EnvironmentName}-media-${AWS::AccountId}-${AWS::Region}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: TransitionOlderObjects
+            Status: Enabled
+            Transitions:
+              - StorageClass: STANDARD_IA
+                TransitionInDays: 60
+              - StorageClass: GLACIER_IR
+                TransitionInDays: 180
+              - StorageClass: GLACIER
+                TransitionInDays: 360
+
+  MediaBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MediaBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowEcsTaskRoleObjectAccess
+            Effect: Allow
+            Principal:
+              AWS: !GetAtt EcsTaskRole.Arn
+            Action:
+              - s3:PutObject
+              - s3:DeleteObject
+            Resource: !Sub '${MediaBucket.Arn}/*'
+          - Sid: AllowRootFullAccess
+            Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            Action: s3:*
+            Resource:
+              - !GetAtt MediaBucket.Arn
+              - !Sub '${MediaBucket.Arn}/*'
+
+  FrontendOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub '${ProjectName}-${EnvironmentName}-frontend-oac'
+        Description: OAC for the frontend bucket
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  FrontendCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub '${ProjectName}-${EnvironmentName}-frontend-cache'
+        Comment: Cache policy for frontend assets
+        DefaultTTL: 86400
+        MinTTL: 1
+        MaxTTL: 31536000
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          CookiesConfig:
+            CookieBehavior: none
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: none
+
+  ApiCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub '${ProjectName}-${EnvironmentName}-api-cache'
+        Comment: Low-cache policy for dynamic API responses
+        DefaultTTL: 0
+        MinTTL: 0
+        MaxTTL: 1
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          CookiesConfig:
+            CookieBehavior: all
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: all
+
+  ApiOriginRequestPolicy:
+    Type: AWS::CloudFront::OriginRequestPolicy
+    Properties:
+      OriginRequestPolicyConfig:
+        Name: !Sub '${ProjectName}-${EnvironmentName}-api-origin-request'
+        Comment: Forward all viewer request data to the API origin
+        CookiesConfig:
+          CookieBehavior: all
+        HeadersConfig:
+          HeaderBehavior: allViewer
+        QueryStringsConfig:
+          QueryStringBehavior: all
+
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Version: '2008-10-17'
+        Id: PolicyForCloudFrontPrivateContent
+        Statement:
+          - Sid: AllowCloudFrontServicePrincipal
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub '${FrontendBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}'
+          - Sid: AllowCicdRoleObjectUpload
+            Effect: Allow
+            Principal:
+              AWS: !GetAtt CICDRole.Arn
+            Action:
+              - s3:PutObject
+              - s3:PutObjectTagging
+              - s3:AbortMultipartUpload
+              - s3:DeleteObject
+              - s3:GetObject
+            Resource: !Sub '${FrontendBucket.Arn}/*'
+          - Sid: AllowCicdRoleListBucket
+            Effect: Allow
+            Principal:
+              AWS: !GetAtt CICDRole.Arn
+            Action: s3:ListBucket
+            Resource: !GetAtt FrontendBucket.Arn
+
+  FrontendAssetSyncRole:
+    Type: AWS::IAM::Role
+    Condition: EnableFrontendAssetSync
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: FrontendAssetSync
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource: !Sub 'arn:aws:s3:::${FrontendAssetSourceBucket}/${FrontendAssetSourceKey}'
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                Resource: !Sub '${FrontendBucket.Arn}/*'
+
+  FrontendAssetSyncFunction:
+    Type: AWS::Lambda::Function
+    Condition: EnableFrontendAssetSync
+    Properties:
+      Runtime: python3.12
+      Handler: index.handler
+      Timeout: 900
+      MemorySize: 512
+      Role: !GetAtt FrontendAssetSyncRole.Arn
+      Code:
+        ZipFile: |
+          import boto3, cfnresponse, io, mimetypes, zipfile
+          s3 = boto3.client("s3")
+          IMMUTABLE_EXTS = (".js", ".css", ".png", ".jpg", ".jpeg", ".svg", ".webp", ".ico", ".woff", ".woff2", ".ttf")
+          def handler(event, context):
+              try:
+                  if event["RequestType"] == "Delete":
+                      cfnresponse.send(event, context, cfnresponse.SUCCESS, {"Status": "Skipped"})
+                      return
+                  props = event["ResourceProperties"]
+                  args = {"Bucket": props["SourceBucket"], "Key": props["SourceKey"]}
+                  if props.get("SourceObjectVersion"):
+                      args["VersionId"] = props["SourceObjectVersion"]
+                  body = s3.get_object(**args)["Body"].read()
+                  uploaded = 0
+                  with zipfile.ZipFile(io.BytesIO(body)) as archive:
+                      for item in archive.infolist():
+                          if item.is_dir():
+                              continue
+                          key = item.filename.lstrip("/")
+                          content_type = mimetypes.guess_type(key)[0] or "application/octet-stream"
+                          extra = {
+                              "ContentType": content_type,
+                              "CacheControl": "public,max-age=31536000,immutable" if key.startswith("assets/") or key.endswith(IMMUTABLE_EXTS) else "public,max-age=300"
+                          }
+                          s3.put_object(Bucket=props["TargetBucket"], Key=key, Body=archive.read(item), **extra)
+                          uploaded += 1
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {"UploadedFiles": str(uploaded)})
+              except Exception as exc:
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {"Error": str(exc)}, str(exc))
+
+  FrontendAssetSync:
+    Type: Custom::FrontendAssetSync
+    Condition: EnableFrontendAssetSync
+    Properties:
+      ServiceToken: !GetAtt FrontendAssetSyncFunction.Arn
+      SourceBucket: !Ref FrontendAssetSourceBucket
+      SourceKey: !Ref FrontendAssetSourceKey
+      SourceObjectVersion: !Ref FrontendAssetSourceObjectVersion
+      TargetBucket: !Ref FrontendBucket
+
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub '${ProjectName}-${EnvironmentName}-alb'
+      Type: application
+      Scheme: internal
+      IpAddressType: ipv4
+      SecurityGroups:
+        - !Ref AlbSecurityGroup
+      Subnets:
+        - !Ref PrivateSubnetAz1
+        - !Ref PrivateSubnetAz2
+
+  ApplicationLoadBalancerVpcOrigin:
+    Type: AWS::CloudFront::VpcOrigin
+    Properties:
+      VpcOriginEndpointConfig:
+        Arn: !Ref ApplicationLoadBalancer
+        Name: !Sub '${ProjectName}-${EnvironmentName}-alb-vpc-origin'
+        HTTPPort: 80
+        HTTPSPort: 443
+        OriginProtocolPolicy: !If [UseAlbTls, https-only, http-only]
+        OriginSSLProtocols: !If
+          - UseAlbTls
+          - [TLSv1.2]
+          - !Ref AWS::NoValue
+
+  ApiTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub '${ProjectName}-${EnvironmentName}-api-tg'
+      Port: !Ref BackendContainerPort
+      Protocol: HTTP
+      VpcId: !Ref VPC
+      TargetType: ip
+      HealthCheckEnabled: true
+      HealthCheckProtocol: HTTP
+      HealthCheckPath: /up
+      HealthCheckPort: traffic-port
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 5
+      UnhealthyThresholdCount: 2
+      Matcher:
+        HttpCode: '200'
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: '30'
+
+  HttpListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions: !If
+        - UseAlbTls
+        - - Type: redirect
+            RedirectConfig:
+              Protocol: HTTPS
+              Port: '443'
+              StatusCode: HTTP_301
+        - - Type: forward
+            TargetGroupArn: !Ref ApiTargetGroup
+
+  HttpsListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Condition: UseAlbTls
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      Certificates:
+        - CertificateArn: !Ref AlbCertificateArn
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ApiTargetGroup
+
+  DatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: !Sub '${ProjectName}-${EnvironmentName} database subnet group'
+      SubnetIds:
+        - !Ref DatabaseSubnetAz1
+        - !Ref DatabaseSubnetAz2
+      DBSubnetGroupName: !Sub '${ProjectName}-${EnvironmentName}-db-subnets'
+
+  DatabaseInstance:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: !Sub '${ProjectName}-${EnvironmentName}-database'
+      Engine: mariadb
+      DBName: !Ref DatabaseName
+      DBInstanceClass: !Ref DatabaseInstanceClass
+      AllocatedStorage: !Ref DatabaseAllocatedStorage
+      MaxAllocatedStorage: !Ref DatabaseMaxAllocatedStorage
+      StorageType: gp3
+      StorageEncrypted: true
+      MasterUsername: !Ref DatabaseMasterUsername
+      ManageMasterUserPassword: true
+      Port: !Ref DatabasePort
+      MultiAZ: !If [UseMultiAzDatabase, true, false]
+      DBSubnetGroupName: !Ref DatabaseSubnetGroup
+      VPCSecurityGroups:
+        - !Ref RdsSecurityGroup
+      PubliclyAccessible: false
+      BackupRetentionPeriod: 7
+      AutoMinorVersionUpgrade: true
+
+  ApplicationSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub '${ProjectName}/${EnvironmentName}/app'
+      Description: Application secret bundle for the Petty backend
+      GenerateSecretString:
+        SecretStringTemplate: !Sub |
+          {
+            "EXISTING_APP_KEY": "${AppKey}",
+            "MAIL_USERNAME": "${MailUsername}",
+            "MAIL_PASSWORD": "${MailPassword}",
+            "MAIL_FROM_ADDRESS": "${MailFromAddress}",
+            "MAIL_FROM_NAME": "${MailFromName}",
+            "MAIL_HOST": "${MailHost}",
+            "MAIL_PORT": "${MailPort}",
+            "MAIL_ENCRYPTION": "${MailEncryption}",
+            "GOOGLE_CLIENT_ID": "${GoogleClientId}",
+            "GOOGLE_CLIENT_SECRET": "${GoogleClientSecret}",
+            "GOOGLE_REDIRECT_URI": "${GoogleRedirectUri}",
+            "FACEBOOK_CLIENT_ID": "${FacebookClientId}",
+            "FACEBOOK_CLIENT_SECRET": "${FacebookClientSecret}",
+            "FACEBOOK_REDIRECT_URI": "${FacebookRedirectUri}"
+          }
+        GenerateStringKey: APP_KEY
+        PasswordLength: 32
+        ExcludePunctuation: true
+
+  BackendLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/ecs/${ProjectName}-${EnvironmentName}-backend'
+      RetentionInDays: !Ref LogRetentionDays
+
+  EcsCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub '${ProjectName}-${EnvironmentName}-cluster'
+      CapacityProviders:
+        - FARGATE
+        - FARGATE_SPOT
+      DefaultCapacityProviderStrategy:
+        - CapacityProvider: FARGATE
+          Weight: 1
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+
+  EcsTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: ReadApplicationAndDatabaseSecrets
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - !Ref ApplicationSecret
+                  - !GetAtt DatabaseInstance.MasterUserSecret.SecretArn
+        - PolicyName: ReadApplicationParameters
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*'
+
+  EcsTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: MediaBucketAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource: !Sub '${MediaBucket.Arn}/*'
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                Resource: !GetAtt MediaBucket.Arn
+
+  GitHubActionsOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList:
+        - sts.amazonaws.com
+
+  FrontendBucketUploadPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: FrontendBucketUploadPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowUploadObjectsToS3
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:PutObjectTagging
+              - s3:AbortMultipartUpload
+            Resource: arn:aws:s3:::webapp-group10-frontend-bucket/*
+          - Sid: AllowListBucketForUpload
+            Effect: Allow
+            Action:
+              - s3:ListBucket
+            Resource: arn:aws:s3:::webapp-group10-frontend-bucket
+
+  BackendRepositoryPushPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: BackendRepositoryPushPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowEcrLogin
+            Effect: Allow
+            Action:
+              - ecr:GetAuthorizationToken
+            Resource: '*'
+          - Sid: AllowPushImageToEcrRepository
+            Effect: Allow
+            Action:
+              - ecr:BatchCheckLayerAvailability
+              - ecr:InitiateLayerUpload
+              - ecr:UploadLayerPart
+              - ecr:CompleteLayerUpload
+              - ecr:PutImage
+            Resource: arn:aws:ecr:us-west-2:392446151551:repository/webapp-group10/backend
+
+  CICDRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CICDRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowGitHubActionsAssumeRole
+            Effect: Allow
+            Principal:
+              Federated: !Ref GitHubActionsOidcProvider
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:sub: repo:tmcmanhcuong/petty_care_vms:ref:refs/heads/main
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+      ManagedPolicyArns:
+        - !Ref FrontendBucketUploadPolicy
+        - !Ref BackendRepositoryPushPolicy
+
+  BackendTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub '${ProjectName}-${EnvironmentName}-backend'
+      Cpu: !Ref BackendCpu
+      Memory: !Ref BackendMemory
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ExecutionRoleArn: !GetAtt EcsTaskExecutionRole.Arn
+      TaskRoleArn: !GetAtt EcsTaskRole.Arn
+      RuntimePlatform:
+        OperatingSystemFamily: LINUX
+        CpuArchitecture: X86_64
+      ContainerDefinitions:
+        - Name: backend
+          Image: !If
+            - UseExplicitBackendImageUri
+            - !Ref BackendImageUri
+            - !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${BackendRepositoryName}:${BackendImageTag}'
+          Essential: true
+          PortMappings:
+            - ContainerPort: !Ref BackendContainerPort
+              HostPort: !Ref BackendContainerPort
+              Protocol: tcp
+              AppProtocol: http
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref BackendLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+          Secrets:
+            - Name: APP_KEY
+              ValueFrom: !If
+                - HasProvidedAppKey
+                - !Sub '${ApplicationSecret}:EXISTING_APP_KEY::'
+                - !Sub '${ApplicationSecret}:APP_KEY::'
+            - Name: MAIL_USERNAME
+              ValueFrom: !Sub '${ApplicationSecret}:MAIL_USERNAME::'
+            - Name: MAIL_PASSWORD
+              ValueFrom: !Sub '${ApplicationSecret}:MAIL_PASSWORD::'
+            - Name: MAIL_FROM_ADDRESS
+              ValueFrom: !Sub '${ApplicationSecret}:MAIL_FROM_ADDRESS::'
+            - Name: MAIL_FROM_NAME
+              ValueFrom: !Sub '${ApplicationSecret}:MAIL_FROM_NAME::'
+            - Name: MAIL_HOST
+              ValueFrom: !Sub '${ApplicationSecret}:MAIL_HOST::'
+            - Name: MAIL_PORT
+              ValueFrom: !Sub '${ApplicationSecret}:MAIL_PORT::'
+            - Name: MAIL_ENCRYPTION
+              ValueFrom: !Sub '${ApplicationSecret}:MAIL_ENCRYPTION::'
+            - Name: GOOGLE_CLIENT_ID
+              ValueFrom: !Sub '${ApplicationSecret}:GOOGLE_CLIENT_ID::'
+            - Name: GOOGLE_CLIENT_SECRET
+              ValueFrom: !Sub '${ApplicationSecret}:GOOGLE_CLIENT_SECRET::'
+            - Name: GOOGLE_REDIRECT_URI
+              ValueFrom: !Sub '${ApplicationSecret}:GOOGLE_REDIRECT_URI::'
+            - Name: FACEBOOK_CLIENT_ID
+              ValueFrom: !Sub '${ApplicationSecret}:FACEBOOK_CLIENT_ID::'
+            - Name: FACEBOOK_CLIENT_SECRET
+              ValueFrom: !Sub '${ApplicationSecret}:FACEBOOK_CLIENT_SECRET::'
+            - Name: FACEBOOK_REDIRECT_URI
+              ValueFrom: !Sub '${ApplicationSecret}:FACEBOOK_REDIRECT_URI::'
+            - Name: DB_PASSWORD
+              ValueFrom: !Sub '${DatabaseInstance.MasterUserSecret.SecretArn}:password::'
+          Environment:
+            - Name: APP_NAME
+              Value: !Ref AppName
+            - Name: APP_ENV
+              Value: !Ref AppEnvironment
+            - Name: APP_DEBUG
+              Value: !Ref AppDebug
+            - Name: APP_TIMEZONE
+              Value: !Ref AppTimezone
+            - Name: APP_URL
+              Value: !Ref PublicAppUrl
+            - Name: FRONTEND_URL
+              Value: !Ref FrontendUrl
+            - Name: APP_LOCALE
+              Value: !Ref AppLocale
+            - Name: APP_FALLBACK_LOCALE
+              Value: !Ref AppFallbackLocale
+            - Name: APP_FAKER_LOCALE
+              Value: !Ref AppFakerLocale
+            - Name: APP_MAINTENANCE_DRIVER
+              Value: !Ref AppMaintenanceDriver
+            - Name: APP_MAINTENANCE_STORE
+              Value: !Ref AppMaintenanceStore
+            - Name: DB_CONNECTION
+              Value: mysql
+            - Name: DB_HOST
+              Value: !GetAtt DatabaseInstance.Endpoint.Address
+            - Name: DB_PORT
+              Value: !Sub '${DatabasePort}'
+            - Name: DB_DATABASE
+              Value: !Ref DatabaseName
+            - Name: DB_USERNAME
+              Value: !Ref DatabaseMasterUsername
+            - Name: BROADCAST_CONNECTION
+              Value: !Ref BroadcastConnection
+            - Name: CACHE_STORE
+              Value: !Ref CacheStore
+            - Name: CACHE_PREFIX
+              Value: !Ref CachePrefix
+            - Name: FILESYSTEM_DISK
+              Value: !Ref FilesystemDisk
+            - Name: LOG_CHANNEL
+              Value: !Ref LogChannel
+            - Name: LOG_LEVEL
+              Value: !Ref LogLevel
+            - Name: MAIL_MAILER
+              Value: !Ref MailMailer
+            - Name: LOG_DEPRECATIONS_CHANNEL
+              Value: !Ref LogDeprecationsChannel
+            - Name: LOG_STACK
+              Value: !Ref LogStack
+            - Name: PHP_CLI_SERVER_WORKERS
+              Value: !Ref PhpCliServerWorkers
+            - Name: QUEUE_CONNECTION
+              Value: !Ref QueueConnection
+            - Name: SESSION_DRIVER
+              Value: !Ref SessionDriver
+            - Name: SESSION_LIFETIME
+              Value: !Ref SessionLifetime
+            - Name: SESSION_ENCRYPT
+              Value: !Ref SessionEncrypt
+            - Name: SESSION_PATH
+              Value: !Ref SessionPath
+            - Name: SESSION_DOMAIN
+              Value: !Ref SessionDomain
+            - Name: VITE_APP_NAME
+              Value: !Ref FrontendAppName
+
+  MigrationTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub '${ProjectName}-${EnvironmentName}-migration'
+      Cpu: '512'
+      Memory: '1024'
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ExecutionRoleArn: !GetAtt EcsTaskExecutionRole.Arn
+      TaskRoleArn: !GetAtt EcsTaskRole.Arn
+      RuntimePlatform:
+        OperatingSystemFamily: LINUX
+        CpuArchitecture: X86_64
+      ContainerDefinitions:
+        - Name: migration
+          Image: !If
+            - UseExplicitBackendImageUri
+            - !Ref BackendImageUri
+            - !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${BackendRepositoryName}:${BackendImageTag}'
+          Essential: true
+          EntryPoint:
+            - /bin/sh
+            - -lc
+          Command:
+            - !Ref DatabaseMigrationCommand
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref BackendLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: migrations
+          Secrets:
+            - Name: APP_KEY
+              ValueFrom: !If
+                - HasProvidedAppKey
+                - !Sub '${ApplicationSecret}:EXISTING_APP_KEY::'
+                - !Sub '${ApplicationSecret}:APP_KEY::'
+            - Name: DB_PASSWORD
+              ValueFrom: !Sub '${DatabaseInstance.MasterUserSecret.SecretArn}:password::'
+          Environment:
+            - Name: APP_NAME
+              Value: !Ref AppName
+            - Name: APP_ENV
+              Value: !Ref AppEnvironment
+            - Name: APP_DEBUG
+              Value: !Ref AppDebug
+            - Name: APP_TIMEZONE
+              Value: !Ref AppTimezone
+            - Name: APP_URL
+              Value: !Ref PublicAppUrl
+            - Name: DB_CONNECTION
+              Value: mysql
+            - Name: DB_HOST
+              Value: !GetAtt DatabaseInstance.Endpoint.Address
+            - Name: DB_PORT
+              Value: !Sub '${DatabasePort}'
+            - Name: DB_DATABASE
+              Value: !Ref DatabaseName
+            - Name: DB_USERNAME
+              Value: !Ref DatabaseMasterUsername
+            - Name: LOG_CHANNEL
+              Value: !Ref LogChannel
+            - Name: LOG_LEVEL
+              Value: !Ref LogLevel
+            - Name: QUEUE_CONNECTION
+              Value: !Ref QueueConnection
+            - Name: SESSION_DRIVER
+              Value: !Ref SessionDriver
+
+  MigrationRunnerRole:
+    Type: AWS::IAM::Role
+    Condition: EnableDatabaseMigrations
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: RunMigrationTask
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - ecs:RunTask
+                  - ecs:DescribeTasks
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource:
+                  - !GetAtt EcsTaskExecutionRole.Arn
+                  - !GetAtt EcsTaskRole.Arn
+
+  MigrationRunnerFunction:
+    Type: AWS::Lambda::Function
+    Condition: EnableDatabaseMigrations
+    Properties:
+      Runtime: python3.12
+      Handler: index.handler
+      Timeout: 900
+      MemorySize: 256
+      Role: !GetAtt MigrationRunnerRole.Arn
+      Code:
+        ZipFile: |
+          import boto3, cfnresponse, time
+          ecs = boto3.client("ecs")
+          def handler(event, context):
+              try:
+                  if event["RequestType"] == "Delete":
+                      cfnresponse.send(event, context, cfnresponse.SUCCESS, {"Status": "Skipped"})
+                      return
+                  p = event["ResourceProperties"]
+                  resp = ecs.run_task(
+                      cluster=p["Cluster"],
+                      taskDefinition=p["TaskDefinition"],
+                      launchType="FARGATE",
+                      count=1,
+                      networkConfiguration={
+                          "awsvpcConfiguration": {
+                              "subnets": p["Subnets"],
+                              "securityGroups": p["SecurityGroups"],
+                              "assignPublicIp": "DISABLED"
+                          }
+                      }
+                  )
+                  failures = resp.get("failures", [])
+                  if failures:
+                      raise Exception(failures[0].get("reason", "Failed to start migration task"))
+                  task_arn = resp["tasks"][0]["taskArn"]
+                  deadline = time.time() + 840
+                  while time.time() < deadline:
+                      task = ecs.describe_tasks(cluster=p["Cluster"], tasks=[task_arn])["tasks"][0]
+                      if task["lastStatus"] == "STOPPED":
+                          container = task["containers"][0]
+                          if container.get("exitCode", 1) == 0:
+                              cfnresponse.send(event, context, cfnresponse.SUCCESS, {"TaskArn": task_arn})
+                              return
+                          raise Exception(container.get("reason") or task.get("stoppedReason") or "Migration task failed")
+                      time.sleep(5)
+                  raise Exception("Timed out waiting for migration task to finish")
+              except Exception as exc:
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {"Error": str(exc)}, str(exc))
+
+  RunDatabaseMigrationsTask:
+    Type: Custom::RunDatabaseMigrations
+    Condition: EnableDatabaseMigrations
+    DependsOn:
+      - DatabaseInstance
+      - MigrationTaskDefinition
+    Properties:
+      ServiceToken: !GetAtt MigrationRunnerFunction.Arn
+      Cluster: !Ref EcsCluster
+      TaskDefinition: !Ref MigrationTaskDefinition
+      Subnets:
+        - !Ref PrivateSubnetAz1
+        - !Ref PrivateSubnetAz2
+      SecurityGroups:
+        - !Ref EcsSecurityGroup
+
+  BackendService:
+    Type: AWS::ECS::Service
+    DependsOn: HttpListener
+    Properties:
+      ServiceName: !Sub '${ProjectName}-${EnvironmentName}-backend'
+      Cluster: !Ref EcsCluster
+      LaunchType: FARGATE
+      DesiredCount: !Ref BackendDesiredCount
+      TaskDefinition: !Ref BackendTaskDefinition
+      LoadBalancers:
+        - TargetGroupArn: !Ref ApiTargetGroup
+          ContainerName: backend
+          ContainerPort: !Ref BackendContainerPort
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - !Ref EcsSecurityGroup
+          Subnets:
+            - !Ref PrivateSubnetAz1
+            - !Ref PrivateSubnetAz2
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub '${ProjectName}-${EnvironmentName}-distribution'
+        DefaultRootObject: index.html
+        IPV6Enabled: true
+        PriceClass: !Ref CloudFrontPriceClass
+        Aliases: !If
+          - UseCustomDomain
+          - [!Ref CustomDomainName]
+          - !Ref AWS::NoValue
+        WebACLId: !If
+          - UseCloudFrontWebAcl
+          - !Ref CloudFrontWebAclArn
+          - !Ref AWS::NoValue
+        ViewerCertificate: !If
+          - UseCustomDomain
+          - AcmCertificateArn: !Ref CloudFrontCertificateArn
+            MinimumProtocolVersion: TLSv1.2_2021
+            SslSupportMethod: sni-only
+          - CloudFrontDefaultCertificate: true
+        Origins:
+          - Id: frontend-origin
+            DomainName: !GetAtt FrontendBucket.RegionalDomainName
+            OriginAccessControlId: !Ref FrontendOriginAccessControl
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+          - Id: api-origin
+            DomainName: !GetAtt ApplicationLoadBalancer.DNSName
+            VpcOriginConfig:
+              VpcOriginId: !GetAtt ApplicationLoadBalancerVpcOrigin.Id
+              OriginReadTimeout: 30
+              OriginKeepaliveTimeout: 5
+              OwnerAccountId: !Ref AWS::AccountId
+        DefaultCacheBehavior:
+          TargetOriginId: frontend-origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          CachedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          Compress: true
+          CachePolicyId: !Ref FrontendCachePolicy
+        CacheBehaviors:
+          - PathPattern: /api/*
+            TargetOriginId: api-origin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+              - PUT
+              - POST
+              - PATCH
+              - DELETE
+            CachedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            Compress: true
+            CachePolicyId: !Ref ApiCachePolicy
+            OriginRequestPolicyId: !Ref ApiOriginRequestPolicy
+          - PathPattern: /up
+            TargetOriginId: api-origin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            Compress: true
+            CachePolicyId: !Ref ApiCachePolicy
+            OriginRequestPolicyId: !Ref ApiOriginRequestPolicy
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 10
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 10
+
+Outputs:
+  VpcId:
+    Value: !Ref VPC
+  FrontendBucketName:
+    Value: !Ref FrontendBucket
+  MediaBucketName:
+    Value: !Ref MediaBucket
+  EcrRepositoryUri:
+    Value: !GetAtt BackendRepository.RepositoryUri
+  EcsClusterName:
+    Value: !Ref EcsCluster
+  EcsServiceName:
+    Value: !GetAtt BackendService.Name
+  AlbDnsName:
+    Value: !GetAtt ApplicationLoadBalancer.DNSName
+  CloudFrontDistributionId:
+    Value: !Ref CloudFrontDistribution
+  CloudFrontDomainName:
+    Value: !GetAtt CloudFrontDistribution.DomainName
+  DatabaseEndpointAddress:
+    Value: !GetAtt DatabaseInstance.Endpoint.Address
+  DatabaseEndpointPort:
+    Value: !GetAtt DatabaseInstance.Endpoint.Port
+  DatabaseMasterSecretArn:
+    Value: !GetAtt DatabaseInstance.MasterUserSecret.SecretArn
+  ApplicationSecretArn:
+    Value: !Ref ApplicationSecret
