@@ -421,6 +421,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import axios from "axios";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import AddIcon from "@/assets/svg/add.svg";
@@ -618,9 +619,15 @@ const fetchFilterOptions = async () => {
   }
 };
 
+const route = useRoute();
+
 onMounted(() => {
   fetchAppointments();
   fetchFilterOptions();
+
+  if (route.query.action === 'book') {
+    handleNewAppointment();
+  }
 });
 
 const openFilter = (type) => {

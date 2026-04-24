@@ -26,7 +26,8 @@
         <div class="flex gap-4 items-center">
           <a
             href="#"
-            class="bg-[#5a9690] flex items-center justify-center px-6 py-3 rounded-2xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.1)] hover:shadow-lg transition-all"
+            @click.prevent="handleDatLichNgay"
+            class="bg-[#5a9690] flex items-center justify-center px-6 py-3 rounded-2xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.1)] hover:shadow-lg transition-all cursor-pointer"
           >
             <span
               class="font-semibold text-[#eeeeee] text-[18px] leading-[20px] tracking-[0.4px]"
@@ -35,8 +36,8 @@
             </span>
           </a>
           <a
-            href="#"
-            class="border-2 border-[#5a9690] flex items-center justify-center px-6 py-3 rounded-2xl hover:bg-[#5a9690] transition-all group"
+            href="#services"
+            class="border-2 border-[#5a9690] flex items-center justify-center px-6 py-3 rounded-2xl hover:bg-[#5a9690] transition-all group cursor-pointer"
           >
             <span
               class="font-semibold text-[#222831] group-hover:text-white text-[18px] leading-[20px] tracking-[0.4px]"
@@ -940,6 +941,38 @@ onMounted(async () => {
     }
   }
 });
+
+const handleDatLichNgay = async () => {
+  const token = localStorage.getItem("auth_token");
+  if (!token) {
+    toast.warning("Vui lòng đăng nhập để đặt lịch");
+    router.push({ path: "/customer/login", query: { redirect: "/customer/appointments?action=book" } });
+    return;
+  }
+
+  try {
+    const res = await axios.get(import.meta.env.VITE_API_BASE_URL + "/thu-cung?all=1", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const pets = res.data?.data || res.data || [];
+    if (pets.length > 0) {
+      router.push({ path: "/customer/appointments", query: { action: "book" } });
+    } else {
+      toast.warning("Bạn cần có ít nhất một thú cưng để đặt lịch.");
+      router.push("/customer/my-pets");
+    }
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      toast.warning("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại");
+      localStorage.removeItem("auth_token");
+      router.push({ path: "/customer/login", query: { redirect: "/customer/appointments?action=book" } });
+    } else {
+      console.error(error);
+      toast.error("Kiểm tra thông tin thú cưng thất bại.");
+      router.push("/customer/appointments");
+    }
+  }
+};
 
 const avatarImages = [
   "/src_assets/img_imports/public_img/hp-pic13.jpg",
