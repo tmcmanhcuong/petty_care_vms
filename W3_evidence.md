@@ -126,8 +126,8 @@ Khi đặt lịch hẹn, hệ thống cần đảm bảo `khach_hang_id`, `thu_c
 
 ### 3.7 Lambda Function — Execution Role (no wildcard)
 
-📸 **[CHỤP ẢNH]** Vào: **AWS Console → Lambda → [tên function] → Configuration → Permissions**  
-Cần thấy: Execution role name, sau đó click vào role → xem IAM policy — **không có** `Action: "*"` hoặc `Resource: "*"`
+<img width="1860" height="689" alt="image" src="https://github.com/user-attachments/assets/fc9d83c1-023d-496b-9c5b-626871dc1d94" />
+
 
 > **Notes:** Lambda execution role được scope về specific actions và specific resource ARNs theo principle of least privilege. Ví dụ: nếu Lambda cần gọi Bedrock, policy chỉ có `bedrock:InvokeModel` trên ARN của model cụ thể, không phải `bedrock:*` trên `*`.
 
@@ -135,8 +135,8 @@ Cần thấy: Execution role name, sau đó click vào role → xem IAM policy �
 
 ### 3.8 Lambda Function — Trigger hoạt động
 
-📸 **[CHỤP ẢNH]** Vào: **AWS Console → Lambda → [tên function] → Configuration → Triggers**  
-Cần thấy: Trigger đang active (S3 event trigger hoặc API Gateway)
+<img width="1860" height="674" alt="image" src="https://github.com/user-attachments/assets/a2fed8cf-3777-4d89-ac3b-5b2f37c5458e" />
+
 
 > **Notes:** _(điền trigger đang dùng là gì — S3 upload hay API Gateway endpoint)_
 
