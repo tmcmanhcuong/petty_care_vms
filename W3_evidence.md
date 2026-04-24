@@ -9,7 +9,7 @@
 | **Group** | Nhóm 10 |
 | **Members** | Nguyễn Thị Mến, Lê Trần Tuấn Khanh, Phan Đức Huy, Huỳnh Xuân Hậu, Lê Văn Hải, Trần Mạnh Trường, Trần Quốc Hùng, Lê Viết Quốc Hưng, Trần Mạnh Cường, Nguyễn Đức Hảo |
 | **App** | Petty VMCS — Hệ thống Quản lý Phòng khám Thú y |
-| **Database path** | RDS MariaDB 11.5 / Relational |
+| **Database path** | RDS MariaDB 11.8 / Relational |
 | **W2 Evidence link** | _(paste link commit W2 evidence ở đây)_ |
 
 ---
@@ -30,7 +30,7 @@
 
 **Pattern 1 — Lấy lịch hẹn của khách hàng**
 
-- **Engine:** RDS MariaDB 10.4 (managed relational)
+- **Engine:** RDS MariaDB 11.8 (managed relational)
 - **Paradigm:** Relational
 - **Cơ chế:** Query với `WHERE khach_hang_id = ? AND trang_thai = ?` trên bảng `lich_hens`. Index `lich_hens_trang_thai_index` trên cột `trang_thai` đã được định nghĩa trong schema. Kết quả JOIN với `thu_cungs` (FK `thu_cung_id`) và `dich_vus` (FK `dich_vu_id`) để trả về đầy đủ thông tin cho frontend.
 
@@ -46,13 +46,13 @@ ORDER BY lh.ngay_gio ASC;
 
 **Pattern 2 — Đặt lịch hẹn mới (transaction)**
 
-- **Engine:** RDS MariaDB 10.4
+- **Engine:** RDS MariaDB 11.8
 - **Paradigm:** Relational — ACID transaction
 - **Cơ chế:** Laravel Eloquent bọc toàn bộ trong `DB::transaction()`. Đảm bảo nếu bất kỳ bước nào fail (ví dụ: `dich_vu_id` không tồn tại), toàn bộ rollback. FK constraints (`lich_hens_khach_hang_id_foreign`, `lich_hens_thu_cung_id_foreign`, `lich_hens_dich_vu_id_foreign`) được enforce ở tầng DB.
 
 **Pattern 3 — Tạo phiếu khám + cập nhật lịch hẹn**
 
-- **Engine:** RDS MariaDB 10.4
+- **Engine:** RDS MariaDB 11.4
 - **Paradigm:** Relational — multi-table write + JOIN
 - **Cơ chế:** INSERT vào `phieu_khams` với FK `lich_hen_id`, đồng thời UPDATE `lich_hens.trang_thai = 'hoan_thanh'` và set `thoi_gian_hoan_thanh`. Hai thao tác này trong cùng một transaction để đảm bảo consistency.
 
